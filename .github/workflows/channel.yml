@@ -6,6 +6,10 @@ on:
         description: Otomasyonun yüklemediği eski videoları sil
         type: boolean
         default: false
+      publish_only:
+        description: Sadece gizli yüklenmiş videoları herkese açık yap
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -29,11 +33,11 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           YT_CHANNEL_ID: ${{ secrets.YT_CHANNEL_ID }}
-        run: python channel_setup.py ${{ inputs.delete_old && '--delete-old' || '' }}
+        run: python channel_setup.py ${{ inputs.delete_old && '--delete-old' || '' }} ${{ inputs.publish_only && '--publish-only' || '' }}
       - run: |
           git config user.name "bloop-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add playlists.json
+          git add playlists.json history.json
           git diff --cached --quiet && exit 0
           git commit -m "channel: playlists"
           git pull --rebase

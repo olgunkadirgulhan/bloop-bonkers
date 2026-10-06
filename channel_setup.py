@@ -70,8 +70,25 @@ def delete_old(yt, cid):
         step(f'silindi: {t[:70]}', lambda: yt.videos().delete(id=vid).execute())
 
 
+def publish_all(yt):
+    """history.json'daki gizli videoları herkese açık yapar."""
+    hist = json.loads(HISTORY.read_text()) if HISTORY.exists() else {'videos': []}
+    for v in hist['videos']:
+        if v.get('privacy') == 'public':
+            continue
+        cur = yt.videos().list(part='status', id=v['id']).execute().get('items', [])
+        if not cur:
+            continue
+        st = cur[0]['status']; st['privacyStatus'] = 'public'
+        yt.videos().update(part='status', body={'id': v['id'], 'status': st}).execute()
+        v['privacy'] = 'public'; print(f"✓ yayında: {v['title']} (https://youtube.com/shorts/{v['id']})")
+    HISTORY.write_text(json.dumps(hist, indent=2, ensure_ascii=False) + '\n')
+
+
 def main():
     yt = upload.client()
+    if '--publish-only' in sys.argv:
+        publish_all(yt); return
     ch = yt.channels().list(part='id,snippet,brandingSettings', mine=True).execute()['items'][0]
     cid, title = ch['id'], ch['snippet']['title']
     print(f'kanal: {title} ({cid})')
