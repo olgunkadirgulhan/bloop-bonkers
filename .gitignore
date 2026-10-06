@@ -1,0 +1,7 @@
+output/
+__pycache__/
+client_secret*.json
+*.wav
+secrets*.env
+.env
+.venv/
