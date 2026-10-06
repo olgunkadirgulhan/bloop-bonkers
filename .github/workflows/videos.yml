@@ -1,0 +1,78 @@
+name: videos
+on:
+  schedule:
+    # Shorts 2/gün: 15:00 ve 22:00 UTC (New York 11:00 ve 18:00). Saatlik tetiklenir,
+    # .github/slot_guard.py sadece zamanı gelmiş ve yüklenmemiş slot varsa video yapar.
+    - cron: "41 14-23 * * *"
+  workflow_dispatch:
+    inputs:
+      no_upload:
+        description: Sadece render, yükleme yapma
+        type: boolean
+        default: false
+      auto:
+        description: Harici zamanlayıcı çağrısı - slot planına uy
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repo-writes
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    if: github.event_name == 'schedule' || inputs.auto
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.g.outputs.go }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: g
+        env:
+          LOG_FILE: history.json
+          SLOTS: "15:00,22:00"
+        run: python3 .github/slot_guard.py
+
+  make:
+    needs: guard
+    if: always() && ((github.event_name != 'schedule' && !inputs.auto) || needs.guard.outputs.go == '1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run pipeline
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YT_CHANNEL_ID: ${{ secrets.YT_CHANNEL_ID }}
+          YT_PRIVACY: ${{ vars.YT_PRIVACY }}
+        run: python run.py ${{ inputs.no_upload && '--no-upload' || '' }}
+      - name: Keep video for review
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: video-${{ github.run_id }}
+          path: |
+            output/*/video.mp4
+            output/*/meta.json
+          retention-days: 7
+          if-no-files-found: ignore
+      - name: Commit log
+        if: always()
+        run: |
+          git config user.name "bloop-bot"
+          git config user.email "bot@users.noreply.github.com"
+          [ -e history.json ] && git add history.json || true
+          git diff --cached --quiet && exit 0
+          git commit -m "video: $(date -u +%F-%H%M)"
+          git pull --rebase
+          git push
