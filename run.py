@@ -21,12 +21,12 @@ TITLES = {
                '{c}: Normal vs Psycho ({g}) 😂'],
     'level': ['Level 1 vs Level 100: {g} 🔥', '{g}: Level 1 vs Level 100 😂', 'Level 1 vs Level 100 ({g}) 💀'],
     'expect': ['Expectation vs Reality: {g} 😭', '{g}: Expectation vs Reality 💀', 'Expectation vs Reality ({g}) 😂'],
-    'mom': ['Mom Watching vs Mom NOT Watching 😂 {g}', 'When Mom Isn\'t Watching... ({g}) 💀', 'Mom Watching vs Not Watching: {g} 👀'],
+    'boss': ['Boss Watching vs Boss NOT Watching 😂 {g}', 'When the Boss Isn\'t Watching... ({g}) 💀', 'Boss Watching vs Not Watching: {g} 👀'],
     'public': ['In Public vs At Home 😂 {g}', 'Me in Public vs Me at Home ({g}) 🤪', 'In Public vs At Home: {g} 💀'],
     'clock': ['Me at 8 AM vs Me at 3 AM 😂 {g}', '8 AM Me vs 3 AM Me ({g}) 💀', 'Me at 8 AM vs 3 AM: {g} 🌙'],
 }
 TAGS = {'psycho': 'normalvspsycho', 'level': 'level1vslevel100', 'expect': 'expectationvsreality',
-        'mom': 'momwatching', 'public': 'inpublicvsathome', 'clock': '3am'}
+        'boss': 'bosswatching', 'public': 'inpublicvsathome', 'clock': '3am'}
 
 
 def load():

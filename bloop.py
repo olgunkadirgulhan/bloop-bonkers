@@ -43,7 +43,8 @@ FORMATS = {
     'psycho': ('NORMAL', 'PSYCHOPATH', 'WHICH ONE ARE YOU?'),
     'level': ('LEVEL 1', 'LEVEL 100', 'WHAT LEVEL ARE YOU?'),
     'expect': ('EXPECTATION', 'REALITY', 'SO TRUE?'),
-    'mom': ('MOM WATCHING', 'MOM NOT WATCHING', 'BE HONEST...'),
+    # 'mom' (Mom watching vs not) kaldırıldı: çocuk davranışı teması, kanal 13+ kitleye yönelik
+    'boss': ('BOSS WATCHING', 'BOSS NOT WATCHING', 'BE HONEST...'),
     'public': ('IN PUBLIC', 'AT HOME', 'WHICH ONE ARE YOU?'),
     'clock': ('ME AT 8 AM', 'ME AT 3 AM', 'WHICH ONE ARE YOU?'),
 }
