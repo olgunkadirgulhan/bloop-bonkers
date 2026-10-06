@@ -1,9 +1,9 @@
 name: videos
 on:
   schedule:
-    # Shorts 2/gün: 15:00 ve 22:00 UTC (New York 11:00 ve 18:00). Saatlik tetiklenir,
+    # Shorts 3/gün: 14:00, 18:00, 23:00 UTC (New York 10:00, 14:00, 19:00). Saatlik tetiklenir,
     # .github/slot_guard.py sadece zamanı gelmiş ve yüklenmemiş slot varsa video yapar.
-    - cron: "41 14-23 * * *"
+    - cron: "41 13-23 * * *"
   workflow_dispatch:
     inputs:
       no_upload:
@@ -33,7 +33,7 @@ jobs:
       - id: g
         env:
           LOG_FILE: history.json
-          SLOTS: "15:00,22:00"
+          SLOTS: "14:00,18:00,23:00"
         run: python3 .github/slot_guard.py
 
   make:

@@ -8,7 +8,7 @@ Her şey kodla üretilir (karakter, sahne, müzik, efekt): telif yok.
 - `channel_setup.py` açıklama, banner, filigran, oynatma listeleri; `--delete-old` eski videoları siler
 - `branding.py` profil resmi / banner / filigran üretir (`branding/`)
 
-**Takvim:** günde 2 Short, 15:00 ve 22:00 UTC. Saatlik tetiklenir, `.github/slot_guard.py` karar verir.
+**Takvim:** günde 3 Short, 14:00, 18:00, 23:00 UTC. Saatlik tetiklenir, `.github/slot_guard.py` karar verir.
 **Variables:** `YT_PRIVACY` (boş = private, `public` = yayında).
 
 Yerel: `python bloop.py --preview 3,9 --gags soda,cake --cast zip --format level`
