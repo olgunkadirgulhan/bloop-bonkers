@@ -47,6 +47,22 @@
         "alarm"
       ],
       "seed": 933515
+    },
+    {
+      "id": "Dxy2f_e7pN0",
+      "date": "2026-10-07 14:52",
+      "kind": "short",
+      "title": "Level 1 vs Level 100: Cookie & Alarm Clock 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "zip",
+      "gags": [
+        "cookie",
+        "alarm",
+        "balloon",
+        "pumpkin"
+      ],
+      "seed": 10342
     }
   ]
 }
