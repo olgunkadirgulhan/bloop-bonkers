@@ -66,6 +66,14 @@ jobs:
             output/*/meta.json
           retention-days: 7
           if-no-files-found: ignore
+      - name: Günün videosu (Telegram relay için)
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: social-${{ github.run_id }}
+          path: social/
+          retention-days: 3
+          if-no-files-found: ignore
       - name: Commit log
         if: always()
         run: |

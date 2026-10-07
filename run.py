@@ -33,19 +33,62 @@ def load():
     return json.loads(HISTORY.read_text()) if HISTORY.exists() else {'videos': []}
 
 
-def pick_plan(hist, rnd):
+# Kanal verisi yokken başlangıç ağırlıkları: 'psycho' ilk gün viral oldu (31 bin izlenme)
+PRIOR = {'psycho': 2.0}
+
+
+def performance(hist):
+    """Kendi videolarımızın izlenmeleri (en az 20 saatlik olanlar) → format ve gag başına ortalama.
+    YouTube'a erişilemezse boş döner; seçim o zaman PRIOR ile yapılır."""
+    try:
+        import upload
+        if not upload.configured():
+            return {}, {}
+        now = datetime.now(timezone.utc)
+        old = [v for v in hist['videos'][-40:]
+               if (now - datetime.strptime(v['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)).total_seconds() > 20 * 3600]
+        if not old:
+            return {}, {}
+        items = upload.client().videos().list(part='statistics', id=','.join(v['id'] for v in old)).execute()['items']
+        views = {i['id']: int(i['statistics'].get('viewCount', 0)) for i in items}
+    except Exception as e:
+        print('performans okunamadı:', str(e)[:150]); return {}, {}
+    fmt, gag = {}, {}
+    for v in old:
+        if v['id'] in views:
+            fmt.setdefault(v['format'], []).append(views[v['id']])
+            for g in v['gags']:
+                gag.setdefault(g, []).append(views[v['id']])
+    avg = lambda d: {k: sum(x) / len(x) for k, x in d.items()}
+    return avg(fmt), avg(gag)
+
+
+def weights(keys, perf, prior=None):
+    """Keşif + sömürü: denenmemiş/az izlenen seçenek de şans bulur (taban 1), iyi gidenin ağırlığı en fazla 6."""
+    prior = prior or {}
+    top = max(perf.values(), default=0)
+    return [max(prior.get(k, 1.0), 1.0 + 5.0 * perf[k] / top) if top and k in perf else prior.get(k, 1.0) for k in keys]
+
+
+def pick_plan(hist, rnd, perf=({}, {})):
+    fperf, gperf = perf
     past = hist['videos'][-12:]
-    last_fmt = [v['format'] for v in past[-2:]]
-    fmt = rnd.choice([f for f in bloop.FORMATS if f not in last_fmt])
+    last2 = [v['format'] for v in past[-2:]]
+    fmts = [f for f in bloop.FORMATS if not (len(last2) == 2 and last2[0] == last2[1] == f)]   # 3. kez üst üste yok
+    fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
     last_cast = past[-1]['cast'] if past else None
     casts = [c for c in bloop.CAST if c != last_cast]
     cast = rnd.choices(casts, weights=[3 if c == 'bloop' else 2 for c in casts])[0]
     month = datetime.now(timezone.utc).month
     pool = [k for k, g in bloop.GAGS.items() if month in g.get('months', range(1, 13))]
+    gw = dict(zip(pool, weights(pool, gperf)))
     seen_sets = {tuple(sorted(v['gags'])) for v in past}
     last_first = past[-1]['gags'][0] if past else None
     for _ in range(200):
-        gags = rnd.sample(pool, 4 if rnd.random() < 0.7 else 3)
+        n, left, gags = (4 if rnd.random() < 0.7 else 3), list(pool), []
+        while len(gags) < n:                         # ağırlıklı, tekrarsız seçim
+            g = rnd.choices(left, weights=[gw[k] for k in left])[0]
+            gags.append(g); left.remove(g)
         if 'pumpkin' in pool and 'pumpkin' not in gags and rnd.random() < 0.5:
             gags[-1] = 'pumpkin'
         if tuple(sorted(gags)) not in seen_sets and gags[0] != last_first:
@@ -75,7 +118,10 @@ def metadata(plan, hist, rnd):
 def main():
     no_upload = '--no-upload' in sys.argv
     hist = load(); rnd = random.Random()
-    plan = pick_plan(hist, rnd)
+    perf = performance(hist)
+    if perf[0]:
+        print('format ortalama izlenme:', {k: round(v) for k, v in perf[0].items()}, flush=True)
+    plan = pick_plan(hist, rnd, perf)
     title, desc, tags = metadata(plan, hist, rnd)
     vid_key = datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')
     print(f'plan: {plan}\ntitle: {title}', flush=True)
@@ -98,6 +144,25 @@ def main():
     hist['videos'].append(dict(id=vid, date=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M'), kind='short',
                                title=title, privacy=privacy, **plan))
     HISTORY.write_text(json.dumps(hist, indent=2, ensure_ascii=False) + '\n')
+    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    if sum(v['date'].startswith(today) for v in hist['videos']) == 1:
+        social(mp4, title, f'https://youtube.com/shorts/{vid}', plan)
+
+
+def social(mp4, title, url, plan):
+    """Günün ilk videosu → social/ (artifact 'social-<run>'): fenek-shorts telegram-relay bunu TikTok/Instagram
+    açıklamalarıyla Fenek botundan gönderir."""
+    import shutil
+    A, B, _ = bloop.FORMATS[plan['format']]
+    tag = TAGS[plan['format']]
+    tiktok = f"{title}\nWhich one are YOU? 1 or 2? 👇\n\n#{tag} #animation #funny #relatable #cartoon #fyp"
+    insta = (f"{title}\n\nWhich one are you, {A.lower()} or {B.lower()}? Comment 1 or 2 👇\n"
+             f"Follow for daily Bloop Bonkers chaos 🟣\n\n#{tag} #animation #funny #relatable #cartoon #reels #comedy")
+    soc = HERE / 'social'
+    soc.mkdir(exist_ok=True)
+    shutil.copy(mp4, soc / 'video.mp4')
+    (soc / 'post.json').write_text(json.dumps({'channel': 'Bloop Bonkers', 'title': title, 'url': url, 'tiktok': tiktok,
+                                               'instagram': insta}, ensure_ascii=False, indent=1), encoding='utf-8')
 
 
 if __name__ == '__main__':
