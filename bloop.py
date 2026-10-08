@@ -992,6 +992,346 @@ def gag_pumpkin(img, v, t, gt):
 
 
 # ---------------------------------------------------------------- gag kataloğu
+
+# ================================================================ yeni gag'ler (2026-10-08): çeşitlilik, tekrar azaltma
+# ---------------------------------------------------------------- gag: kahve
+COFFEE = (95, 60, 35)
+MUGP = (850, TTOP - 44)
+POTP = (975, TTOP - 70)
+
+
+@lru_cache(None)
+def mug_spr():
+    im = Image.new('RGBA', (L(110), L(100)), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.ellipse(box(62, 22, 104, 70), outline=(235, 235, 240), width=L(9))
+    put(im, cyl((245, 245, 248), 70, 84, 12), 42, 54)
+    put_sphere(im, COFFEE, 42, 16, 62, 14, 0.5)
+    return im
+
+
+@lru_cache(None)
+def pot_spr(level):
+    im = Image.new('RGBA', (L(110), L(170)), (0, 0, 0, 0))
+    put(im, cyl((205, 225, 240), 90, 130, 30, spec=0.6), 55, 100)
+    d = ImageDraw.Draw(im)
+    if level > 0.02:
+        h = 110 * level
+        d.rounded_rectangle(box(14, 160 - h, 96, 158), radius=L(18), fill=COFFEE)
+    d.rectangle(box(30, 26, 80, 38), fill=(40, 40, 46))
+    d.ellipse(box(95, 70, 112, 130), outline=(40, 40, 46), width=L(7))
+    return im
+
+
+def gag_coffee(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    hd = hand_default(1); my = mouth_y()
+    if v == 'N':
+        sip = (CX + 112, my - 18)
+        if tt < 0.5: cp, ang = MUGP, 0.0
+        elif tt < 2.3:
+            cp = lp(MUGP, sip, sm(seg(tt, 0.5, 0.9)))
+            ang = -35 * sm(seg(tt, 0.9, 1.1)) * (1 - sm(seg(tt, 2.0, 2.2)))
+        elif tt < 2.8: cp, ang = lp(sip, MUGP, sm(seg(tt, 2.3, 2.8))), 0.0
+        else: cp, ang = MUGP, 0.0
+        hr = lp(hd, (MUGP[0] + 44, MUGP[1] + 20), sm(seg(tt, 0, 0.5))) if tt < 0.5 else \
+            ((cp[0] + 44, cp[1] + 20) if tt < 2.8 else lp((MUGP[0] + 44, MUGP[1] + 20), hd, sm(seg(tt, 2.8, 3.1))))
+        put(img, pot_spr(0.8), *POTP)
+        o.update(hands=[None, hr], mouth='o' if 1.05 <= tt < 2.05 else 'smile',
+                 eyes='happy' if 1.1 <= tt < 2.0 or tt > 2.6 else 'sleepy' if tt < 0.9 else 'normal', look=(1, 0))
+        draw_char(img, CX, GY, o)
+        put_rot(img, mug_spr(), cp[0], cp[1], ang); hand(img, hr)
+        if 2.1 <= tt < 3.0: put_text(img, 'MMM~', CX + 60, 300, 72, (230, 190, 140), scale=back(seg(tt, 2.1, 2.3)), rot=-6)
+    else:
+        above = (CX + 4, my - 230)
+        drink = 1.0 <= tt < 2.4
+        if tt < 0.5: pp, ang, lvl = POTP, 0.0, 0.8
+        elif tt < 1.0: pp, ang, lvl = lp(POTP, above, sm(seg(tt, 0.5, 1.0))), 175 * sm(seg(tt, 0.5, 1.0)), 0.8
+        elif tt < 2.4: pp, ang, lvl = (above[0] + math.sin(tt * 40) * 2, above[1]), 175.0, 0.8 * (1 - seg(tt, 1.0, 2.4))
+        else:
+            dt = tt - 2.4; pp, ang, lvl = (above[0] - 600 * dt, above[1] - 400 * dt + 1500 * dt * dt), 175 - 700 * dt, 0.0
+        hr = lp(hd, (POTP[0] - 50, POTP[1] + 30), sm(seg(tt, 0, 0.5))) if tt < 0.5 else \
+            ((pp[0] - 50, pp[1] + 30) if tt < 2.4 else None)
+        hyper = sm(seg(tt, 2.4, 2.7))
+        # 3.3-4.3: ışık hızında sağa fırlayıp soldan geri gelir
+        if 3.3 <= tt < 3.7: cx = lerp(CX, 1400, seg(tt, 3.3, 3.7) ** 2)
+        elif 3.7 <= tt < 4.2: cx = lerp(-400, CX, sm(seg(tt, 3.7, 4.2)))
+        else: cx = CX + math.sin(tt * 90) * 7 * hyper
+        o.update(hands=[None, hr], mouth='open' if drink else 'grin', mo=1.0, eyes='crazy' if tt > 0.3 else 'sleepy',
+                 brow='angry' if tt > 0.3 else None, eye_s=1.0 + 0.25 * hyper, look=(1, -0.4) if drink else (0, 0),
+                 color=lerpc(CHAR['color'], (230, 120, 60), 0.25 * hyper))
+        info = draw_char(img, cx, GY, o)
+        if drink:
+            d = ImageDraw.Draw(img); nz = (pp[0], pp[1] + 80)
+            d.line([(L(nz[0] + math.sin(tt * 30 + k) * 3), L(lerp(nz[1], info['my'], k / 6))) for k in range(7)],
+                   fill=COFFEE, width=L(18), joint='curve')
+        if tt < 3.3 or pp[1] < PH + 200:
+            put_rot(img, pot_spr(round(lvl, 1)), pp[0], pp[1], ang)
+        if hr is not None: hand(img, hr)
+        if hyper > 0.5 and not (3.3 <= tt < 4.2):
+            d = ImageDraw.Draw(img)
+            for k in range(6):
+                a = k * 1.05 + tt * 3
+                x0, y0 = CX + math.cos(a) * 230, info['cy'] + math.sin(a) * 200
+                d.line(box(x0, y0, x0 + math.cos(a) * 40, y0 + math.sin(a) * 40), fill=(255, 220, 90), width=L(6))
+        if 3.3 <= tt < 4.2: wind(img, (CX - 300, info['cy']), (CX + 500, info['cy']), tt, n=6, spread=40, w=9, speed=2400)
+        if 2.5 <= tt < 3.4: put_text(img, 'MAXIMUM POWER!', 540, 250, 84, (255, 200, 60), scale=back(seg(tt, 2.5, 2.7)), rot=-6, max_w=1000)
+        if 3.3 <= tt < 3.6: shake = 12
+    return shake
+
+
+# ---------------------------------------------------------------- gag: sakız
+GUM = (255, 120, 190)
+
+
+def gag_gum(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        r = 8 + 40 * sm(seg(tt, 1.0, 2.2)) if tt < 2.3 else 0
+        mouth = 'chew' if tt < 1.0 else ('o' if tt < 2.3 else 'smile')
+        o.update(mouth=mouth, eyes='happy' if tt > 2.5 else 'normal', look=(0.2, 0.3))
+        info = draw_char(img, CX, GY, o)
+        if r:
+            put_sphere(img, GUM, CX + 6, info['my'] + 8, 2 * r, 1.9 * r, 0.8)
+        if 2.3 <= tt < 2.6: put_text(img, 'pop', CX + 120, info['my'] - 60, 50, GUM, scale=back(seg(tt, 2.3, 2.45)))
+        if tt >= 2.3:
+            for k, (dx, dy) in enumerate(((-30, 10), (34, 4), (0, 30))):
+                put_sphere(img, GUM, CX + dx, info['my'] + dy, 26, 18, 0.5)
+    else:
+        grow = sm(seg(tt, 0.8, 3.0)); r = 8 + 250 * grow
+        lift = 360 * sm(seg(tt, 2.2, 3.7)) if tt < 3.9 else 360 * (1 - sm(seg(tt, 3.9, 4.3))) + spring(tt - 4.3, -30, 18, 6)
+        popped = tt >= 3.9
+        o.update(mouth='chew' if tt < 0.8 else ('o' if not popped else 'grin'), eyes='crazy', brow='angry' if tt < 2.2 else None,
+                 look=(0, -0.8) if 2.2 <= tt < 3.9 else (0.2, 0.3), sy=1.0 + spring(tt - 4.3, -0.15, 20, 5) if tt > 4.3 else 1.0)
+        info = draw_char(img, CX, GY - max(lift, 0), o)
+        if not popped:
+            put_sphere(img, GUM, CX + 6, info['my'] + 10 - r * 0.9, 2 * r, 1.9 * r, 0.85)
+            if 2.4 <= tt < 3.8: put_text(img, 'WHEEE!', 640, 200, 100, GUM, scale=back(seg(tt, 2.4, 2.6)), rot=-8)
+        else:
+            particles(img, 12, 3.9, tt, 18, (CX, info['my'] - 200), (-700, 700), (-900, 200), 1500, [GUM], (24, 50), life=1.2)
+            for dx, dy, s in ((-70, -60, 60), (60, -90, 50), (-20, 10, 70), (80, 30, 44), (-90, 40, 40)):
+                put_sphere(img, GUM, CX + dx, info['cy'] + dy, s, s * 0.7, 0.5)
+            if tt < 4.5: put_text(img, 'POP!', 600, 280, 140, (255, 230, 60), scale=back(seg(tt, 3.9, 4.05)), rot=-8)
+        if 3.9 <= tt < 4.2: shake = 22
+    return shake
+
+
+# ---------------------------------------------------------------- gag: patlamış mısır
+POT2 = (850, TTOP - 50)
+CORN = [(255, 248, 225), (255, 236, 170), (250, 225, 140)]
+
+
+def gag_popcorn(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    my = mouth_y(); hd = hand_default(1)
+    if v == 'N':
+        put_sphere(img, (210, 120, 60), 850, TTOP - 10, 230, 60, 0.4)            # kâse
+        for k in range(14):
+            rnd = random.Random(k); put_sphere(img, rnd.choice(CORN), 850 + rnd.uniform(-90, 90), TTOP - 40 + rnd.uniform(-14, 6), 30, 26, 0.3)
+        grabs = (0.6, 1.5, 2.4)
+        hr, mouth = hd, 'smile'
+        for g in grabs:
+            if g - 0.35 <= tt < g: hr = lp(hd, (850, TTOP - 60), sm(seg(tt, g - 0.35, g)))
+            elif g <= tt < g + 0.3: hr = lp((850, TTOP - 60), (CX + 90, my + 10), sm(seg(tt, g, g + 0.3))); mouth = 'open'
+            elif g + 0.3 <= tt < g + 0.6: hr = lp((CX + 90, my + 10), hd, sm(seg(tt, g + 0.3, g + 0.6))); mouth = 'chew'
+        o.update(hands=[None, hr], mouth=mouth, mo=0.5, eyes='happy' if tt > 2.9 else 'normal', look=(1, 0.3))
+        draw_char(img, CX, GY, o)
+        if any(g <= tt < g + 0.3 for g in grabs): put_sphere(img, CORN[0], hr[0] - 10, hr[1] - 30, 26, 22, 0.3)
+    else:
+        put(img, cyl((70, 70, 80), 160, 90, 18), *POT2)
+        lid_t = tt - 1.0
+        if lid_t < 0:
+            put_sphere(img, (90, 90, 100), POT2[0], POT2[1] - 50, 170, 34, 0.7)
+        elif lid_t < 1.5:
+            put_rot(img, sphere((90, 90, 100), 170, 34, 0.7), POT2[0] + 300 * lid_t, POT2[1] - 50 - 900 * lid_t + 1400 * lid_t ** 2, 600 * lid_t)
+        particles(img, 21, 1.0, tt, 130, (POT2[0], POT2[1] - 40), (-520, 260), (-1600, -900), 1900, CORN, (14, 24), life=2.2, emit=2.4)
+        pile = sm(seg(tt, 1.6, 4.0))
+        if pile > 0.01:
+            put_sphere(img, CORN[1], 600, GY + 10, 900 * pile, 90 * pile, 0.3)
+        o.update(mouth='open' if 1.2 <= tt < 3.6 else 'grin', mo=1.0, eyes='crazy', brow='angry',
+                 look=(0.6, -0.9) if tt > 1.0 else (1, 0), hands=[(CX - 200, mouth_y() - 120), (CX + 200, mouth_y() - 120)] if 1.2 <= tt < 3.6 else [None, None])
+        draw_char(img, CX, GY, o)
+        if 1.0 <= tt < 2.6: put_text(img, 'POP POP POP!', 560, 210, 92, (255, 230, 120), scale=back(seg(tt, 1.0, 1.2)), rot=-6, max_w=980)
+        if 1.0 <= tt < 1.25: shake = 10
+    return shake
+
+
+# ---------------------------------------------------------------- gag: diş macunu
+PASTE = (225, 250, 250)
+FOAM = (245, 252, 255)
+
+
+@lru_cache(None)
+def tube_spr():
+    im = Image.new('RGBA', (L(60), L(170)), (0, 0, 0, 0))
+    put(im, cyl((70, 150, 230), 52, 120, 10), 30, 100)
+    put(im, cyl((250, 250, 250), 22, 26, 6), 30, 28)
+    ImageDraw.Draw(im).rectangle(box(6, 150, 54, 162), fill=(60, 130, 210))
+    return im
+
+
+@lru_cache(None)
+def brush_spr():
+    im = Image.new('RGBA', (L(40), L(200)), (0, 0, 0, 0))
+    put(im, cyl((120, 210, 140), 16, 170, 8), 20, 110)
+    d = ImageDraw.Draw(im)
+    for k in range(5):
+        d.rectangle(box(8 + k * 5, 4, 10 + k * 5, 26), fill=(255, 255, 255))
+    return im
+
+
+def gag_toothpaste(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    my = mouth_y()
+    hl, hr = (CX - 200, my + 20), (CX + 200, my + 20)
+    if v == 'N':
+        brushing = 1.4 <= tt < 2.8
+        if brushing: hr = (CX + 60 + math.sin(tt * 40) * 18, my + 10)
+        o.update(hands=[hl, hr], mouth='grin' if brushing else 'smile', mo=0.7,
+                 eyes='happy' if tt > 2.9 else 'normal', look=(0.6, 0.4))
+        draw_char(img, CX, GY, o)
+        put_rot(img, tube_spr(), hl[0], hl[1] - 60, 30 if 0.6 <= tt < 1.2 else 0); hand(img, hl)
+        put_rot(img, brush_spr(), hr[0] - 10, hr[1] - 70, -70 if brushing else 0)
+        if 0.9 <= tt < 1.4: put_sphere(img, PASTE, hr[0] - 10, hr[1] - 160, 22, 16, 0.6)
+        hand(img, hr)
+        if brushing:
+            for k in range(3): put_sphere(img, FOAM, CX + 40 + k * 18, my + 12 + (k % 2) * 8, 18, 16, 0.4)
+        if tt > 2.9: put_text(img, 'SHINY!', 560, 250, 90, (130, 220, 255), scale=back(seg(tt, 2.9, 3.1)), rot=-6)
+    else:
+        squeeze = sm(seg(tt, 0.6, 2.0))
+        foam = sm(seg(tt, 2.0, 2.8))
+        o.update(hands=[hl, hr], mouth='grin', eyes='crazy', brow='angry', look=(1, 0.5),
+                 sx=1.0 + 0.05 * math.sin(tt * 30) * (0.5 <= tt < 2.0))
+        draw_char(img, CX, GY, o)
+        put_rot(img, scaled(tube_spr(), 1 - 0.4 * squeeze), hl[0], hl[1] - 60, 40 * (tt > 0.4)); hand(img, hl)
+        if squeeze > 0.01:  # tüpten çıkan uzun macun şeridi: masaya, odaya dolanır
+            d = ImageDraw.Draw(img)
+            n = int(40 * squeeze) + 2
+            pts = [(L(hl[0] + 60 + k * 18), L(hl[1] - 120 + 90 * math.sin(k * 0.6 + tt * 2))) for k in range(n)]
+            d.line(pts, fill=PASTE, width=L(22), joint='curve')
+            d.line(pts, fill=(140, 230, 230), width=L(6), joint='curve')
+        if foam > 0.01:
+            rnd = random.Random(5)
+            for k in range(int(70 * foam)):
+                x = rnd.uniform(-50, W + 50); y = rnd.uniform(GY - 420 * foam, GY + 80); s = rnd.uniform(50, 130)
+                put_sphere(img, FOAM, x, y, s, s * 0.9, 0.3)
+        if 2.0 <= tt < 3.0: put_text(img, 'FOAM PARTY!', 540, 230, 100, (130, 220, 255), scale=back(seg(tt, 2.0, 2.2)), rot=-6)
+        if 2.0 <= tt < 2.3: shake = 12
+        if tt > 3.2:  # köpükten kafası çıkar, köpük sakallı sırıtma
+            info = draw_char(img, CX, GY, dict(o, eyes='happy'))
+            for dx, dy in ((-40, 70), (0, 90), (40, 70), (-70, 50), (70, 50)):
+                put_sphere(img, FOAM, CX + dx, info['my'] + dy - 20, 60, 50, 0.3)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: sandviç
+LAYERS = [(235, 195, 130), (120, 200, 90), (250, 210, 80), (230, 80, 70), (240, 160, 160)]
+SAND = (840, TTOP - 8)
+
+
+def stack(img, n, x=SAND[0], base=SAND[1], s=1.0):
+    d = ImageDraw.Draw(img)
+    put_sphere(img, (245, 245, 250), x, base + 4, 250 * s, 40 * s, 0.6)
+    for k in range(n):
+        c = LAYERS[0] if k in (0, n - 1) else LAYERS[1 + (k % 4)]
+        y = base - 10 * s - k * 17 * s
+        d.rounded_rectangle(box(x - 105 * s, y - 14 * s, x + 105 * s, y + 4 * s), radius=L(9 * s), fill=c)
+        d.line(box(x - 100 * s, y - 13 * s, x + 100 * s, y - 13 * s), fill=lerpc(c, (255, 255, 255), 0.35), width=L(3))
+
+
+def gag_sandwich(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    my = mouth_y(); hd = hand_default(1)
+    if v == 'N':
+        n = min(3, 1 + int(tt / 0.4)) if tt < 1.4 else 3
+        if tt < 1.6:
+            stack(img, n)
+            hr = hd
+        else:
+            hr = lp((SAND[0], SAND[1] - 40), (CX + 120, my + 10), sm(seg(tt, 1.6, 2.0)))
+            stack(img, 0)
+        o.update(hands=[None, hr], mouth='open' if 2.0 <= tt < 2.2 else ('chew' if 2.2 <= tt < 2.7 else 'smile'),
+                 mo=0.6, eyes='happy' if tt > 2.7 else 'normal', look=(1, 0.3))
+        draw_char(img, CX, GY, o)
+        if tt >= 1.6:
+            stack(img, 3, hr[0] - 40, hr[1] - 10, 0.45)
+            hand(img, hr)
+    else:
+        n = 3 + int(30 * sm(seg(tt, 0.2, 2.4)))
+        eat = sm(seg(tt, 3.0, 3.5))
+        puff = 1.4 * sm(seg(tt, 3.3, 3.6)) * (1 - sm(seg(tt, 4.1, 4.4)))
+        o.update(mouth='open' if 2.9 <= tt < 3.5 else ('chew' if 3.5 <= tt < 4.1 else 'grin'), mo=1.0, eyes='crazy',
+                 brow='angry', puff=puff, look=(1, -0.9) if tt < 2.9 else (0, 0))
+        info = draw_char(img, CX, GY, o)
+        if eat < 1:  # kule masadan ağzına uçar ve küçülür
+            x = lerp(SAND[0], CX, eat); base = lerp(SAND[1], info['my'] + 40, eat)
+            stack(img, n, x, base, 1 - 0.75 * eat)
+        if 1.0 <= tt < 2.9: put_text(img, f'{n} LAYERS', 330, 260, 72, (255, 220, 120), rot=-6)
+        if 4.0 <= tt < 4.8: put_text(img, 'ONE BITE.', 560, 260, 100, (255, 220, 120), scale=back(seg(tt, 4.0, 4.2)), rot=-6)
+        if 2.2 <= tt < 2.9: shake = 4
+    return shake
+
+
+# ---------------------------------------------------------------- gag: hediye
+GIFT = (235, 70, 90)
+RIBBON = (255, 215, 80)
+GIFTP = (845, TTOP)
+
+
+def gift_box(img, cx, base, s, lid_dy=0.0, ribbon=True, col=GIFT):
+    w, h = 190 * s, 150 * s
+    put(img, cyl(col, w, h, 10 * s), cx, base - h / 2)
+    d = ImageDraw.Draw(img)
+    if ribbon:
+        d.rectangle(box(cx - 14 * s, base - h, cx + 14 * s, base), fill=RIBBON)
+    lid_y = base - h - 14 * s - lid_dy
+    put(img, cyl(lerpc(col, (255, 255, 255), 0.15), w + 20 * s, 34 * s, 8 * s), cx, lid_y)
+    if ribbon:
+        d.rectangle(box(cx - 14 * s, lid_y - 17 * s, cx + 14 * s, lid_y + 17 * s), fill=RIBBON)
+        for sgn in (-1, 1):
+            put_rot(img, sphere(RIBBON, 60 * s, 34 * s, 0.6), cx + sgn * 28 * s, lid_y - 26 * s, sgn * 25)
+
+
+def gag_gift(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        lid = 160 * sm(seg(tt, 1.2, 1.8))
+        gift_box(img, *GIFTP, 1.0, lid_dy=lid, ribbon=tt < 1.0)
+        if tt >= 1.8:  # oyuncak ayı kutudan çıkar
+            up = 80 * back(seg(tt, 1.8, 2.2))
+            put_sphere(img, (200, 140, 90), GIFTP[0], GIFTP[1] - 150 - up + 40, 110, 100, 0.4)
+            for sgn in (-1, 1): put_sphere(img, (200, 140, 90), GIFTP[0] + sgn * 40, GIFTP[1] - 190 - up + 40, 36, 36, 0.4)
+        hr = lp(hand_default(1), (GIFTP[0] - 30, GIFTP[1] - 180), sm(seg(tt, 0.3, 0.8))) if tt < 1.9 else \
+            lp((GIFTP[0] - 30, GIFTP[1] - 180), hand_default(1), sm(seg(tt, 1.9, 2.2)))
+        o.update(hands=[None, hr], mouth='open' if tt > 2.0 else 'smile', mo=0.5, eyes='happy' if tt > 2.0 else 'normal', look=(1, -0.2))
+        draw_char(img, CX, GY, o)
+        if tt > 2.1: put_text(img, 'AWW!', 560, 260, 96, (255, 170, 190), scale=back(seg(tt, 2.1, 2.3)), rot=-6)
+        confetti(img, 31, 2.0, tt, (GIFTP[0], GIFTP[1] - 200))
+    else:
+        rips = (1.0, 2.0, 3.0)
+        level = sum(1 for r in rips if tt >= r)
+        s = (1.0, 0.68, 0.45, 0.26)[level]
+        jig = math.sin(tt * 50) * 6 if any(r - 0.5 <= tt < r for r in rips) else 0
+        if tt < 3.8:
+            gift_box(img, GIFTP[0] + jig, GIFTP[1], s, col=(GIFT, (90, 160, 240), (120, 210, 120), (240, 180, 60))[level])
+        else:  # en içteki kutu açılır: tek bir şeker
+            put_sphere(img, (255, 120, 200), GIFTP[0], GIFTP[1] - 20, 40, 30, 0.8)
+        for k, r in enumerate(rips):
+            particles(img, 40 + k, r, tt, 26, (GIFTP[0], GIFTP[1] - 120 * s), (-600, 600), (-900, -200), 1600,
+                      [(GIFT, (90, 160, 240), (120, 210, 120))[k], RIBBON], (18, 34), life=1.3)
+        hands = [(GIFTP[0] - 120 + jig, GIFTP[1] - 120 * s), (GIFTP[0] + 120 - jig, GIFTP[1] - 120 * s)] if 0.4 < tt < 3.8 else [None, None]
+        reveal = tt >= 3.8
+        o.update(hands=hands, mouth='flat' if 3.8 <= tt < 4.3 else 'grin', eyes='normal' if 3.8 <= tt < 4.3 else 'crazy',
+                 brow=None if reveal else 'angry', look=(1, 0.2))
+        draw_char(img, CX, GY, o)
+        if 1.0 <= tt < 3.6:
+            put_text(img, ('ANOTHER BOX?!', 'AGAIN?!', 'SERIOUSLY?!')[min(level - 1, 2)], 560, 230, 88, (255, 230, 120),
+                     scale=back(seg(tt, rips[min(level - 1, 2)], rips[min(level - 1, 2)] + 0.2)), rot=-6, max_w=980)
+        if reveal: put_text(img, '...ONE CANDY.', 560, 250, 92, (255, 170, 210), scale=back(seg(tt, 3.8, 4.0)), rot=-6, max_w=980)
+        if any(r <= tt < r + 0.2 for r in rips): shake = 9
+    return shake
+
+
 GAGS = {
     'cookie': dict(title='EATING A COOKIE', name='Cookie', wall=(250, 215, 160), fn=gag_cookie,
                    N=[(0.5, 'pop'), (1.1, 'crunch'), (1.6, 'crunch'), (2.1, 'crunch'), (2.6, 'crunch'), (2.85, 'pop')],
@@ -1020,6 +1360,27 @@ GAGS = {
                     N=[(1.2, 'carve'), (1.6, 'carve'), (2.0, 'carve'), (2.4, 'ding')],
                     P=[(0.0, 'sting'), (0.4, 'whoosh'), (1.15, 'whoosh_s'), (1.3, 'smash'), (2.4, 'boing')]),
 }
+
+GAGS.update({
+    'coffee': dict(title='MORNING COFFEE', name='Coffee', wall=(240, 222, 200), fn=gag_coffee,
+                   N=[(0.5, 'pop'), (1.0, 'slurp', 1.0), (2.1, 'ahh')],
+                   P=[(0.0, 'sting'), (1.0, 'slurp', 1.4), (2.4, 'whoosh'), (3.3, 'whoosh'), (3.7, 'whoosh'), (4.2, 'boing')]),
+    'gum': dict(title='BUBBLE GUM', name='Bubble Gum', wall=(232, 218, 246), fn=gag_gum,
+                N=[(0.2, 'crunch'), (1.0, 'blow', 1.2), (2.3, 'pop')],
+                P=[(0.0, 'sting'), (0.8, 'blow', 2.2), (2.4, 'boing'), (3.9, 'bang'), (4.3, 'boing')]),
+    'popcorn': dict(title='POPCORN', name='Popcorn', wall=(250, 232, 195), fn=gag_popcorn,
+                    N=[(0.6, 'crunch'), (1.5, 'crunch'), (2.4, 'crunch')],
+                    P=[(0.0, 'sting'), (1.0, 'bang')] + [(1.05 + i * 0.13, 'pop') for i in range(18)]),
+    'toothpaste': dict(title='BRUSHING TEETH', name='Toothpaste', wall=(205, 236, 242), fn=gag_toothpaste,
+                       N=[(0.9, 'squirt'), (1.4, 'rattle', 1.4), (2.9, 'ding')],
+                       P=[(0.0, 'sting'), (0.6, 'squirt'), (1.2, 'squirt'), (2.0, 'splat'), (2.1, 'fizz', 1.5)]),
+    'sandwich': dict(title='MAKING A SANDWICH', name='Sandwich', wall=(236, 226, 205), fn=gag_sandwich,
+                     N=[(0.4, 'pop'), (0.8, 'pop'), (1.2, 'pop'), (2.0, 'crunch'), (2.3, 'crunch')],
+                     P=[(0.0, 'sting')] + [(0.2 + i * 0.08, 'pop') for i in range(27)] + [(3.0, 'whoosh'), (3.5, 'gulp'), (4.0, 'burp')]),
+    'gift': dict(title='OPENING A GIFT', name='Gift', wall=(215, 230, 250), fn=gag_gift,
+                 N=[(0.8, 'rattle', 0.4), (1.2, 'whoosh'), (1.8, 'pop'), (2.0, 'horn')],
+                 P=[(0.0, 'sting'), (1.0, 'bang'), (2.0, 'bang'), (3.0, 'bang'), (3.8, 'ding')]),
+})
 
 
 def total(plan=None):
