@@ -33,7 +33,7 @@ jobs:
           CHANNEL_KIND: general
           CHANNEL_LANG: en
           STATE_FILE: comment_replies.json
-          FIRST_QUESTIONS: "[\"Be honest: are you 1 or 2? 😂\", \"Which scene was the most chaotic? 🤪\", \"Which one would your best friend be? 👀\", \"What should Bloop try next? 💡\", \"Rate the chaos from 1 to 10 💥\"]"
+          FIRST_QUESTIONS: "[\"Be honest: are you 1 or 2? 😂\", \"Which {topic} scene was the most chaotic? 🤪\", \"Who in your family is number 2? 👀\", \"Rate the chaos from 1 to 10 💥\", \"What should Bloop try after {topic}? 💡\", \"Which one would your best friend be? 👀\", \"Have you ever done the {topic} thing like number 2? 😅\", \"Which reaction was the funniest? 😂\", \"Tag-free question: are you more 1 or 2 today? 🤔\", \"What's the most psycho thing you've done with food? 🍕\", \"Which gag should come back in a new video? 🔁\", \"Normal or psycho: what are you at 3 AM? 🌙\", \"Who would win: Bloop or Zip? 🥊\", \"Which scene made you laugh first? 😆\", \"What everyday thing should we turn into chaos next? 💡\"]"
         run: python tools/auto_reply.py
       - run: |
           git config user.name "comment-bot"
