@@ -1,0 +1,44 @@
+name: comments
+# Yeni videolara videoya özel ilk yorum + yorumlara kişisel cevap (tools/auto_reply.py), saatte bir
+on:
+  schedule:
+    - cron: "37 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: comments
+  cancel-in-progress: false
+
+jobs:
+  reply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -q google-api-python-client google-auth requests
+      - name: Bloop Bonkers
+        continue-on-error: true
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          CHANNEL_NAME: "Bloop Bonkers"
+          CHANNEL_ABOUT: "Funny 3D cartoon Shorts: normal vs psycho, level 1 vs 100."
+          CHANNEL_KIND: general
+          CHANNEL_LANG: en
+          STATE_FILE: comment_replies.json
+          FIRST_QUESTIONS: "[\"Be honest: are you 1 or 2? 😂\", \"Which scene was the most chaotic? 🤪\", \"Which one would your best friend be? 👀\", \"What should Bloop try next? 💡\", \"Rate the chaos from 1 to 10 💥\"]"
+        run: python tools/auto_reply.py
+      - run: |
+          git config user.name "comment-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add comment_replies*.json 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -m "comments: $(date -u +%F-%H%M)"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep 5; done
