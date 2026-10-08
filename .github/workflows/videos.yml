@@ -34,7 +34,7 @@ jobs:
       - id: g
         env:
           LOG_FILE: history.json
-          SLOTS: "14:00,18:00,23:00"
+          SLOTS: "13:00,16:00,19:00,23:00"  # 2026-10-08 viral dönem: 4/gün (2 hafta sonra veriyle karar)
         run: python3 .github/slot_guard.py
 
   make:
