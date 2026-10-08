@@ -45,8 +45,8 @@ def performance(hist):
         if not upload.configured():
             return {}, {}
         now = datetime.now(timezone.utc)
-        old = [v for v in hist['videos'][-40:]
-               if (now - datetime.strptime(v['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)).total_seconds() > 20 * 3600]
+        old = [v for v in hist['videos'][-40:] if v.get('kind', 'short') == 'short' and v.get('format')
+               and (now - datetime.strptime(v['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)).total_seconds() > 20 * 3600]
         if not old:
             return {}, {}
         items = upload.client().videos().list(part='statistics', id=','.join(v['id'] for v in old)).execute()['items']
@@ -72,7 +72,7 @@ def weights(keys, perf, prior=None):
 
 def pick_plan(hist, rnd, perf=({}, {})):
     fperf, gperf = perf
-    past = hist['videos'][-12:]
+    past = [v for v in hist['videos'] if v.get('kind', 'short') == 'short' and v.get('format')][-12:]  # derlemeler hariç
     last2 = [v['format'] for v in past[-2:]]
     fmts = [f for f in bloop.FORMATS if not (len(last2) == 2 and last2[0] == last2[1] == f)]   # 3. kez üst üste yok
     fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
@@ -82,6 +82,16 @@ def pick_plan(hist, rnd, perf=({}, {})):
     month = datetime.now(timezone.utc).month
     pool = [k for k, g in bloop.GAGS.items() if month in g.get('months', range(1, 13))]
     gw = dict(zip(pool, weights(pool, gperf)))
+    # tekrar cezası: son 6 videoda her kullanım ağırlığı 4'te birine indirir, son videodakiler hiç seçilmez;
+    # hiç kullanılmamış gag 2 kat öne çıkar (viral gag'ler her videoya girip içeriği tekrarlamasın)
+    recent = [g for v in past[-6:] for g in v.get('gags', [])]
+    used_ever = {g for v in hist['videos'] for g in v.get('gags', [])}
+    last_gags = set(past[-1]['gags']) if past else set()
+    for k in pool:
+        gw[k] *= 0.25 ** recent.count(k) * (2.0 if k not in used_ever else 1.0)
+        if k in last_gags and len(pool) - len(last_gags) >= 4:
+            gw[k] = 0.0
+    gw = {k: (w if w > 0 else 1e-9) for k, w in gw.items()}
     seen_sets = {tuple(sorted(v['gags'])) for v in past}
     last_first = past[-1]['gags'][0] if past else None
     for _ in range(200):
@@ -89,7 +99,7 @@ def pick_plan(hist, rnd, perf=({}, {})):
         while len(gags) < n:                         # ağırlıklı, tekrarsız seçim
             g = rnd.choices(left, weights=[gw[k] for k in left])[0]
             gags.append(g); left.remove(g)
-        if 'pumpkin' in pool and 'pumpkin' not in gags and rnd.random() < 0.5:
+        if 'pumpkin' in pool and 'pumpkin' not in gags and 'pumpkin' not in last_gags and rnd.random() < 0.25:
             gags[-1] = 'pumpkin'
         if tuple(sorted(gags)) not in seen_sets and gags[0] != last_first:
             break
@@ -145,7 +155,7 @@ def main():
                                title=title, privacy=privacy, **plan))
     HISTORY.write_text(json.dumps(hist, indent=2, ensure_ascii=False) + '\n')
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-    if sum(v['date'].startswith(today) for v in hist['videos']) == 1:
+    if sum(v['date'].startswith(today) and v.get('kind', 'short') == 'short' for v in hist['videos']) == 1:
         social(mp4, title, f'https://youtube.com/shorts/{vid}', plan)
 
 
