@@ -93,6 +93,22 @@
         "balloon"
       ],
       "seed": 631152
+    },
+    {
+      "id": "4supLq-3Eec",
+      "date": "2026-10-08 14:51",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Ice Cream & Ketchup Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "bloop",
+      "gags": [
+        "icecream",
+        "ketchup",
+        "cookie",
+        "cake"
+      ],
+      "seed": 454974
     }
   ]
 }
