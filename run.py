@@ -157,7 +157,7 @@ def social(mp4, title, url, plan):
     tag = TAGS[plan['format']]
     tiktok = f"{title}\nWhich one are YOU? 1 or 2? 👇\n\n#{tag} #animation #funny #relatable #cartoon #fyp"
     insta = (f"{title}\n\nWhich one are you, {A.lower()} or {B.lower()}? Comment 1 or 2 👇\n"
-             f"Follow for daily Bloop Bonkers chaos 🟣\n\n#{tag} #animation #funny #relatable #cartoon #reels #comedy")
+             f"Follow for daily Bloop Bonkers chaos 🟣\n\n#{tag} #animation #funny #cartoon #comedy")  # Instagram: en fazla 5
     soc = HERE / 'social'
     soc.mkdir(exist_ok=True)
     shutil.copy(mp4, soc / 'video.mp4')
