@@ -33,13 +33,14 @@ jobs:
           CHANNEL_KIND: general
           CHANNEL_LANG: en
           STATE_FILE: comment_replies.json
+          REQUESTS_FILE: viewer_requests.json
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FIRST_QUESTIONS: "[\"Be honest: are you 1 or 2? 😂\", \"Which {topic} scene was the most chaotic? 🤪\", \"Who in your family is number 2? 👀\", \"Rate the chaos from 1 to 10 💥\", \"What should Bloop try after {topic}? 💡\", \"Which one would your best friend be? 👀\", \"Have you ever done the {topic} thing like number 2? 😅\", \"Which reaction was the funniest? 😂\", \"Tag-free question: are you more 1 or 2 today? 🤔\", \"What's the most psycho thing you've done with food? 🍕\", \"Which gag should come back in a new video? 🔁\", \"Normal or psycho: what are you at 3 AM? 🌙\", \"Who would win: Bloop or Zip? 🥊\", \"Which scene made you laugh first? 😆\", \"What everyday thing should we turn into chaos next? 💡\"]"
         run: python tools/auto_reply.py
       - run: |
           git config user.name "comment-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add comment_replies*.json 2>/dev/null || true
+          git add comment_replies*.json viewer_requests*.json 2>/dev/null || true
           git diff --cached --quiet && exit 0
           git commit -m "comments: $(date -u +%F-%H%M)"
           for i in 1 2 3; do git pull -q --rebase && git push -q && exit 0; sleep 5; done
