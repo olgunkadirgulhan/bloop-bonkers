@@ -109,6 +109,21 @@
         "cake"
       ],
       "seed": 454974
+    },
+    {
+      "id": "-Vclb5xIG2Y",
+      "date": "2026-10-08 18:50",
+      "kind": "short",
+      "title": "Mimi: Normal vs Psycho (Pumpkin & Ketchup) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "mimi",
+      "gags": [
+        "pumpkin",
+        "ketchup",
+        "balloon"
+      ],
+      "seed": 383629
     }
   ]
 }
