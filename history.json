@@ -228,6 +228,22 @@
         "pumpkin"
       ],
       "seed": 805941
+    },
+    {
+      "id": "ZbWz9lxOVhM",
+      "date": "2026-10-09 23:31",
+      "kind": "short",
+      "title": "Coffee & Birthday Cake: Expectation vs Reality 💀",
+      "privacy": "public",
+      "format": "expect",
+      "cast": "zip",
+      "gags": [
+        "coffee",
+        "cake",
+        "cookie",
+        "popcorn"
+      ],
+      "seed": 479120
     }
   ]
 }
