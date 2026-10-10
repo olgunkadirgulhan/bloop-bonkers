@@ -35,7 +35,7 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           YT_CHANNEL_ID: ${{ secrets.YT_CHANNEL_ID }}
-          YT_PRIVACY: ${{ inputs.privacy || vars.YT_PRIVACY }}
+          YT_PRIVACY: ${{ inputs.privacy || 'private' }}   # kullanıcı onayına kadar bölümler gizli (2026-10-10)
         run: python episode.py
       - name: Keep for review
         if: always()
