@@ -367,6 +367,22 @@
       ],
       "room": "bedroom",
       "seed": 18345
+    },
+    {
+      "id": "Fd0Lz0HMsCo",
+      "date": "2026-10-10 19:50",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Ketchup & Popcorn",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "duke",
+      "gags": [
+        "ketchup",
+        "popcorn",
+        "soda"
+      ],
+      "room": "cafe",
+      "seed": 974229
     }
   ]
 }
