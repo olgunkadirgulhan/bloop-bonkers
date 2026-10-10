@@ -10,6 +10,9 @@ on:
         description: Sadece gizli yüklenmiş videoları herkese açık yap
         type: boolean
         default: false
+      ids:
+        description: Yalnız bu video id'leri (boşlukla); boşsa derleme/bölüm hariç tüm gizli Shorts
+        default: ""
 
 permissions:
   contents: write
@@ -33,6 +36,7 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           YT_CHANNEL_ID: ${{ secrets.YT_CHANNEL_ID }}
+          PUBLISH_IDS: ${{ inputs.ids }}
         run: python channel_setup.py ${{ inputs.delete_old && '--delete-old' || '' }} ${{ inputs.publish_only && '--publish-only' || '' }}
       - run: |
           git config user.name "bloop-bot"

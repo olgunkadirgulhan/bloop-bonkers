@@ -73,15 +73,16 @@ def delete_old(yt, cid):
 def publish_all(yt):
     """history.json'daki gizli videoları herkese açık yapar."""
     hist = json.loads(HISTORY.read_text()) if HISTORY.exists() else {'videos': []}
+    only = set(os.environ.get('PUBLISH_IDS', '').split()) # boş değilse yalnız bu videolar (gizli derleme açılmasın)
     for v in hist['videos']:
-        if v.get('privacy') == 'public':
+        if v.get('privacy') == 'public' or (only and v['id'] not in only) or (not only and v.get('kind') in ('compilation', 'episode')):
             continue
         cur = yt.videos().list(part='status', id=v['id']).execute().get('items', [])
         if not cur:
             continue
         st = cur[0]['status']; st['privacyStatus'] = 'public'
         yt.videos().update(part='status', body={'id': v['id'], 'status': st}).execute()
-        v['privacy'] = 'public'; print(f"✓ yayında: {v['title']} (https://youtube.com/shorts/{v['id']})")
+        v['privacy'] = 'public'; print(f"✓ yayında: {v['title']} (https://youtu.be/{v['id']})")
     HISTORY.write_text(json.dumps(hist, indent=2, ensure_ascii=False) + '\n')
 
 
