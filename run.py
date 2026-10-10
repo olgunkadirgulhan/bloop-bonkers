@@ -34,7 +34,7 @@ def load():
 
 
 # Kanal verisi yokken başlangıç ağırlıkları: 'psycho' ilk gün viral oldu (31 bin izlenme)
-PRIOR = {'psycho': 2.0}
+PRIOR = {'psycho': 9.0}   # 2026-10-10: psycho 18K-100K, diğer formatlar 1.7-5K izlenme
 
 
 def performance(hist):
