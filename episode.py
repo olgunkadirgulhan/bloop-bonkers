@@ -91,6 +91,10 @@ def scene(out, k, n, gag, cast, seed, room='living'):
 def plan_episode(hist, rnd):
     month = datetime.now(timezone.utc).month
     gags = [k for k, g in bloop.GAGS.items() if month in g.get('months', range(1, 13))]
+    # bölüm özeli: bu bölüm yalnız en yakın 'debut' grubunu tanıtır, sonraki grup bir sonraki bölüme kalır
+    shown = {g for v in hist['videos'] if v.get('kind') == 'episode' for g, *_ in v.get('items', [])}
+    pending = sorted({bloop.GAGS[k]['debut'] for k in gags if bloop.GAGS[k].get('debut') and k not in shown})
+    gags = [k for k in gags if not bloop.GAGS[k].get('debut') or k in shown or bloop.GAGS[k]['debut'] == pending[0]]
     rnd.shuffle(gags)
     for first in ('cookie', 'icecream'):             # en çok izlenen durumla aç
         if first in gags:
@@ -132,12 +136,15 @@ def main():
                                          ('First time on the channel!' if new else teasers[(k - 1) % len(teasers)], 720, 60, (200, 200, 220))])
         parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), bloop.ROOMS[(k - 1) % len(bloop.ROOMS)])]
     names = [bloop.GAGS[g]['name'] for g, _ in items]
-    half = (n + 1) // 2
-    img = Image.new('RGB', (OW, OH), BG)                # iki sütunlu oy kartı
-    bloop.put_text_px(img, lines[0][0], OW // 2, 120, 84, Y8)
+    cols = 2 if n <= 14 else 3                          # oy kartı: 24 durum da sığsın
+    rows = -(-n // cols)
+    gap = min(100, 700 // rows)
+    img = Image.new('RGB', (OW, OH), BG)
+    bloop.put_text_px(img, 'WHICH ONE WAS THE MOST PSYCHO?', OW // 2, 120, 84, Y8)
     for i, nm in enumerate(names):
-        col, row = divmod(i, half)
-        bloop.put_text_px(img, f'{i + 1}. {nm}', OW // 2 + (-430 if col == 0 else 430), 260 + row * 100, 56, W8)
+        col, row = divmod(i, rows)
+        x = OW // 2 + (col - (cols - 1) / 2) * (860 if cols == 2 else 600)
+        bloop.put_text_px(img, f'{i + 1}. {nm}', int(x), 250 + row * gap, 52 if cols == 3 else 56, W8)
     bloop.put_text_px(img, 'COMMENT THE NUMBER!', OW // 2, 1000, 70, (120, 235, 130))
     img.save(out / 'outro.png')
     ff('-loop', '1', '-i', str(out / 'outro.png'), '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=stereo', '-t', '6',
