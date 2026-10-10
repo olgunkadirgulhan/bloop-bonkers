@@ -1,6 +1,8 @@
 name: episode
-# Uzun bölüm (yatay): her gag tam bir kez, tekrar yok. Şimdilik elle; tutarsa aylık takvime alınır
+# Uzun bölüm (yatay): her durum bölümde bir kez; haftada 2 (Çar + Cmt 17:00 UTC). episode.py 2,5 gün kuralıyla korur
 on:
+  schedule:
+    - cron: "0 17 * * 3,6"
   workflow_dispatch:
     inputs:
       privacy:

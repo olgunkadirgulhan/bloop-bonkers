@@ -48,7 +48,7 @@ def card_mp4(path, lines, seconds=CARD):
        '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-r', str(bloop.FPS), '-c:a', 'aac', '-shortest', str(path))
 
 
-def overlay_png(path, k, n, title, cast, y0, pw):
+def overlay_png(path, k, n, title, cast, y0, pw, fmt='psycho'):
     """Tam kare şeffaf katman: üstte başlık, panellerin köşesinde 1. NORMAL / 2. PSYCHOPATH rozetleri
     (dikey karedeki rozet, VS kesimi yüzünden sağ panelde yarım kalıyordu)."""
     img = Image.new('RGBA', (OW, OH), (0, 0, 0, 0))
@@ -56,7 +56,7 @@ def overlay_png(path, k, n, title, cast, y0, pw):
     d.rectangle([0, 0, OW, 190], fill=BG + (255,))
     bloop.put_text_px(img, f'#{k}  {strip(title)}', OW // 2, 80, 84, (255, 255, 255), max_w=1500)
     bloop.put_text_px(img, f'{cast.upper()}  ·  {k}/{n}', OW // 2, 160, 40, (255, 214, 60))
-    A, B, _ = bloop.FORMATS['psycho']
+    A, B, _ = bloop.FORMATS[fmt]
     for x, txt, c in ((OW // 2 - pw - 15, f'1. {A}', (60, 190, 90)), (OW // 2 + 15, f'2. {B}', (225, 50, 60))):
         spr = bloop.text_spr(txt, 40, (255, 255, 255))
         d.rounded_rectangle([x + 16, y0 + 16, x + 16 + spr.width + 26, y0 + 16 + spr.height + 18], radius=14,
@@ -65,17 +65,17 @@ def overlay_png(path, k, n, title, cast, y0, pw):
     img.save(path)
 
 
-def scene(out, k, n, gag, cast, seed, room='living'):
+def scene(out, k, n, gag, cast, seed, room='living', fmt='psycho'):
     """Tek gag'i dikey render eder, yalnız gag penceresini (intro/outro yok) yatay düzene çevirir:
     NORMAL solda, PSYCHO sağda, üstte başlık."""
-    plan = dict(format='psycho', cast=cast, gags=[gag], room=room, seed=seed)
+    plan = dict(format=fmt, cast=cast, gags=[gag], room=room, seed=seed)
     mp4 = bloop.render_video(plan, str(out / f'raw{k}'))
     T, PH, cut, top = bloop.TOP, bloop.PH, 58, 100   # alt 58: VS rozeti; üst 100: dikey karenin rozetleri
     ph = PH - cut - top
     pw, phs = 930, round(930 * ph / bloop.W)         # panel ölçeği
     y0 = 190 + (OH - 190 - phs) // 2
     hdr = out / f'hdr{k}.png'
-    overlay_png(hdr, k, n, bloop.GAGS[gag]['title'], bloop.CAST[cast]['name'], y0, pw)
+    overlay_png(hdr, k, n, bloop.GAGS[gag]['title'], bloop.CAST[cast]['name'], y0, pw, fmt)
     dst = out / f'scene{k}.mp4'
     ff('-ss', str(bloop.INTRO), '-t', str(bloop.GAG), '-i', mp4, '-i', str(hdr), '-filter_complex',
        f'[0:v]crop={bloop.W}:{ph}:0:{T + top},scale={pw}:{phs}[n];'
@@ -88,6 +88,10 @@ def scene(out, k, n, gag, cast, seed, room='living'):
     return dst
 
 
+EP_FORMATS = ['psycho', 'level', 'expect', 'public', 'clock', 'boss']
+EP_SIZE = 14
+
+
 def plan_episode(hist, rnd):
     month = datetime.now(timezone.utc).month
     gags = [k for k, g in bloop.GAGS.items() if month in g.get('months', range(1, 13))]
@@ -95,8 +99,16 @@ def plan_episode(hist, rnd):
     shown = {g for v in hist['videos'] if v.get('kind') == 'episode' for g, *_ in v.get('items', [])}
     pending = sorted({bloop.GAGS[k]['debut'] for k in gags if bloop.GAGS[k].get('debut') and k not in shown})
     gags = [k for k in gags if not bloop.GAGS[k].get('debut') or k in shown or bloop.GAGS[k]['debut'] == pending[0]]
+    # haftada 2 bölüm: her bölüm EP_SIZE durum; yeni (debut) durumlar önce, sonra bölümlerde en uzun süredir
+    # görünmeyenler → aynı durum ardışık bölümlerde tekrar etmez
+    last_used = {}
+    for i, v in enumerate(v for v in hist['videos'] if v.get('kind') == 'episode'):
+        for g, *_ in v.get('items', []): last_used[g] = i
     rnd.shuffle(gags)
-    for first in ('cookie', 'icecream'):             # en çok izlenen durumla aç
+    gags.sort(key=lambda k: (not (bloop.GAGS[k].get('debut') and k not in shown), last_used.get(k, -1)))
+    gags = gags[:EP_SIZE]
+    rnd.shuffle(gags)
+    for first in ('cookie', 'icecream', 'pizza', 'coffee'):   # güçlü bir durumla aç
         if first in gags:
             gags.remove(first); gags.insert(0, first); break
     if 'gift' in gags:                               # kapanış: kutu içinde kutu
@@ -113,7 +125,15 @@ def main():
     no_upload = '--no-upload' in sys.argv
     hist = json.loads(HISTORY.read_text())
     rnd = random.Random()
-    n_ep = sum(1 for v in hist['videos'] if v.get('kind') == 'episode') + 1
+    eps = [v for v in hist['videos'] if v.get('kind') == 'episode']
+    n_ep = len(eps) + 1
+    if '--force' not in sys.argv and eps:          # takvim Çar+Cmt tetikler (haftada 2)
+        last = datetime.strptime(eps[-1]['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)
+        if (datetime.now(timezone.utc) - last).total_seconds() < 2.5 * 86400:
+            print(f'son bölüm {eps[-1]["date"]}: 2,5 gün dolmadı, atlandı'); return
+    fmt = EP_FORMATS[(n_ep - 1) % len(EP_FORMATS)]   # her bölüm farklı kıyas çerçevesi
+    A, B, Q = bloop.FORMATS[fmt]
+    AB = f'{A.title()} vs {B.title()}'
     items = plan_episode(hist, rnd)
     n = len(items)
     out = HERE / 'output' / f'episode-{n_ep}'
@@ -121,11 +141,11 @@ def main():
     W8, Y8 = (255, 255, 255), (255, 214, 60)
     parts = []
     n_new = sum(1 for g, _ in items if bloop.GAGS[g].get('debut'))
-    card_mp4(out / 'intro.mp4', [('NORMAL vs PSYCHO', 380, 170, (120, 235, 130)),
+    card_mp4(out / 'intro.mp4', [(f'{A} vs {B}', 380, 150, (120, 235, 130)),
                                  (f'{n} SITUATIONS' + (f'  ·  {n_new} NEW' if n_new else ''), 580, 150, W8),
-                                 ('Count how many times YOU are the psycho', 760, 64, Y8)], 3.6)
+                                 ('Count how many times you are #2', 760, 64, Y8)], 3.6)
     parts.append(out / 'intro.mp4')
-    teasers = ['What would YOU do?', 'Normal... or psycho?', 'Be honest.', 'Guess what happens next.',
+    teasers = ['What would YOU do?', f'{A.title()}... or {B.title()}?', 'Be honest.', 'Guess what happens next.',
                'This one is personal.', 'We have all been here.', 'Watch the right side.']
     for k, (gag, cast) in enumerate(items, 1):
         print(f'#{k}/{n}: {gag} ({cast})', flush=True)
@@ -134,13 +154,13 @@ def main():
         card_mp4(out / f'card{k}.mp4', [(f'SITUATION #{k}' + ('  ·  NEW!' if new else ''), 400, 110, (255, 120, 170) if new else Y8),
                                          (title, 560, 130, W8),
                                          ('First time on the channel!' if new else teasers[(k - 1) % len(teasers)], 720, 60, (200, 200, 220))])
-        parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), bloop.ROOMS[(k - 1) % len(bloop.ROOMS)])]
+        parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), bloop.ROOMS[(k - 1) % len(bloop.ROOMS)], fmt)]
     names = [bloop.GAGS[g]['name'] for g, _ in items]
     cols = 2 if n <= 14 else 3                          # oy kartı: 24 durum da sığsın
     rows = -(-n // cols)
     gap = min(100, 700 // rows)
     img = Image.new('RGB', (OW, OH), BG)
-    bloop.put_text_px(img, 'WHICH ONE WAS THE MOST PSYCHO?', OW // 2, 120, 84, Y8)
+    bloop.put_text_px(img, 'WHICH ONE IS MOST YOU?', OW // 2, 120, 84, Y8)
     for i, nm in enumerate(names):
         col, row = divmod(i, rows)
         x = OW // 2 + (col - (cols - 1) / 2) * (860 if cols == 2 else 600)
@@ -162,13 +182,13 @@ def main():
     bloop.put_text_px(th, f'{n} SITUATIONS', OW // 2, 1000, 110, Y8)
     th.resize((1280, 720)).save(out / 'thumb.png')
     print(f'bölüm hazır: {final}', flush=True)
-    title = f'Normal vs Psycho: {n} Situations 🤪 | Bloop Bonkers Full Episode {n_ep}'
-    desc = (f'{n} everyday situations, normal vs psycho, each one shown once'
+    title = f'{AB}: {n} Situations 🤪 | Bloop Bonkers Full Episode {n_ep}'
+    desc = (f'{n} everyday situations, {AB.lower()}, each one shown once'
             + (f' ({sum(1 for g, _ in items if bloop.GAGS[g].get("debut"))} of them brand new, not in any Short yet)' if any(bloop.GAGS[g].get('debut') for g, _ in items) else '') + '. '
-            'Which one was the MOST psycho? Comment the number! 👇\n\n'
+            'Which one is MOST you? Comment the number! 👇\n\n'
             + '\n'.join(f'{i + 1}. {bloop.GAGS[g]["title"].title()} ({bloop.CAST[c]["name"]})' for i, (g, c) in enumerate(items))
             + '\n\nNew Bloop Bonkers Shorts every day. Subscribe for more chaos! 🟣\n\n#animation #funny #cartoon')
-    tags = ['bloop bonkers', 'normal vs psycho', 'funny animation', 'cartoon', '3d animation', 'full episode',
+    tags = ['bloop bonkers', AB.lower(), 'normal vs psycho', 'funny animation', 'cartoon', '3d animation', 'full episode',
             'normal people vs psychopaths', 'funny cartoon'] + [bloop.GAGS[g]['name'].lower() for g, _ in items[:6]]
     if no_upload:
         print('yükleme yok (--no-upload)'); return
@@ -181,7 +201,7 @@ def main():
         print('küçük resim:', e)
     print(f'yüklendi: https://youtu.be/{vid} ({privacy})', flush=True)
     hist['videos'].append(dict(id=vid, date=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M'), kind='episode',
-                               title=title, privacy=privacy, items=[list(x) for x in items]))
+                               title=title, privacy=privacy, format=fmt, items=[list(x) for x in items]))
     HISTORY.write_text(json.dumps(hist, indent=2, ensure_ascii=False) + '\n')
 
 

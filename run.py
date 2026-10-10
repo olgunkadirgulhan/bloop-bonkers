@@ -85,7 +85,7 @@ def pick_plan(hist, rnd, perf=({}, {})):
              for g, *_ in v.get('items', [])}
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
     pool = [k for k, g in bloop.GAGS.items() if month in g.get('months', range(1, 13))
-            and (not g.get('debut') or k in shown or today >= g['debut'])]
+            and (not g.get('debut') or k in shown or today > g['debut'])]
     gw = dict(zip(pool, weights(pool, gperf)))
     # tekrar cezası: son 6 videoda her kullanım ağırlığı 4'te birine indirir, son videodakiler hiç seçilmez;
     # hiç kullanılmamış gag 2 kat öne çıkar (viral gag'ler her videoya girip içeriği tekrarlamasın)
