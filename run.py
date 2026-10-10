@@ -103,7 +103,9 @@ def pick_plan(hist, rnd, perf=({}, {})):
             gags[-1] = 'pumpkin'
         if tuple(sorted(gags)) not in seen_sets and gags[0] != last_first:
             break
-    return dict(format=fmt, cast=cast, gags=gags, seed=rnd.randrange(10 ** 6))
+    last_room = past[-1].get('room') if past else None
+    room = rnd.choice([r for r in bloop.ROOMS if r != last_room])
+    return dict(format=fmt, cast=cast, gags=gags, room=room, seed=rnd.randrange(10 ** 6))
 
 
 def metadata(plan, hist, rnd):

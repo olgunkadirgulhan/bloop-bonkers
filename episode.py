@@ -65,10 +65,10 @@ def overlay_png(path, k, n, title, cast, y0, pw):
     img.save(path)
 
 
-def scene(out, k, n, gag, cast, seed):
+def scene(out, k, n, gag, cast, seed, room='living'):
     """Tek gag'i dikey render eder, yalnız gag penceresini (intro/outro yok) yatay düzene çevirir:
     NORMAL solda, PSYCHO sağda, üstte başlık."""
-    plan = dict(format='psycho', cast=cast, gags=[gag], seed=seed)
+    plan = dict(format='psycho', cast=cast, gags=[gag], room=room, seed=seed)
     mp4 = bloop.render_video(plan, str(out / f'raw{k}'))
     T, PH, cut, top = bloop.TOP, bloop.PH, 58, 100   # alt 58: VS rozeti; üst 100: dikey karenin rozetleri
     ph = PH - cut - top
@@ -127,7 +127,7 @@ def main():
         title = bloop.GAGS[gag]['title']
         card_mp4(out / f'card{k}.mp4', [(f'SITUATION #{k}', 400, 110, Y8), (title, 560, 130, W8),
                                          (teasers[(k - 1) % len(teasers)], 720, 60, (200, 200, 220))])
-        parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6))]
+        parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), bloop.ROOMS[(k - 1) % len(bloop.ROOMS)])]
     names = [bloop.GAGS[g]['name'] for g, _ in items]
     half = (n + 1) // 2
     img = Image.new('RGB', (OW, OH), BG)                # iki sütunlu oy kartı
