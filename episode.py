@@ -116,8 +116,9 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     W8, Y8 = (255, 255, 255), (255, 214, 60)
     parts = []
+    n_new = sum(1 for g, _ in items if bloop.GAGS[g].get('debut'))
     card_mp4(out / 'intro.mp4', [('NORMAL vs PSYCHO', 380, 170, (120, 235, 130)),
-                                 (f'{n} SITUATIONS', 580, 150, W8),
+                                 (f'{n} SITUATIONS' + (f'  ·  {n_new} NEW' if n_new else ''), 580, 150, W8),
                                  ('Count how many times YOU are the psycho', 760, 64, Y8)], 3.6)
     parts.append(out / 'intro.mp4')
     teasers = ['What would YOU do?', 'Normal... or psycho?', 'Be honest.', 'Guess what happens next.',
@@ -125,8 +126,10 @@ def main():
     for k, (gag, cast) in enumerate(items, 1):
         print(f'#{k}/{n}: {gag} ({cast})', flush=True)
         title = bloop.GAGS[gag]['title']
-        card_mp4(out / f'card{k}.mp4', [(f'SITUATION #{k}', 400, 110, Y8), (title, 560, 130, W8),
-                                         (teasers[(k - 1) % len(teasers)], 720, 60, (200, 200, 220))])
+        new = bool(bloop.GAGS[gag].get('debut'))
+        card_mp4(out / f'card{k}.mp4', [(f'SITUATION #{k}' + ('  ·  NEW!' if new else ''), 400, 110, (255, 120, 170) if new else Y8),
+                                         (title, 560, 130, W8),
+                                         ('First time on the channel!' if new else teasers[(k - 1) % len(teasers)], 720, 60, (200, 200, 220))])
         parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), bloop.ROOMS[(k - 1) % len(bloop.ROOMS)])]
     names = [bloop.GAGS[g]['name'] for g, _ in items]
     half = (n + 1) // 2
@@ -153,7 +156,8 @@ def main():
     th.resize((1280, 720)).save(out / 'thumb.png')
     print(f'bölüm hazır: {final}', flush=True)
     title = f'Normal vs Psycho: {n} Situations 🤪 | Bloop Bonkers Full Episode {n_ep}'
-    desc = (f'{n} everyday situations, normal vs psycho, every one brand new in this episode. '
+    desc = (f'{n} everyday situations, normal vs psycho, each one shown once'
+            + (f' ({sum(1 for g, _ in items if bloop.GAGS[g].get("debut"))} of them brand new, not in any Short yet)' if any(bloop.GAGS[g].get('debut') for g, _ in items) else '') + '. '
             'Which one was the MOST psycho? Comment the number! 👇\n\n'
             + '\n'.join(f'{i + 1}. {bloop.GAGS[g]["title"].title()} ({bloop.CAST[c]["name"]})' for i, (g, c) in enumerate(items))
             + '\n\nNew Bloop Bonkers Shorts every day. Subscribe for more chaos! 🟣\n\n#animation #funny #cartoon')

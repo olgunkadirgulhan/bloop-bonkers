@@ -1737,22 +1737,22 @@ def gag_donut(img, v, t, gt):
 
 
 GAGS.update({
-    'pizza': dict(title='EATING PIZZA', name='Pizza', wall=(250, 225, 205), fn=gag_pizza,
+    'pizza': dict(debut='2026-10-17', title='EATING PIZZA', name='Pizza', wall=(250, 225, 205), fn=gag_pizza,
                   N=[(0.7, 'pop'), (1.2, 'crunch'), (1.6, 'crunch'), (2.0, 'crunch')],
                   P=[(0.0, 'sting'), (1.0, 'whoosh'), (2.2, 'gulp'), (2.6, 'gulp'), (3.2, 'burp')]),
-    'phone': dict(title='CHARGING PHONE', name='Phone', wall=(215, 225, 240), fn=gag_phone,
+    'phone': dict(debut='2026-10-17', title='CHARGING PHONE', name='Phone', wall=(215, 225, 240), fn=gag_phone,
                   N=[(0.9, 'click'), (1.6, 'ding')],
                   P=[(0.0, 'sting'), (1.0, 'rattle', 2.0), (3.2, 'ding'), (3.25, 'horn'), (3.3, 'clap')]),
-    'plant': dict(title='WATERING A PLANT', name='Plant', wall=(220, 238, 215), fn=gag_plant,
+    'plant': dict(debut='2026-10-17', title='WATERING A PLANT', name='Plant', wall=(220, 238, 215), fn=gag_plant,
                   N=[(0.9, 'fizz', 1.0), (2.3, 'pop'), (2.4, 'ding')],
                   P=[(0.0, 'sting'), (0.9, 'splat'), (0.95, 'fizz', 1.0), (1.8, 'boing'), (2.6, 'boing'), (3.3, 'ding')]),
-    'chips': dict(title='EATING CHIPS', name='Chips', wall=(245, 228, 200), fn=gag_chips,
+    'chips': dict(debut='2026-10-17', title='EATING CHIPS', name='Chips', wall=(245, 228, 200), fn=gag_chips,
                   N=[(0.6, 'rattle', 0.3), (1.2, 'crunch'), (1.6, 'crunch'), (2.0, 'crunch')],
                   P=[(0.0, 'sting'), (0.5, 'rattle', 0.6), (1.2, 'whoosh')] + [(2.9 + i * 0.12, 'crunch') for i in range(8)]),
-    'lemon': dict(title='LEMONADE', name='Lemon', wall=(250, 245, 205), fn=gag_lemon,
+    'lemon': dict(debut='2026-10-17', title='LEMONADE', name='Lemon', wall=(250, 245, 205), fn=gag_lemon,
                   N=[(1.0, 'slurp', 1.0), (2.0, 'ahh')],
                   P=[(0.0, 'sting'), (1.0, 'crunch'), (1.1, 'freeze'), (3.4, 'boing')]),
-    'donut': dict(title='DONUT BREAKFAST', name='Donut', wall=(250, 220, 235), fn=gag_donut,
+    'donut': dict(debut='2026-10-17', title='DONUT BREAKFAST', name='Donut', wall=(250, 220, 235), fn=gag_donut,
                   N=[(0.5, 'pop'), (1.4, 'crunch'), (1.9, 'crunch')],
                   P=[(0.0, 'sting'), (0.5, 'whoosh'), (1.2, 'boing'), (2.6, 'gulp'), (3.0, 'gulp'), (3.4, 'burp')]),
 })

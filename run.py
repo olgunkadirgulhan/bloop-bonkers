@@ -80,7 +80,12 @@ def pick_plan(hist, rnd, perf=({}, {})):
     casts = [c for c in bloop.CAST if c != last_cast]
     cast = rnd.choices(casts, weights=[3 if c == 'bloop' else 2 for c in casts])[0]
     month = datetime.now(timezone.utc).month
-    pool = [k for k, g in bloop.GAGS.items() if month in g.get('months', range(1, 13))]
+    # bölüm özel durumlar: önce uzun bölümde çıkar; bölüm herkese açık olunca ya da 'debut' tarihi gelince Shorts'a girer
+    shown = {g for v in hist['videos'] if v.get('kind') == 'episode' and v.get('privacy') == 'public'
+             for g, *_ in v.get('items', [])}
+    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    pool = [k for k, g in bloop.GAGS.items() if month in g.get('months', range(1, 13))
+            and (not g.get('debut') or k in shown or today >= g['debut'])]
     gw = dict(zip(pool, weights(pool, gperf)))
     # tekrar cezası: son 6 videoda her kullanım ağırlığı 4'te birine indirir, son videodakiler hiç seçilmez;
     # hiç kullanılmamış gag 2 kat öne çıkar (viral gag'ler her videoya girip içeriği tekrarlamasın)
