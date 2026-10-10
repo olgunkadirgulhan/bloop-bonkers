@@ -350,6 +350,23 @@
       ],
       "room": "garage",
       "seed": 221108
+    },
+    {
+      "id": "uRtT5v1bGkc",
+      "date": "2026-10-10 16:50",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Toothpaste & Ice Cream) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "zip",
+      "gags": [
+        "toothpaste",
+        "icecream",
+        "balloon",
+        "cookie"
+      ],
+      "room": "bedroom",
+      "seed": 18345
     }
   ]
 }
