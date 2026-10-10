@@ -383,6 +383,23 @@
       ],
       "room": "cafe",
       "seed": 974229
+    },
+    {
+      "id": "0cb1beV-5_U",
+      "date": "2026-10-10 23:51",
+      "kind": "short",
+      "title": "Me in Public vs Me at Home (Plant & Coffee) 🤪",
+      "privacy": "public",
+      "format": "public",
+      "cast": "chonk",
+      "gags": [
+        "plant",
+        "coffee",
+        "donut",
+        "pumpkin"
+      ],
+      "room": "bathroom",
+      "seed": 948101
     }
   ]
 }
