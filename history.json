@@ -333,6 +333,23 @@
           "ziggy"
         ]
       ]
+    },
+    {
+      "id": "oDfdfw2GaCU",
+      "date": "2026-10-10 14:49",
+      "kind": "short",
+      "title": "In Public vs At Home 😂 Ketchup & Sandwich",
+      "privacy": "public",
+      "format": "public",
+      "cast": "duke",
+      "gags": [
+        "ketchup",
+        "sandwich",
+        "gum",
+        "pumpkin"
+      ],
+      "room": "garage",
+      "seed": 221108
     }
   ]
 }
