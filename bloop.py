@@ -38,6 +38,8 @@ CAST = {
     'mimi': dict(name='Mimi', color=(255, 125, 185), shoe=(125, 90, 225), acc='bow'),
     'pip': dict(name='Pip', color=(70, 175, 240), shoe=(255, 95, 95), acc='glasses'),
     'chonk': dict(name='Chonk', color=(255, 145, 60), shoe=(70, 70, 95), acc='cap'),
+    'ziggy': dict(name='Ziggy', color=(60, 200, 170), shoe=(255, 200, 40), acc='headphones'),
+    'duke': dict(name='Duke', color=(165, 120, 95), shoe=(40, 40, 50), acc='mustache'),
 }
 
 # (üst etiket, alt etiket, kapanış sorusu)
@@ -183,8 +185,9 @@ def put_text(img, txt, cx, cy, sz, fill, scale=1.0, rot=0, max_w=None):
 
 
 # ---------------------------------------------------------------- sahne
-ROOMS = ('living', 'kitchen', 'bedroom', 'office')
-FLOORS = {'living': (196, 138, 88), 'kitchen': (214, 204, 186), 'bedroom': (176, 120, 150), 'office': (150, 152, 165)}
+ROOMS = ('living', 'kitchen', 'bedroom', 'office', 'bathroom', 'garage', 'cafe')
+FLOORS = {'living': (196, 138, 88), 'kitchen': (214, 204, 186), 'bedroom': (176, 120, 150), 'office': (150, 152, 165),
+          'bathroom': (225, 228, 238), 'garage': (128, 128, 134), 'cafe': (150, 100, 70)}
 
 
 @lru_cache(None)
@@ -196,6 +199,12 @@ def background(wall, room='living'):
         stripe = ((((xx + 30 * ((yy // 60) % 2)) % 60 - 30) ** 2 + ((yy % 60) - 30) ** 2) < 49) * 0.06
     elif room == 'office':
         stripe = 0.0 * xx
+    elif room == 'bathroom':   # tam duvar fayans
+        stripe = (((xx % 60) < 3) | ((yy % 60) < 3)) * -0.10 + 0.0 * yy
+    elif room == 'garage':     # beton paneller
+        stripe = ((xx // 160) % 2) * -0.03 + (((xx % 160) < 3) * -0.08) + 0.0 * yy
+    elif room == 'cafe':       # tuğla
+        stripe = (((yy % 40) < 4) | (((xx + 40 * ((yy // 40) % 2)) % 80) < 4)) * -0.16 + ((xx * 7 + (yy // 40) * 13) % 5 == 0) * 0.0
     elif room == 'kitchen':    # alt duvarda fayans
         stripe = ((yy > 380) & (((xx % 70) < 3) | ((yy % 70) < 3))) * -0.12
     else:
@@ -231,6 +240,23 @@ def background(wall, room='living'):
         for sx_, sy_, r_ in ((120, 140, 10), (200, 120, 7), (160, 220, 14), (220, 260, 6), (100, 270, 8)):
             d.ellipse(box(sx_ - r_, sy_ - r_, sx_ + r_, sy_ + r_), fill=(255, 230, 120))
         d.ellipse(box(170, 140, 230, 200), fill=(250, 245, 220)); d.ellipse(box(188, 132, 244, 188), fill=(60, 50, 110))
+    elif room == 'bathroom':   # ayna
+        d.ellipse(box(60, 60, 260, 320), fill=(200, 200, 205)); d.ellipse(box(74, 74, 246, 306), fill=(200, 230, 245))
+        d.line(box(110, 120, 150, 90), fill=(255, 255, 255), width=L(8)); d.line(box(110, 170, 190, 100), fill=(255, 255, 255), width=L(6))
+    elif room == 'garage':     # alet panosu
+        d.rectangle(box(40, 70, 300, 330), fill=(175, 140, 100))
+        for yh in range(85, 330, 24):
+            for xh in range(55, 300, 24): d.ellipse(box(xh - 3, yh - 3, xh + 3, yh + 3), fill=(120, 95, 70))
+        d.rectangle(box(80, 110, 92, 230), fill=(120, 80, 50)); d.rectangle(box(62, 100, 110, 130), fill=(110, 110, 120))
+        d.rectangle(box(170, 110, 182, 260), fill=(150, 150, 160)); d.ellipse(box(158, 92, 194, 128), outline=(150, 150, 160), width=L(10))
+        d.rounded_rectangle(box(220, 120, 280, 280), radius=L(8), fill=(220, 60, 50))
+    elif room == 'cafe':       # tebeşir menü
+        d.rounded_rectangle(box(40, 70, 300, 330), radius=L(8), fill=(120, 80, 50))
+        d.rectangle(box(54, 84, 286, 316), fill=(40, 50, 45))
+        bloop_menu = [(170, 120, 'MENU'), (170, 190, 'coffee ~ 3'), (170, 240, 'cake ~ 4'), (170, 290, 'tea ~ 2')]
+        for x_, y_, tx in bloop_menu:
+            f_ = font(L(30 if tx == 'MENU' else 22)); tw = d.textlength(tx, font=f_)
+            d.text((L(x_) - tw / 2, L(y_) - L(16)), tx, font=f_, fill=(235, 235, 225))
     elif room == 'office':     # kitaplık
         d.rectangle(box(50, 60, 280, 340), fill=(130, 90, 60))
         for shelf in (60, 150, 240):
@@ -295,6 +321,10 @@ def draw_char(img, cx, gy, o):
         d.rounded_rectangle(box(cx + 0.1 * rx, cy - ry + 36 * sy, cx + 1.05 * rx, cy - ry + 60 * sy), radius=L(10),
                             fill=lerpc(capc, (0, 0, 0), 0.25), outline=DARK, width=L(4))
         d.ellipse(box(cx - 12, cy - ry - 26, cx + 12, cy - ry - 4), fill=lerpc(capc, (255, 255, 255), 0.3))
+    if acc == 'headphones':
+        d.arc(box(cx - rx - 8, cy - ry - 24, cx + rx + 8, cy + ry * 0.3), 180, 360, fill=(45, 45, 55), width=L(16))
+        for s_ in (-1, 1): put_sphere(img, (230, 60, 90), cx + s_ * (rx + 2), cy - 24 * sy, 64, 104, 0.6)
+        d = ImageDraw.Draw(img)
     puff = o.get('puff', 0.0)
     for s in (-1, 1):
         if puff > 0.02:
@@ -380,6 +410,8 @@ def draw_char(img, cx, gy, o):
     elif m == 'chew':
         k = abs(math.sin(t * 16))
         d.ellipse(box(mx - 26, my - 2 - 6 * k, mx + 26, my + 10 + 8 * k), fill=(110, 25, 40), outline=DARK, width=L(4))
+    if acc == 'mustache':
+        for s_ in (-1, 1): put_rot(img, sphere((85, 50, 30), 96, 34, 0.3), mx + s_ * 40, my - 24, s_ * 14)
     hs = o.get('hands', [None, None]); bob = math.sin(t * 3.4 + 1) * 5
     dflt = [(cx - rx - 24, cy + 52 + bob), (cx + rx + 24, cy + 52 - bob)]
     for i in (0, 1):
@@ -1755,6 +1787,195 @@ GAGS.update({
     'donut': dict(debut='2026-10-17', title='DONUT BREAKFAST', name='Donut', wall=(250, 220, 235), fn=gag_donut,
                   N=[(0.5, 'pop'), (1.4, 'crunch'), (1.9, 'crunch')],
                   P=[(0.0, 'sting'), (0.5, 'whoosh'), (1.2, 'boing'), (2.6, 'gulp'), (3.0, 'gulp'), (3.4, 'burp')]),
+})
+
+
+# ================================================================ 2026-10-10 (2) yeni gag'ler (24'e çıkış)
+def flash(img, a):
+    if a > 0: img.alpha_composite(Image.new('RGBA', img.size, (255, 255, 255, int(255 * clamp(a)))))
+
+
+# ---------------------------------------------------------------- gag: hapşırık
+def gag_sneeze(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    my = mouth_y()
+    if v == 'N':
+        inh = sm(seg(tt, 0.2, 1.1)) * (1 - sm(seg(tt, 1.2, 1.4)))
+        elbow = (CX + 70, my - 10) if 1.0 <= tt < 1.8 else None
+        o.update(mouth='o' if tt < 1.2 else ('open' if tt < 1.6 else 'smile'), mo=0.4, eyes='sleepy' if tt < 1.2 else ('happy' if tt < 1.6 or tt > 2.2 else 'normal'),
+                 sy=1.0 + 0.05 * inh, look=(0, -0.6) if tt < 1.2 else (0, 0), hands=[None, elbow])
+        draw_char(img, CX, GY, o)
+        if 1.2 <= tt < 2.0:
+            put_text(img, 'achoo', CX + 190, 330, 56, (255, 255, 255), scale=back(seg(tt, 1.2, 1.35)), rot=-6)
+            particles(img, 61, 1.2, tt, 6, (CX + 90, my), (40, 160), (-80, 40), 300, [(235, 245, 255)], (8, 12), life=0.5)
+        if 2.1 <= tt: put_text(img, 'excuse me', CX + 150, 330, 48, (200, 200, 220), scale=back(seg(tt, 2.1, 2.3)), rot=-4)
+    else:
+        inh = sm(seg(tt, 0.2, 2.0))
+        blast = tt >= 2.2
+        push = (-260 * sm(seg(tt, 2.2, 2.45)) + 260 * sm(seg(tt, 2.9, 3.6))) if blast else 0
+        o.update(mouth='o' if not blast else ('open' if tt < 2.9 else 'grin'), mo=1.0,
+                 eyes='sleepy' if tt < 1.4 else 'crazy', brow='angry' if 1.4 <= tt < 2.2 else None,
+                 sx=1.0 + 0.18 * inh * (not blast), sy=1.0 + 0.22 * inh * (not blast), look=(0, -0.8) if not blast else (1, 0))
+        info = draw_char(img, CX + push, GY, o)
+        if blast:
+            particles(img, 62, 2.2, tt, 70, (CX + push + 120, info['my']), (500, 1500), (-500, 300), 300,
+                      [(235, 245, 255), (210, 230, 255)], (14, 34), life=1.0, emit=0.5)
+            if tt < 3.4: put_text(img, 'ACHOO!!!', 640, 230, 160, (255, 255, 255), scale=back(seg(tt, 2.2, 2.35)), rot=-9)
+            if tt < 2.6: shake = 20
+        if 3.6 <= tt: put_text(img, 'BLESS ME.', 620, 250, 100, (255, 230, 60), scale=back(seg(tt, 3.6, 3.8)), rot=6)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: spagetti
+NOODLE, SAUCE = (245, 215, 130), (200, 50, 40)
+PLATE = (850, TTOP - 20)
+
+
+def draw_spaghetti(img, left=1.0):
+    put_sphere(img, (245, 245, 250), PLATE[0], PLATE[1] + 10, 260, 50, 0.6)
+    if left > 0.05:
+        put_sphere(img, NOODLE, PLATE[0], PLATE[1] - 14 * left, 170 * left, 70 * left, 0.3)
+        put_sphere(img, SAUCE, PLATE[0], PLATE[1] - 34 * left, 80 * left, 34 * left, 0.5)
+
+
+def gag_spaghetti(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    hd = hand_default(1); my = mouth_y()
+    if v == 'N':
+        draw_spaghetti(img, 1.0 - 0.15 * (tt >= 1.4))
+        if tt < 0.6: hr = lp(hd, (PLATE[0] - 30, PLATE[1] - 90), sm(seg(tt, 0.1, 0.6)))
+        elif tt < 1.1: hr = (PLATE[0] - 30 + 14 * math.sin(tt * 30), PLATE[1] - 90)
+        elif tt < 1.5: hr = lp((PLATE[0] - 30, PLATE[1] - 90), (CX + 120, my + 40), sm(seg(tt, 1.1, 1.5)))
+        elif tt < 2.2: hr = (CX + 120, my + 40)
+        else: hr = lp((CX + 120, my + 40), hd, sm(seg(tt, 2.2, 2.6)))
+        o.update(hands=[None, hr], mouth='chew' if 1.5 <= tt < 2.6 else 'smile', eyes='happy' if tt > 2.6 else 'normal', look=(1, 0.2))
+        draw_char(img, CX, GY, o)
+        d = ImageDraw.Draw(img)
+        d.line(box(hr[0], hr[1], hr[0] + 10, hr[1] - 90), fill=(200, 200, 210), width=L(7))
+        if tt < 2.2: put_sphere(img, NOODLE, hr[0] + 10, hr[1] - 92, 46, 38, 0.3)
+        hand(img, hr)
+    else:
+        left = 1.0 - sm(seg(tt, 1.0, 3.4))
+        draw_spaghetti(img, left)
+        o.update(mouth='o' if 0.8 <= tt < 3.4 else ('grin' if tt >= 3.4 else 'smile'), mo=0.5, eyes='crazy', brow='angry' if tt < 3.4 else None,
+                 look=(1, 0.3), puff=sm(seg(tt, 1.5, 3.0)) * (1 - sm(seg(tt, 3.6, 4.2))))
+        info = draw_char(img, CX, GY, o)
+        if 0.8 <= tt < 3.4:
+            d = ImageDraw.Draw(img)
+            x0, y0 = CX + 14, info['my'] + 6; x1, y1 = PLATE[0], PLATE[1] - 30 * left
+            pts = []
+            for i in range(41):
+                u = i / 40
+                wob = math.sin(u * 14 + tt * 25) * 26 * (1 - abs(2 * u - 1))
+                pts.append((L(lerp(x0, x1, u)), L(lerp(y0, y1, u) - 140 * math.sin(math.pi * u) + wob)))
+            d.line(pts, fill=NOODLE, width=L(12), joint='curve')
+            put_text(img, 'SLURRRRP!', 600, 200, 120, NOODLE, scale=1.0 + 0.05 * math.sin(tt * 30), rot=-7)
+        if tt >= 3.4:
+            for dx, dy, s_ in ((-60, -40, 30), (40, -70, 24), (70, 10, 34), (-20, 30, 22)):
+                put_sphere(img, SAUCE, CX + dx, info['cy'] + dy, s_, s_ * 0.8, 0.5)
+            put_text(img, 'ONE NOODLE.', 620, 240, 100, (255, 255, 255), scale=back(seg(tt, 3.4, 3.6)), rot=6)
+            if tt < 3.6: shake = 10
+    return shake
+
+
+# ---------------------------------------------------------------- gag: selfie
+def gag_selfie(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    hd = hand_default(1)
+    up = (CX + 250, GY - 470)
+    if v == 'N':
+        hr = lp(hd, up, sm(seg(tt, 0.3, 0.9))) if tt < 2.4 else lp(up, hd, sm(seg(tt, 2.4, 2.8)))
+        o.update(hands=[None, hr], mouth='smile', eyes='happy' if 1.3 <= tt < 2.2 else 'normal', look=(1, -0.6))
+        draw_char(img, CX, GY, o)
+        draw_phone(img, hr[0] + 10, hr[1] - 60, 80); hand(img, hr)
+        flash(img, 0.4 * (1 - seg(tt, 1.5, 1.6)) if 1.5 <= tt < 1.6 else 0)
+        if 1.8 <= tt: put_text(img, 'nice.', 620, 320, 64, (255, 255, 255), scale=back(seg(tt, 1.8, 2.0)), rot=-4)
+    else:
+        hr = lp(hd, up, sm(seg(tt, 0.2, 0.6)))
+        k = int((tt - 0.8) / 0.4) if tt >= 0.8 else -1   # 2,5 flaş/sn: ışığa duyarlılık sınırı (3/sn) altında
+        poses = [('grin', 'crazy', (1, -0.6), 1.0), ('o', 'happy', (0, 0), 1.08), ('open', 'crazy', (-1, -0.3), 0.94),
+                 ('grin', 'happy', (0, 0), 1.0), ('flat', 'normal', (1, 0), 1.1), ('open', 'happy', (0, 0), 0.92)]
+        m, e, lk, sq = poses[k % len(poses)] if k >= 0 else ('smile', 'normal', (1, -0.6), 1.0)
+        tilt = 30 * math.sin(k * 1.7) if k >= 0 else 0
+        o.update(hands=[(CX - 200, GY - 330 + 40 * math.sin(k)) if k >= 0 else None, hr], mouth=m, mo=1.0, eyes=e, look=lk,
+                 sx=sq, sy=2 - sq, brow='angry' if k % 3 == 2 else None)
+        draw_char(img, CX + tilt, GY, o)
+        draw_phone(img, hr[0] + 10, hr[1] - 60, 80); hand(img, hr)
+        if k >= 0 and tt < 4.2:
+            f = (tt - 0.8) % 0.4
+            flash(img, 0.3 * (1 - f / 0.08) if f < 0.08 else 0)
+            put_text(img, f'x{(k + 1) * 4}', 760, 240, 120, (255, 230, 60), rot=-6)
+        if tt >= 4.2: put_text(img, 'ONE MORE.', 620, 250, 110, (255, 255, 255), scale=back(seg(tt, 4.2, 4.4)), rot=6)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: acı sos
+HOT = (215, 35, 30)
+BOTTLE = (860, TTOP - 85)
+
+
+@lru_cache(None)
+def hot_spr():
+    spr = Image.new('RGBA', (L(80), L(190)), (0, 0, 0, 0))
+    spr.alpha_composite(cyl(HOT, 70, 130, 22), (L(5), L(55)))
+    spr.alpha_composite(cyl((240, 240, 240), 36, 60, 8), (L(22), L(0)))
+    d = ImageDraw.Draw(spr)
+    d.rectangle([L(14), L(95), L(66), L(135)], fill=(255, 235, 200))
+    d.polygon([(L(40), L(100)), (L(30), L(125)), (L(40), L(132)), (L(50), L(125))], fill=HOT)
+    return spr
+
+
+def gag_hotsauce(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    hd = hand_default(1); my = mouth_y()
+    taco = (760, TTOP - 30)
+    if v == 'N':
+        put_sphere(img, (240, 200, 100), *taco, 170, 70, 0.4)
+        put_sphere(img, (110, 180, 80), taco[0], taco[1] - 20, 120, 30, 0.3)
+        bp = lp(BOTTLE, (taco[0] + 20, taco[1] - 170), sm(seg(tt, 0.4, 0.9))) if tt < 2.0 else lp((taco[0] + 20, taco[1] - 170), BOTTLE, sm(seg(tt, 2.0, 2.4)))
+        ang = 150 * sm(seg(tt, 0.9, 1.1)) * (1 - sm(seg(tt, 1.6, 1.8)))
+        put_rot(img, hot_spr(), bp[0], bp[1], ang)
+        if 1.1 <= tt < 1.5:
+            y = lerp(bp[1] + 60, taco[1] - 30, seg(tt, 1.1, 1.5)); put_sphere(img, HOT, taco[0] + 20, y, 20, 26, 0.6)
+        if tt >= 1.5: put_sphere(img, HOT, taco[0] + 20, taco[1] - 30, 22, 12, 0.6)
+        hr = (bp[0] - 50, bp[1] + 30) if 0.4 <= tt < 2.4 else hd
+        o.update(hands=[None, hr], mouth='smile', eyes='happy' if tt > 1.9 else 'normal', look=(1, 0.3))
+        draw_char(img, CX, GY, o); hand(img, hr)
+        if 1.5 <= tt: put_text(img, 'one drop.', 600, 320, 60, (255, 255, 255), scale=back(seg(tt, 1.5, 1.7)), rot=-4)
+    else:
+        bp = lp(BOTTLE, (CX + 140, my - 70), sm(seg(tt, 0.3, 0.8))) if tt < 2.2 else (CX + 140, my - 70)
+        ang = 120 * sm(seg(tt, 0.8, 1.0)) if tt < 2.2 else 0
+        heat = sm(seg(tt, 1.6, 2.4))
+        o.update(hands=[None, (bp[0] + 40, bp[1] + 30)] if tt < 2.2 else [None, None],
+                 mouth='o' if 1.0 <= tt < 2.2 else ('open' if tt < 3.8 else 'grin'), mo=1.0,
+                 eyes='crazy', brow='angry' if tt < 1.0 else None, color=lerpc(CHAR['color'], HOT, 0.75 * heat), look=(1, 0) if tt < 2.2 else (0, -0.5))
+        info = draw_char(img, CX, GY - (spring(tt - 2.4, 40, 12, 3) if tt > 2.4 else 0), o)
+        if tt < 2.2:
+            put_rot(img, hot_spr(), bp[0], bp[1], ang); hand(img, (bp[0] + 40, bp[1] + 30))
+        if tt >= 2.4:
+            particles(img, 71, 2.4, tt, 60, (CX + 90, info['my']), (300, 900), (-300, 100), -200,
+                      [(255, 120, 30), (255, 200, 40), (255, 80, 20)], (20, 44), life=0.6, emit=1.4)
+            particles(img, 72, 2.4, tt, 30, (CX, info['cy'] - info['ry']), (-120, 120), (-500, -300), 0,
+                      [(200, 200, 210), (230, 230, 235)], (30, 60), life=1.0, emit=1.8)
+            if tt < 3.9: put_text(img, 'SPICY!!!', 640, 220, 150, (255, 140, 30), scale=1.0 + 0.06 * math.sin(tt * 35), rot=-8)
+            if tt < 3.9: shake = 8
+        if 4.0 <= tt: put_text(img, '...MILD.', 620, 250, 110, (255, 255, 255), scale=back(seg(tt, 4.0, 4.2)), rot=6)
+    return shake
+
+
+GAGS.update({
+    'sneeze': dict(debut='2026-10-24', title='WHEN YOU SNEEZE', name='Sneeze', wall=(225, 235, 245), fn=gag_sneeze,
+                   N=[(0.2, 'inhale', 0.9), (1.2, 'pop')],
+                   P=[(0.0, 'sting'), (0.2, 'inhale', 1.9), (2.2, 'bang'), (2.25, 'whoosh'), (2.9, 'boing')]),
+    'spaghetti': dict(debut='2026-10-24', title='EATING SPAGHETTI', name='Spaghetti', wall=(250, 230, 215), fn=gag_spaghetti,
+                      N=[(0.7, 'rattle', 0.4), (1.6, 'crunch'), (2.0, 'crunch')],
+                      P=[(0.0, 'sting'), (0.9, 'slurp', 2.5), (3.4, 'splat'), (3.6, 'burp')]),
+    'selfie': dict(debut='2026-10-24', title='TAKING A SELFIE', name='Selfie', wall=(240, 225, 245), fn=gag_selfie,
+                   N=[(1.5, 'click'), (1.8, 'ding')],
+                   P=[(0.0, 'sting')] + [(0.8 + i * 0.4, 'click') for i in range(9)] + [(4.2, 'boing')]),
+    'hotsauce': dict(debut='2026-10-24', title='HOT SAUCE', name='Hot Sauce', wall=(250, 225, 210), fn=gag_hotsauce,
+                     N=[(1.1, 'pop'), (1.6, 'ding')],
+                     P=[(0.0, 'sting'), (1.0, 'gulp'), (1.5, 'gulp'), (2.4, 'blow', 1.4), (2.4, 'horn'), (4.0, 'ding')]),
 })
 
 
