@@ -433,6 +433,23 @@
       ],
       "room": "office",
       "seed": 304434
+    },
+    {
+      "id": "qkAS4YZ1_wo",
+      "date": "2026-10-11 19:49",
+      "kind": "short",
+      "title": "Chonk: Normal vs Psycho (Coffee & Pizza) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "chonk",
+      "gags": [
+        "coffee",
+        "pizza",
+        "lemon",
+        "soda"
+      ],
+      "room": "library",
+      "seed": 296138
     }
   ]
 }
