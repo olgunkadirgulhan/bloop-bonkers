@@ -42,6 +42,11 @@ CAST = {
     'duke': dict(name='Duke', color=(165, 120, 95), shoe=(40, 40, 50), acc='mustache'),
     'luna': dict(name='Luna', color=(175, 140, 235), shoe=(255, 255, 255), acc='flower'),
     'rex': dict(name='Rex', color=(230, 80, 70), shoe=(40, 120, 200), acc='beanie'),
+    'kiki': dict(name='Kiki', color=(120, 225, 195), shoe=(255, 120, 60), acc='sunglasses'),
+    'boris': dict(name='Boris', color=(110, 130, 195), shoe=(60, 40, 30), acc='bowtie'),
+    'nova': dict(name='Nova', color=(250, 175, 150), shoe=(150, 90, 200), acc='crown'),
+    'pepper': dict(name='Pepper', color=(200, 90, 160), shoe=(250, 210, 60), acc='scarf'),
+    'jojo': dict(name='Jojo', color=(240, 228, 215), shoe=(230, 60, 90), acc='ponytail'),
 }
 
 # (üst etiket, alt etiket, kapanış sorusu)
@@ -187,10 +192,11 @@ def put_text(img, txt, cx, cy, sz, fill, scale=1.0, rot=0, max_w=None):
 
 
 # ---------------------------------------------------------------- sahne
-ROOMS = ('living', 'kitchen', 'bedroom', 'office', 'bathroom', 'garage', 'cafe', 'library', 'gym', 'diner')
+ROOMS = ('living', 'kitchen', 'bedroom', 'office', 'bathroom', 'garage', 'cafe', 'library', 'gym', 'diner', 'arcade', 'studio', 'greenhouse', 'spaceship', 'hotel')
 FLOORS = {'living': (196, 138, 88), 'kitchen': (214, 204, 186), 'bedroom': (176, 120, 150), 'office': (150, 152, 165),
           'bathroom': (225, 228, 238), 'garage': (128, 128, 134), 'cafe': (150, 100, 70),
-          'library': (120, 80, 55), 'gym': (70, 72, 80), 'diner': (235, 235, 235)}
+          'library': (120, 80, 55), 'gym': (70, 72, 80), 'diner': (235, 235, 235),
+          'arcade': (60, 42, 80), 'studio': (105, 90, 82), 'greenhouse': (150, 132, 100), 'spaceship': (140, 145, 158), 'hotel': (150, 40, 52)}
 
 
 @lru_cache(None)
@@ -206,6 +212,16 @@ def background(wall, room='living'):
         stripe = (((xx % 60) < 3) | ((yy % 60) < 3)) * -0.10 + 0.0 * yy
     elif room == 'garage':     # beton paneller
         stripe = ((xx // 160) % 2) * -0.03 + (((xx % 160) < 3) * -0.08) + 0.0 * yy
+    elif room == 'arcade':     # karanlık + neon şeritler
+        stripe = -0.5 + (((yy % 120) < 6) * 0.9) + 0.0 * xx
+    elif room == 'studio':     # akustik sünger
+        stripe = ((((xx % 50) - 25) ** 2 + ((yy % 50) - 25) ** 2) < 200) * -0.12 - 0.15
+    elif room == 'greenhouse': # cam paneller
+        stripe = (((xx % 140) < 5) | ((yy % 140) < 5)) * 0.18 + 0.05 + 0.0 * yy
+    elif room == 'spaceship':  # metal paneller + perçin
+        stripe = (((xx % 180) < 4) | ((yy % 120) < 4)) * -0.2 + ((((xx % 180) - 14) ** 2 + ((yy % 120) - 14) ** 2) < 20) * -0.3 - 0.1
+    elif room == 'hotel':      # geniş altın çizgiler
+        stripe = (((xx // 45) % 3) == 0) * 0.08 + ((yy > 420) & (yy < 430)) * -0.3
     elif room == 'library':    # ahşap lambri
         stripe = ((xx % 90) < 4) * -0.18 + (yy > 380) * -0.10
     elif room == 'gym':
@@ -259,6 +275,30 @@ def background(wall, room='living'):
         d.rectangle(box(80, 110, 92, 230), fill=(120, 80, 50)); d.rectangle(box(62, 100, 110, 130), fill=(110, 110, 120))
         d.rectangle(box(170, 110, 182, 260), fill=(150, 150, 160)); d.ellipse(box(158, 92, 194, 128), outline=(150, 150, 160), width=L(10))
         d.rounded_rectangle(box(220, 120, 280, 280), radius=L(8), fill=(220, 60, 50))
+    elif room == 'arcade':     # oyun makinesi
+        d.rounded_rectangle(box(60, 60, 280, 360), radius=L(16), fill=(30, 20, 60), outline=(80, 220, 255), width=L(6))
+        d.rectangle(box(90, 100, 250, 220), fill=(20, 200, 140)); d.rectangle(box(110, 130, 140, 150), fill=(255, 230, 60))
+        d.ellipse(box(180, 150, 210, 180), fill=(255, 80, 150))
+        for x in (110, 150, 190, 230): d.ellipse(box(x - 12, 260, x + 12, 284), fill=(255, 80, 150) if x % 80 else (80, 220, 255))
+    elif room == 'studio':     # ON AIR
+        d.rounded_rectangle(box(70, 150, 300, 250), radius=L(14), fill=(200, 30, 40), outline=(255, 120, 120), width=L(6))
+        f_ = font(L(54)); tw = d.textlength('ON AIR', font=f_); d.text((L(185) - tw / 2, L(176)), 'ON AIR', font=f_, fill=(255, 255, 255))
+    elif room == 'greenhouse': # asılı saksılar
+        for x, yb in ((110, 210), (230, 260)):
+            d.line(box(x, 40, x, yb - 40), fill=(90, 70, 50), width=L(4))
+            d.rounded_rectangle(box(x - 40, yb - 40, x + 40, yb + 10), radius=L(10), fill=(200, 100, 60))
+            for k in range(5): d.ellipse(box(x - 60 + k * 26, yb - 70 + (k % 2) * 16, x - 20 + k * 26, yb - 30 + (k % 2) * 16), fill=(70, 170, 80))
+    elif room == 'spaceship':  # lomboz + kontrol paneli
+        d.ellipse(box(684, 64, 936, 336), fill=(12, 12, 32), outline=(170, 175, 190), width=L(16))
+        for k in range(14):
+            r_ = random.Random(k); sx_, sy_ = r_.uniform(720, 900), r_.uniform(100, 300); rr = r_.uniform(2, 5)
+            d.ellipse(box(sx_ - rr, sy_ - rr, sx_ + rr, sy_ + rr), fill=(255, 255, 230))
+        d.ellipse(box(820, 220, 880, 280), fill=(230, 120, 70))
+        d.rounded_rectangle(box(50, 120, 300, 280), radius=L(12), fill=(50, 55, 70))
+        for k in range(8): d.ellipse(box(75 + (k % 4) * 55, 150 + (k // 4) * 60, 105 + (k % 4) * 55, 180 + (k // 4) * 60), fill=[(255, 80, 80), (80, 220, 120), (255, 220, 60), (80, 170, 255)][k % 4])
+    elif room == 'hotel':      # altın çerçeveli tablo
+        d.rectangle(box(60, 80, 290, 300), fill=(200, 160, 60)); d.rectangle(box(78, 98, 272, 282), fill=(70, 110, 150))
+        d.polygon([(L(78), L(282)), (L(150), L(170)), (L(200), L(230)), (L(272), L(150)), (L(272), L(282))], fill=(60, 130, 90))
     elif room == 'library':    # büyük kitaplık
         d.rectangle(box(30, 40, 320, 360), fill=(95, 60, 40))
         for shelf in (40, 120, 200, 280):
@@ -340,8 +380,20 @@ def draw_char(img, cx, gy, o):
         for a in (-38, -12, 14, 40):
             px, py = rotv(0, -ry - 18, a)
             put_rot(img, sphere(lerpc(col, (255, 120, 0), 0.35), 46, 96, 0.5), cx + px * 0.95, cy + py * 0.95, a + math.sin(t * 5 + a) * 4)
+    if acc == 'ponytail':
+        put_rot(img, sphere((120, 75, 45), 90, 170, 0.4), cx + rx * 0.95, cy - ry * 0.35 + math.sin(t * 5) * 6, -25)
     put_sphere(img, col, cx, cy, 2 * rx, 2 * ry, 0.45)
     d = ImageDraw.Draw(img)
+    if acc == 'ponytail':
+        d.chord(box(cx - 0.9 * rx, cy - ry - 6, cx + 0.9 * rx, cy - ry + 90 * sy), 180, 360, fill=(120, 75, 45))
+        put_sphere(img, (230, 60, 90), cx + rx * 0.82, cy - ry * 0.55, 34, 34, 0.5)
+        d = ImageDraw.Draw(img)
+    if acc == 'crown':
+        top = cy - ry + 6
+        pts = [(cx - 70, top + 10), (cx - 70, top - 50), (cx - 35, top - 20), (cx, top - 64), (cx + 35, top - 20), (cx + 70, top - 50), (cx + 70, top + 10)]
+        d.polygon([(L(x), L(y)) for x, y in pts], fill=(250, 200, 50), outline=DARK)
+        for x in (-35, 0, 35): put_sphere(img, (230, 60, 90) if x else (80, 160, 240), cx + x, top - 6, 18, 18, 0.6)
+        d = ImageDraw.Draw(img)
     if acc == 'cap':
         capc = (40, 95, 205)
         d.chord(box(cx - 0.8 * rx, cy - ry - 16, cx + 0.8 * rx, cy - ry + 112 * sy), 180, 360, fill=capc, outline=DARK, width=L(5))
@@ -444,6 +496,18 @@ def draw_char(img, cx, gy, o):
     elif m == 'chew':
         k = abs(math.sin(t * 16))
         d.ellipse(box(mx - 26, my - 2 - 6 * k, mx + 26, my + 10 + 8 * k), fill=(110, 25, 40), outline=DARK, width=L(4))
+    if acc == 'sunglasses':   # alnın üstünde (gözler ifade için açık kalsın)
+        gy_ = cy - ry * 0.62
+        for s_ in (-1, 1): d.rounded_rectangle(box(cx + s_ * 46 - 38, gy_ - 20, cx + s_ * 46 + 38, gy_ + 22), radius=L(14), fill=(30, 30, 40), outline=(255, 255, 255), width=L(3))
+        d.line(box(cx - 8, gy_ - 6, cx + 8, gy_ - 6), fill=(30, 30, 40), width=L(6))
+    if acc == 'bowtie':
+        by_ = cy + ry * 0.78
+        tri(img, [(cx, by_), (cx - 60, by_ - 30), (cx - 60, by_ + 30)], (220, 40, 60)); tri(img, [(cx, by_), (cx + 60, by_ - 30), (cx + 60, by_ + 30)], (220, 40, 60))
+        put_sphere(img, (180, 30, 50), cx, by_, 26, 26, 0.4)
+    if acc == 'scarf':
+        sy_ = cy + ry * 0.6
+        d.rounded_rectangle(box(cx - rx * 0.85, sy_ - 22, cx + rx * 0.85, sy_ + 22), radius=L(18), fill=(60, 170, 220), outline=DARK, width=L(4))
+        d.rounded_rectangle(box(cx + 40, sy_ - 4, cx + 84, sy_ + 90), radius=L(14), fill=(60, 170, 220), outline=DARK, width=L(4))
     if acc == 'flower':
         fx, fy = cx - 72 * sx, cy - ry * 0.8
         for a in range(0, 360, 72):
@@ -2874,6 +2938,256 @@ GAGS.update({
     'hotdog': dict(debut='2026-11-21', title='HOT DOG', name='Hot Dog', wall=(250, 230, 210), fn=gag_hotdog,
                    N=[(1.2, 'crunch'), (1.6, 'crunch'), (2.0, 'crunch')],
                    P=[(0.0, 'sting'), (1.2, 'slurp', 0.8), (2.0, 'gulp'), (2.4, 'crunch'), (3.0, 'burp')]),
+})
+
+
+# ================================================================ 2026-10-11 (3) yeni gag'ler (50'ye çıkış)
+BOBA = (60, 40, 35)
+TEA = (215, 175, 140)
+
+
+def boba_cup(img, cx, cy, fill=1.0, balls=1.0):
+    put(img, cyl((245, 240, 235), 100, 150, 14), cx, cy)
+    if fill > 0: put(img, cyl(TEA, 92, 140 * fill, 10), cx, cy + 70 * (1 - fill))
+    for k in range(int(9 * balls)):
+        put_sphere(img, BOBA, cx - 30 + (k % 3) * 30, cy + 54 - (k // 3) * 22, 24, 24, 0.6)
+    d = ImageDraw.Draw(img)
+    d.line(box(cx + 10, cy - 75, cx + 40, cy - 170), fill=(255, 120, 170), width=L(12))
+
+
+def gag_boba(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    my = mouth_y()
+    cup = (CX + 170, my + 60)
+    if v == 'N':
+        sip = 0.6 <= tt < 2.2
+        boba_cup(img, *cup, fill=1.0 - 0.3 * sm(seg(tt, 0.6, 2.2)))
+        o.update(mouth='o' if sip else 'smile', eyes='happy' if tt > 2.2 else 'normal', look=(1, 0.4), hands=[None, (cup[0] - 10, cup[1] + 30)])
+        draw_char(img, CX, GY, o); hand(img, (cup[0] - 10, cup[1] + 30))
+    else:
+        suck = sm(seg(tt, 0.4, 1.6))
+        boba_cup(img, *cup, fill=1.0 - suck, balls=1.0 - suck)
+        firing = 2.0 <= tt < 3.8
+        o.update(mouth='o' if tt < 2.0 else ('open' if firing else 'grin'), mo=0.6, eyes='crazy', brow='angry' if tt < 2.0 else None,
+                 look=(1, 0), puff=suck * (1 - sm(seg(tt, 3.2, 3.8))), hands=[None, (cup[0] - 10, cup[1] + 30)])
+        info = draw_char(img, CX, GY, o); hand(img, (cup[0] - 10, cup[1] + 30))
+        if firing:
+            for k in range(12):
+                a = (tt - 2.0) * 3 - k * 0.15
+                if 0 <= a < 1: put_sphere(img, BOBA, CX + 60 + 900 * a, info['my'] - 10 + 30 * math.sin(k), 30, 30, 0.6)
+            put_text(img, 'PEW PEW PEW!', 640, 200, 100, (255, 120, 170), scale=1.0 + 0.04 * math.sin(tt * 40), rot=-6, max_w=980)
+            shake = 4
+        if tt >= 3.9: put_text(img, 'BOBA CANNON.', 620, 240, 100, (255, 255, 255), scale=back(seg(tt, 3.9, 4.1)), rot=6, max_w=980)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: iskambil kulesi
+def card_tower(img, levels, base_x=835, base_y=TTOP - 6, fall=0.0, seed=0):
+    d = ImageDraw.Draw(img)
+    rnd = random.Random(seed)
+    for lv in range(levels):
+        n = max(1, 4 - lv % 4) if levels <= 4 else max(1, 3 - (lv * 3) // levels)
+        for k in range(n):
+            x = base_x + (k - (n - 1) / 2) * 70
+            y = base_y - lv * 72
+            if fall > 0:
+                x += rnd.uniform(-400, 400) * fall; y += (base_y - y) * fall + rnd.uniform(-40, 20) * fall
+            ang = rnd.uniform(-90, 90) * fall
+            for s_ in (-1, 1):
+                p0 = rotv(s_ * 30, 36, ang); p1 = rotv(0, -36, ang)
+                d.line(box(x + p0[0], y + p0[1], x + p1[0], y + p1[1]), fill=(250, 250, 250), width=L(8))
+
+
+def gag_cards(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        card_tower(img, 1 + int(2 * sm(seg(tt, 0.4, 2.0))))
+        o.update(mouth='smile', eyes='happy' if tt > 2.2 else 'normal', look=(1, 0))
+        draw_char(img, CX, GY, o)
+        if tt > 2.2: put_text(img, 'cute.', 840, 280, 60, (255, 255, 255), scale=back(seg(tt, 2.2, 2.4)))
+    else:
+        lv = 1 + int(6 * sm(seg(tt, 0.3, 2.4)))
+        fall = sm(seg(tt, 3.0, 3.6))
+        card_tower(img, lv, fall=fall, seed=3)
+        sneeze = 2.6 <= tt < 3.0
+        o.update(mouth='o' if sneeze else ('grin' if tt < 3.0 else 'open'), mo=1.0, eyes='sleepy' if sneeze else 'crazy',
+                 brow='angry' if tt < 2.4 else None, look=(1, -0.6), sy=1.0 + 0.1 * sneeze)
+        draw_char(img, CX, GY, o)
+        if 2.95 <= tt < 3.5: put_text(img, 'ACHOO', 560, 330, 90, (255, 255, 255), rot=-8)
+        if 1.0 <= tt < 2.6: put_text(img, f'LEVEL {lv}', 660, 160, 90, (255, 230, 60), rot=-5)
+        if tt >= 3.7: put_text(img, '...AGAIN.', 640, 240, 110, (255, 255, 255), scale=back(seg(tt, 3.7, 3.9)), rot=6)
+        if 3.0 <= tt < 3.3: shake = 10
+    return shake
+
+
+# ---------------------------------------------------------------- gag: telefon araması
+def gag_phonecall(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    ring = math.sin(gt * 60) * 8 if tt < 1.0 else 0
+    if v == 'N':
+        hp = lp((850, TTOP - 95), (CX + 120, mouth_y() - 40), sm(seg(tt, 1.0, 1.4)))
+        o.update(hands=[None, (hp[0] - 20, hp[1] + 60)] if tt >= 1.0 else [None, None], mouth='open' if tt >= 1.5 and (tt * 4) % 1 < 0.5 else 'smile', mo=0.4,
+                 eyes='happy' if tt > 1.6 else 'normal', look=(1, 0))
+        draw_char(img, CX, GY, o)
+        draw_phone(img, hp[0] + ring, hp[1], 70)
+        if tt >= 1.0: hand(img, (hp[0] - 20, hp[1] + 60))
+        if tt < 1.0: put_text(img, 'RING RING', 850, TTOP - 260, 50, (255, 255, 255))
+        if tt > 1.6: put_text(img, '"hello?"', 600, 320, 60, (255, 255, 255), scale=back(seg(tt, 1.6, 1.8)), rot=-4)
+    else:
+        grab = tt >= 1.4
+        u = seg(tt, 1.8, 2.6)
+        if not grab: pp = (850 + ring, TTOP - 95)
+        elif tt < 1.8: pp = lp((850, TTOP - 95), (CX + 220, GY - 360), sm(seg(tt, 1.4, 1.8)))
+        else: pp = (lerp(CX + 220, 760, u), lerp(GY - 360, -150, u) + 200 * math.sin(math.pi * u))
+        o.update(mouth='flat' if tt < 1.4 else 'grin', mo=1.0, eyes='crazy', brow='angry', look=(1, -0.2),
+                 hands=[None, (CX + 200, GY - 330)] if 1.4 <= tt < 2.0 else [None, None], eye_s=1.0 + 0.3 * (tt < 1.4))
+        draw_char(img, CX, GY, o)
+        if tt < 2.6: draw_phone(img, pp[0], pp[1], 70)
+        if 1.4 <= tt < 2.0: hand(img, (CX + 200, GY - 330))
+        if tt < 1.4: put_text(img, 'RING RING', 850, TTOP - 260, 50, (255, 255, 255))
+        if 2.0 <= tt < 3.0: put_text(img, 'NOPE!', 620, 220, 150, (255, 90, 90), scale=back(seg(tt, 2.0, 2.2)), rot=-8); shake = 6
+        if tt >= 3.2: put_text(img, 'TEXT ME.', 620, 240, 120, (255, 255, 255), scale=back(seg(tt, 3.2, 3.4)), rot=6)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: kazı kazan
+TICKET = (850, TTOP - 50)
+
+
+def ticket(img, scratched, prize):
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle(box(TICKET[0] - 130, TICKET[1] - 70, TICKET[0] + 130, TICKET[1] + 40), radius=L(12), fill=(255, 220, 90), outline=DARK, width=L(4))
+    d.rounded_rectangle(box(TICKET[0] - 100, TICKET[1] - 50, TICKET[0] + 100, TICKET[1] + 20), radius=L(8), fill=(255, 255, 255) if scratched >= 1 else (170, 170, 180))
+    if scratched > 0:
+        d.rectangle(box(TICKET[0] - 100, TICKET[1] - 50, TICKET[0] - 100 + 200 * scratched, TICKET[1] + 20), fill=(255, 255, 255))
+        if scratched > 0.6:
+            f_ = font(L(54)); tw = d.textlength(prize, font=f_)
+            d.text((L(TICKET[0]) - tw / 2, L(TICKET[1] - 44)), prize, font=f_, fill=(40, 150, 60))
+
+
+def gag_scratch(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        sc = sm(seg(tt, 0.6, 1.8))
+        ticket(img, sc, '$2')
+        hr = (TICKET[0] - 100 + 200 * sc, TICKET[1] - 60 + 10 * math.sin(gt * 30)) if 0.6 <= tt < 1.8 else hand_default(1)
+        o.update(hands=[None, hr], mouth='smile', eyes='happy' if tt > 2.0 else 'normal', look=(1, 0.4))
+        draw_char(img, CX, GY, o); hand(img, hr)
+        if tt > 2.0: put_text(img, 'nice, $2', 640, 300, 60, (255, 255, 255), scale=back(seg(tt, 2.0, 2.2)), rot=-4)
+    else:
+        sc = sm(seg(tt, 0.4, 1.4))
+        ticket(img, sc, '$1')
+        win = tt >= 1.6
+        jump = 220 * abs(math.sin((tt - 1.6) * 6)) if win and tt < 3.8 else 0
+        o.update(mouth='open' if win else 'grin', mo=1.0, eyes='crazy', brow='angry' if not win else None, look=(1, 0.3),
+                 hands=[(CX - 190, GY - 420 - jump), (CX + 190, GY - 420 - jump)] if win else [None, None])
+        draw_char(img, CX, GY - jump, o)
+        if not win: put_text(img, 'scratch scratch', 640, 300, 60, (255, 255, 255), rot=-4)
+        if win:
+            confetti(img, 61, 1.6, tt, (CX, GY - 500))
+            put_text(img, '$1!!! I\'M RICH!', 620, 200, 100, (60, 200, 90), scale=1.0 + 0.05 * math.sin(tt * 30), rot=-7, max_w=980)
+            if tt < 2.0: shake = 10
+    return shake
+
+
+# ---------------------------------------------------------------- gag: ayakkabı bağcığı
+def gag_shoelace(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    d = ImageDraw.Draw(img)
+    if v == 'N':
+        tie = 0.4 <= tt < 2.0
+        o.update(mouth='smile', eyes='happy' if tt > 2.0 else 'normal', look=(0, 1) if tie else (1, 0),
+                 hands=[(CX - 58, GY - 30), (CX + 58, GY - 30)] if tie else [None, None])
+        draw_char(img, CX, GY, o)
+        for s_ in (-1, 1):
+            d = ImageDraw.Draw(img)
+            d.arc(box(CX + s_ * 58 - 22, GY - 46, CX + s_ * 58 + 22, GY - 18), 180, 360, fill=(255, 255, 255), width=L(5))
+        if tie:
+            hand(img, (CX - 58, GY - 30)); hand(img, (CX + 58, GY - 30))
+        if tt > 2.0: put_text(img, 'double knot.', 600, 320, 56, (255, 255, 255), scale=back(seg(tt, 2.0, 2.2)), rot=-4)
+    else:
+        run = tt >= 1.6
+        fall = sm(seg(tt, 2.0, 2.3))
+        x = CX + 120 * sm(seg(tt, 1.6, 2.0))
+        o.update(mouth='grin' if not run else ('open' if tt < 3.4 else 'flat'), mo=1.0, eyes='crazy' if tt < 2.3 else 'happy', brow='angry' if tt < 1.6 else None,
+                 look=(0, 1) if tt < 1.4 else (1, 0), hands=[(CX - 58, GY - 30), (CX + 58, GY - 30)] if 0.4 <= tt < 1.4 else [None, None])
+        if fall > 0:
+            spr = Image.new('RGBA', img.size, (0, 0, 0, 0))
+            draw_char(spr, x, GY, o)
+            img.alpha_composite(spr.rotate(-80 * fall, center=(L(x + 120), L(GY)), resample=Image.BICUBIC))
+        else:
+            draw_char(img, x, GY, o)
+        d = ImageDraw.Draw(img)
+        d.line(box(x - 58, GY - 24, x + 58, GY - 24), fill=(255, 255, 255), width=L(6))
+        if 0.4 <= tt < 1.4: hand(img, (CX - 58, GY - 30)); hand(img, (CX + 58, GY - 30))
+        if 1.6 <= tt < 2.1: put_text(img, 'GO!', 640, 240, 130, (255, 255, 255), rot=-8)
+        if 2.2 <= tt < 2.5: shake = 18
+        if tt >= 2.8: put_text(img, 'SECURITY KNOT.', 620, 220, 100, (255, 230, 60), scale=back(seg(tt, 2.8, 3.0)), rot=6, max_w=980)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: şişe çevirme
+def water_bottle(img, cx, cy, ang, s=1.0):
+    spr = Image.new('RGBA', (L(70 * s), L(170 * s)), (0, 0, 0, 0))
+    spr.alpha_composite(cyl((180, 220, 250), 70 * s, 140 * s, 18), (0, L(30 * s)))
+    spr.alpha_composite(cyl((90, 140, 230), 36 * s, 34 * s, 6), (L(17 * s), 0))
+    put_rot(img, spr, cx, cy, ang)
+
+
+def gag_bottleflip(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    land = (850, TTOP - 85)
+    if v == 'N':
+        u = seg(tt, 0.6, 1.4)
+        if tt < 0.6: bx, by, ang = CX + 220, GY - 300, 0
+        elif u < 1: bx, by, ang = lerp(CX + 220, land[0], u), lerp(GY - 300, land[1], u) - 260 * math.sin(math.pi * u), 360 * u
+        else: bx, by, ang = land[0] + 30, TTOP - 40, 90 + 20 * (1 - sm(seg(tt, 1.4, 1.6)))
+        o.update(hands=[None, (CX + 220, GY - 300) if tt < 0.7 else None], mouth='smile' if tt < 1.4 else 'flat', eyes='normal', look=(1, -0.3))
+        draw_char(img, CX, GY, o)
+        water_bottle(img, bx, by, ang)
+        if tt > 1.6: put_text(img, 'oh well.', 620, 320, 60, (255, 255, 255), scale=back(seg(tt, 1.6, 1.8)), rot=-4)
+    else:
+        flips = [(0.5, 1.3, land), (1.5, 2.3, (CX, head_top() - 70)), (2.5, 3.3, land)]
+        o.update(mouth='grin', mo=1.0, eyes='crazy', brow='angry' if tt < 1.3 else None, look=(1, -0.5))
+        draw_char(img, CX, GY, o)
+        bx, by, ang = CX + 220, GY - 300, 0
+        for a, b, tgt in flips:
+            if a <= tt < b:
+                u = seg(tt, a, b); src = (CX + 220, GY - 300) if a < 1.5 else (land if a > 2 else (CX + 220, GY - 300))
+                bx, by, ang = lerp(src[0], tgt[0], u), lerp(src[1], tgt[1], u) - 300 * math.sin(math.pi * u), 720 * u
+            elif tt >= b:
+                bx, by, ang = tgt[0], tgt[1], 0
+        if tt >= 3.3:
+            water_bottle(img, land[0], land[1], 0); water_bottle(img, CX, head_top() - 70, 0); water_bottle(img, land[0] + 90, land[1] - 160, 0)
+        else:
+            if tt >= 2.3: water_bottle(img, CX, head_top() - 70, 0)
+            if tt >= 1.3 and tt < 2.5: water_bottle(img, land[0], land[1], 0)
+            water_bottle(img, bx, by, ang)
+        hits = [b for a, b, _ in flips if b <= tt < b + 0.4]
+        if hits: put_text(img, 'CLACK!', 640, 220, 100, (255, 255, 255), rot=-6)
+        if tt >= 3.5: put_text(img, '3 FOR 3.', 620, 250, 120, (255, 230, 60), scale=back(seg(tt, 3.5, 3.7)), rot=6)
+    return shake
+
+
+GAGS.update({
+    'boba': dict(debut='2026-11-28', title='BUBBLE TEA', name='Bubble Tea', wall=(245, 225, 235), fn=gag_boba,
+                 N=[(0.6, 'slurp', 1.6), (2.2, 'ahh')],
+                 P=[(0.0, 'sting'), (0.4, 'slurp', 1.2), (2.0, 'pop'), (2.3, 'pop'), (2.6, 'pop'), (2.9, 'pop'), (3.2, 'pop'), (3.9, 'boing')]),
+    'cards': dict(debut='2026-11-28', title='HOUSE OF CARDS', name='Cards', wall=(215, 235, 225), fn=gag_cards,
+                  N=[(0.6, 'click'), (1.3, 'click'), (2.2, 'ding')],
+                  P=[(0.0, 'sting')] + [(0.4 + i * 0.35, 'click') for i in range(6)] + [(2.6, 'inhale', 0.4), (2.95, 'blow', 0.3), (3.0, 'smash')]),
+    'phonecall': dict(debut='2026-11-28', title='PHONE CALL', name='Phone Call', wall=(225, 230, 245), fn=gag_phonecall,
+                      N=[(0.0, 'ring', 1.0), (1.2, 'click')],
+                      P=[(0.0, 'ring', 1.4), (1.4, 'sting'), (1.8, 'whoosh'), (2.6, 'smash'), (3.2, 'ding')]),
+    'scratch': dict(debut='2026-11-28', title='SCRATCH CARD', name='Scratch Card', wall=(245, 240, 210), fn=gag_scratch,
+                    N=[(0.6, 'rattle', 1.2), (2.0, 'ding')],
+                    P=[(0.0, 'sting'), (0.4, 'rattle', 1.0), (1.6, 'horn'), (1.65, 'clap'), (2.0, 'clap'), (2.4, 'clap')]),
+    'shoelace': dict(debut='2026-11-28', title='TYING SHOES', name='Shoelaces', wall=(230, 230, 220), fn=gag_shoelace,
+                     N=[(0.6, 'rattle', 1.2), (2.0, 'ding')],
+                     P=[(0.0, 'sting'), (0.4, 'rattle', 1.0), (1.6, 'whoosh'), (2.2, 'bang'), (2.8, 'boing')]),
+    'bottleflip': dict(debut='2026-11-28', title='BOTTLE FLIP', name='Bottle Flip', wall=(220, 235, 245), fn=gag_bottleflip,
+                       N=[(0.6, 'whoosh_s'), (1.4, 'bonk')],
+                       P=[(0.0, 'sting'), (0.5, 'whoosh_s'), (1.3, 'click'), (1.5, 'whoosh_s'), (2.3, 'click'), (2.5, 'whoosh_s'), (3.3, 'click'), (3.5, 'horn')]),
 })
 
 
