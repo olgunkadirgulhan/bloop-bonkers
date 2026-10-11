@@ -416,6 +416,23 @@
       ],
       "room": "spaceship",
       "seed": 493836
+    },
+    {
+      "id": "soi9z-rJb_k",
+      "date": "2026-10-11 16:51",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Cookie & Birthday Cake) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "ziggy",
+      "gags": [
+        "cookie",
+        "cake",
+        "ketchup",
+        "pumpkin"
+      ],
+      "room": "office",
+      "seed": 304434
     }
   ]
 }
