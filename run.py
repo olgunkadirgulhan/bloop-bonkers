@@ -122,9 +122,11 @@ def metadata(plan, hist, rnd):
     rnd.shuffle(opts)
     title = next((t for t in opts if t not in used), opts[0] + f' #{len(hist["videos"]) + 1}')
     A, B, _ = bloop.FORMATS[plan['format']]
+    ep = next((v for v in reversed(hist['videos']) if v.get('kind') == 'episode' and v.get('privacy') == 'public'), None)  # Shorts → uzun bölüm
     desc = (f'Which one are YOU? Comment 1 or 2! 👇\n\n'
             f'{c} tries {", ".join(n.lower() for n in names[:-1])} and {names[-1].lower()}: '
             f'{A.lower()} vs {B.lower()}.\n\n'
+            + (f'🎬 Full episode ({ep["title"].split("|")[0].strip()}): https://youtu.be/{ep["id"]}\n\n' if ep else '') +
             f'New Bloop Bonkers Shorts every day. Subscribe for more chaos! 🟣\n\n'
             f'#shorts #animation #funny #cartoon #{TAGS[plan["format"]]} #bloopbonkers')
     tags = ['bloop bonkers', f'{A.lower()} vs {B.lower()}', 'funny animation', '3d animation', 'cartoon',

@@ -200,6 +200,18 @@ def main():
     except Exception as e:
         print('küçük resim:', e)
     print(f'yüklendi: https://youtu.be/{vid} ({privacy})', flush=True)
+    try:                                               # "Full Episodes" oynatma listesi (yoksa oluşturulur)
+        plf = HERE / 'playlists.json'
+        pl = json.loads(plf.read_text()) if plf.exists() else {}
+        if 'episodes' not in pl:
+            pl['episodes'] = upload.client().playlists().insert(part='snippet,status', body={
+                'snippet': {'title': 'Full Episodes 🎬 Normal vs Psycho', 'description': 'Every Bloop Bonkers full episode: '
+                            'everyday situations, normal vs psycho, each one shown once. New episodes every Mon, Wed and Fri.'},
+                'status': {'privacyStatus': 'public'}}).execute()['id']
+            plf.write_text(json.dumps(pl, indent=2) + '\n')
+        upload.add_to_playlist(pl['episodes'], vid)
+    except Exception as e:
+        print('playlist:', e)
     hist['videos'].append(dict(id=vid, date=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M'), kind='episode',
                                title=title, privacy=privacy, format=fmt, items=[list(x) for x in items]))
     HISTORY.write_text(json.dumps(hist, indent=2, ensure_ascii=False) + '\n')
