@@ -498,6 +498,21 @@
       ],
       "room": "living",
       "seed": 250048
+    },
+    {
+      "id": "iWm2BpeGFQA",
+      "date": "2026-10-12 21:49",
+      "kind": "short",
+      "title": "In Public vs At Home: Sandwich & Coffee 💀",
+      "privacy": "public",
+      "format": "public",
+      "cast": "mimi",
+      "gags": [
+        "sandwich",
+        "coffee"
+      ],
+      "room": "hotel",
+      "seed": 452502
     }
   ]
 }
