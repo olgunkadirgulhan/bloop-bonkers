@@ -482,6 +482,22 @@
       ],
       "room": "office",
       "seed": 48602
+    },
+    {
+      "id": "yxQMsB6R29k",
+      "date": "2026-10-12 18:25",
+      "kind": "short",
+      "title": "Bubble Gum & Ice Cream: Expectation vs Reality 💀",
+      "privacy": "public",
+      "format": "expect",
+      "cast": "kiki",
+      "gags": [
+        "gum",
+        "icecream",
+        "pumpkin"
+      ],
+      "room": "living",
+      "seed": 250048
     }
   ]
 }
