@@ -3962,12 +3962,24 @@ def line_clip(gag, which):
     """Durum repliği (voices/<Ses>/lines/<durum>_<N|P>.wav); karakterin sesi voice_lines.voices_for ile seçilir."""
     import voice_lines
     v = voice_lines.voices_for(PLAN.get('cast', 'bloop'))[0]
-    f = os.path.join(HERE, 'voices', v, 'lines', f'{gag}_{which}.wav')
-    x = load_clip(f) if os.path.exists(f) else None
+    # 3 varyant (<durum>_<N|P>.wav, ..._N2, ..._N3): mevcut olanlardan videoya göre biri (aynı cümle hep tekrar etmesin)
+    cands = [f for f in (os.path.join(HERE, 'voices', v, 'lines', f'{gag}_{which}{suf}.wav') for suf in ('', '2', '3'))
+             if os.path.exists(f)]
+    if not cands: return None
+    f = cands[random.Random(f"{PLAN.get('seed')}-{gag}-{which}").randrange(len(cands))]
+    x = load_clip(f)
     if x is None: return None
     r = 1.0 + ((sum(map(ord, PLAN.get('cast', 'bloop'))) % 7) - 3) * 0.02   # karakter başına hafif perde farkı
     x = np.interp(np.arange(0, len(x) - 1, r), np.arange(len(x)), x)
     return x / (np.abs(x).max() + 1e-9) * 0.8
+
+
+def catch_clip():
+    """Karakterin tekrar eden sözü (voice_lines.CATCH): voices/<Ses>/lines/catch_<karakter>.wav."""
+    import voice_lines
+    f = os.path.join(HERE, 'voices', voice_lines.voices_for(PLAN.get('cast', 'bloop'))[0], 'lines', f"catch_{PLAN.get('cast', 'bloop')}.wav")
+    x = load_clip(f) if os.path.exists(f) else None
+    return None if x is None else x / (np.abs(x).max() + 1e-9) * 0.8
 
 
 def anime_voice(kind, pitch, seed=0):
@@ -4029,7 +4041,7 @@ def audio_events():
     pv = voice_pitch(); vs = PLAN.get('seed', 1)
     for t0 in (0.0, 0.45): place(t0, sfx('pop'))
     if PLAN.get('format') == 'day':
-        say(0.6, babble('talk', pv, vs))
+        say(0.6, catch_clip() if catch_clip() is not None else babble('talk', pv, vs))
         for k, key in enumerate(PLAN['gags']):
             g = GAGS[key]; base = INTRO + k * DAYSEG + 0.2
             place(base - 0.15, sfx('whoosh_s'))
