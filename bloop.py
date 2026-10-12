@@ -3299,6 +3299,388 @@ GAGS.update({
 })
 
 
+# ================================================================ 2026-10-12 (2) yeni gag'ler (62'ye çıkış)
+MW = (850, TTOP - 75)
+
+
+def microwave(img, secs, door=0.0, food=True):
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle(box(MW[0] - 150, MW[1] - 80, MW[0] + 150, MW[1] + 70), radius=L(14), fill=(225, 225, 230), outline=DARK, width=L(4))
+    d.rounded_rectangle(box(MW[0] - 130, MW[1] - 60, MW[0] + 60, MW[1] + 50), radius=L(8), fill=(40, 40, 50) if door < 0.5 else (90, 80, 70))
+    if food: put_sphere(img, (240, 170, 80), MW[0] - 35, MW[1] + 20, 90, 40, 0.4)
+    d = ImageDraw.Draw(img)
+    d.rectangle(box(MW[0] + 75, MW[1] - 60, MW[0] + 140, MW[1] - 25), fill=(20, 30, 20))
+    f_ = font(L(26)); txt = f'0:{max(0, int(secs)):02d}'; tw = d.textlength(txt, font=f_)
+    d.text((L(MW[0] + 107) - tw / 2, L(MW[1] - 58)), txt, font=f_, fill=(90, 255, 120))
+
+
+def gag_microwave(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        secs = 30 - 10 * tt if tt < 2.6 else 0
+        microwave(img, secs)
+        o.update(mouth='smile', eyes='happy' if tt > 2.6 else 'sleepy', look=(1, 0))
+        draw_char(img, CX, GY, o)
+        if tt > 2.6: put_text(img, 'beep beep', MW[0], MW[1] - 170, 54, (255, 255, 255), scale=back(seg(tt, 2.6, 2.8)))
+    else:
+        secs = 10 - 2.9 * tt if tt < 3.1 else 1
+        opened = tt >= 3.1
+        lean = 140 * sm(seg(tt, 0.3, 1.0))
+        microwave(img, secs, door=1.0 if opened else 0.0)
+        o.update(mouth='flat' if not opened else 'grin', mo=1.0, eyes='crazy', brow='angry', look=(1, 0),
+                 eye_s=1.0 + 0.2 * sm(seg(tt, 1.5, 3.0)), hands=[None, (MW[0] - 160, MW[1] + 10)] if opened else [None, None])
+        draw_char(img, CX + lean, GY, o)
+        if opened: hand(img, (MW[0] - 160, MW[1] + 10))
+        if 1.0 <= tt < 3.1: put_text(img, 'STARING CONTEST', 620, 220, 84, (255, 255, 255), rot=-5, max_w=980)
+        if opened: put_text(img, '0:01. BEAT IT.', 620, 230, 110, (90, 255, 120), scale=back(seg(tt, 3.1, 3.3)), rot=6, max_w=980)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: kapı zili
+def door_frame(img, ding=False):
+    d = ImageDraw.Draw(img)
+    d.rectangle(box(860, 250, 1040, GY + 10), fill=(140, 90, 55), outline=DARK, width=L(4))
+    d.ellipse(box(880, 520, 900, 540), fill=(240, 200, 60))
+    if ding: put_text(img, 'DING DONG', 850, 200, 54, (255, 230, 60), rot=-4)
+
+
+def gag_doorbell(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        door_frame(img, ding=tt < 0.9)
+        x = lerp(CX, 760, sm(seg(tt, 0.9, 1.8)))
+        o.update(mouth='smile', eyes='happy' if tt > 1.8 else 'normal', look=(1, 0))
+        draw_char(img, x, GY, o)
+        if tt > 2.0: put_text(img, '"hi! thanks!"', 600, 300, 60, (255, 255, 255), scale=back(seg(tt, 2.0, 2.2)), rot=-4)
+    else:
+        door_frame(img, ding=(tt < 3.6 and (tt * 2) % 1 < 0.5))
+        hide = sm(seg(tt, 0.4, 1.0))
+        o.update(mouth='flat', eyes='crazy', look=(1, 0), sy=1.0 - 0.45 * hide, sx=1.0 + 0.2 * hide)
+        draw_char(img, lerp(CX, 760, hide), GY, o)
+        dk = Image.new('RGBA', img.size, (10, 10, 25, int(150 * sm(seg(tt, 1.0, 1.3))))); img.alpha_composite(dk)
+        if 1.2 <= tt: put_text(img, "NOBODY'S HOME.", 560, 220, 100, (255, 255, 255), scale=back(seg(tt, 1.2, 1.4)), rot=-6, max_w=980)
+        if tt >= 3.0: put_text(img, '(whispering)', 560, 320, 60, (200, 200, 220), scale=back(seg(tt, 3.0, 3.2)), rot=4)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: buzdolabı
+FRIDGE = (900, GY - 230)
+
+
+def fridge(img, open_):
+    d = ImageDraw.Draw(img, 'RGBA')
+    d.rounded_rectangle(box(FRIDGE[0] - 120, 300, FRIDGE[0] + 120, GY + 10), radius=L(16), fill=(235, 238, 245), outline=DARK, width=L(4))
+    if open_ > 0.05:
+        d.rectangle(box(FRIDGE[0] - 110, 310, FRIDGE[0] + 110, GY), fill=(255, 250, 220, int(255 * open_)))
+        for y in (420, 540, 660): d.line(box(FRIDGE[0] - 110, y, FRIDGE[0] + 110, y), fill=(200, 200, 210), width=L(4))
+        put_sphere(img, (250, 250, 250), FRIDGE[0] - 50, 400, 50, 80, 0.5)
+        d = ImageDraw.Draw(img, 'RGBA')
+        d.polygon([(L(FRIDGE[0] - 120), L(300)), (L(FRIDGE[0] - 120 - 140 * open_), L(330)), (L(FRIDGE[0] - 120 - 140 * open_), L(GY - 20)), (L(FRIDGE[0] - 120), L(GY + 10))], fill=(220, 224, 232), outline=DARK)
+    else:
+        d.rectangle(box(FRIDGE[0] - 100, 460, FRIDGE[0] - 88, 560), fill=(150, 150, 160))
+
+
+def gag_fridge(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        op = sm(seg(tt, 0.4, 0.8)) * (1 - sm(seg(tt, 1.8, 2.2)))
+        fridge(img, op)
+        o.update(mouth='smile', eyes='happy' if tt > 2.2 else 'normal', look=(1, 0), hands=[None, (CX + 220, GY - 150)] if 1.2 <= tt < 2.6 else [None, None])
+        draw_char(img, CX + 120, GY, o)
+        if 1.2 <= tt < 2.6:
+            put_sphere(img, (250, 250, 250), CX + 260, GY - 200, 50, 80, 0.5); hand(img, (CX + 220, GY - 150))
+    else:
+        cycles = [(0.3, 1.1), (1.5, 2.3), (2.7, 3.5)]
+        op = max(sm(seg(tt, a, a + 0.25)) * (1 - sm(seg(tt, b - 0.25, b))) for a, b in cycles)
+        fridge(img, op)
+        k = sum(1 for a, _ in cycles if tt >= a)
+        o.update(mouth='flat', eyes='crazy' if k < 3 else 'sleepy', look=(1, 0), brow='angry' if k >= 2 else None)
+        draw_char(img, CX + 120, GY, o)
+        if k: put_text(img, f'CHECK #{k}', 640, 210, 100, (255, 255, 255), rot=-6)
+        if tt >= 3.6: put_text(img, 'STILL NOTHING.', 600, 300, 96, (255, 230, 60), scale=back(seg(tt, 3.6, 3.8)), rot=6, max_w=980)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: çamaşır
+SHIRTS = [(230, 80, 80), (80, 150, 230), (250, 210, 60), (120, 200, 120), (200, 120, 220), (250, 150, 60)]
+
+
+def shirt(img, cx, cy, col, ang=0.0, s=1.0):
+    spr = Image.new('RGBA', (L(120 * s), L(100 * s)), (0, 0, 0, 0)); d = ImageDraw.Draw(spr)
+    d.polygon([(L(30 * s), 0), (L(90 * s), 0), (L(120 * s), L(30 * s)), (L(100 * s), L(45 * s)), (L(95 * s), L(100 * s)),
+               (L(25 * s), L(100 * s)), (L(20 * s), L(45 * s)), (0, L(30 * s))], fill=col, outline=DARK)
+    put_rot(img, spr, cx, cy, ang)
+
+
+def gag_laundry(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        folded = int(4 * sm(seg(tt, 0.4, 2.4)))
+        for k in range(folded): put_sphere(img, SHIRTS[k], 840, TTOP - 20 - k * 22, 140, 26, 0.3)
+        o.update(mouth='smile', eyes='happy' if tt > 2.4 else 'normal', look=(1, 0.3))
+        draw_char(img, CX, GY, o)
+        if tt > 2.5: put_text(img, 'neat.', 840, 330, 60, (255, 255, 255), scale=back(seg(tt, 2.5, 2.7)))
+    else:
+        n = int(6 * sm(seg(tt, 1.6, 3.2)))
+        o.update(mouth='grin', mo=1.0, eyes='crazy', brow='angry' if tt < 1.6 else None, look=(0, -0.6), sx=1.0 + 0.05 * n, sy=1.0 + 0.03 * n,
+                 color=SHIRTS[(n - 1) % 6] if n else None)
+        if not n: o.pop('color')
+        draw_char(img, CX, GY, o)
+        for k in range(6):
+            if k >= n and tt >= 0.4:
+                a = (tt - 0.4) * 3 + k
+                shirt(img, 560 + 300 * math.cos(a), 260 + 120 * math.sin(a * 1.3), SHIRTS[k], a * 60, 0.9)
+        if 0.4 <= tt < 1.6: put_text(img, 'THROW!', 640, 180, 110, (255, 255, 255), rot=-6)
+        if tt >= 3.4: put_text(img, f'WEARING ALL {6}.', 620, 240, 100, (255, 230, 60), scale=back(seg(tt, 3.4, 3.6)), rot=6, max_w=980)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: satranç
+def chessboard(img, cx, cy, ang=0.0, lift=0.0, pieces=True):
+    spr = Image.new('RGBA', (L(240), L(240)), (0, 0, 0, 0)); d = ImageDraw.Draw(spr)
+    for i in range(6):
+        for j in range(6):
+            d.rectangle([L(i * 40), L(j * 40), L(i * 40 + 39), L(j * 40 + 39)], fill=(240, 220, 180) if (i + j) % 2 else (120, 80, 50))
+    spr = spr.resize((L(240), L(90)))
+    put_rot(img, spr, cx, cy - lift, ang)
+    if pieces and ang == 0:
+        for k in range(5):
+            put_sphere(img, (30, 30, 35) if k % 2 else (250, 250, 250), cx - 90 + k * 45, cy - 30 - lift, 26, 40, 0.6)
+
+
+def gag_chess(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    B = (840, TTOP - 20)
+    if v == 'N':
+        chessboard(img, *B)
+        o.update(mouth='flat' if tt < 1.6 else 'smile', eyes='normal' if tt < 1.6 else 'happy', look=(1, 0.3),
+                 hands=[None, (B[0] - 40, B[1] - 60)] if 0.8 <= tt < 1.4 else [None, None])
+        draw_char(img, CX, GY, o)
+        if 0.8 <= tt < 1.4: hand(img, (B[0] - 40, B[1] - 60))
+        if tt > 1.6: put_text(img, 'good move.', 640, 320, 58, (255, 255, 255), scale=back(seg(tt, 1.6, 1.8)), rot=-4)
+    else:
+        flip = sm(seg(tt, 1.2, 1.6))
+        if tt < 1.2: chessboard(img, *B)
+        else:
+            chessboard(img, B[0] + 120 * flip, B[1], ang=200 * flip, lift=260 * math.sin(math.pi * flip), pieces=False)
+            particles(img, 121, 1.2, tt, 12, (B[0], B[1] - 40), (-300, 400), (-900, -300), 1600, [(30, 30, 35), (250, 250, 250)], (24, 40), life=1.4)
+        o.update(mouth='flat' if tt < 1.2 else 'grin', mo=1.0, eyes='crazy', brow='angry', look=(1, 0.3),
+                 hands=[None, (B[0] - 130, B[1] - 20)] if 1.0 <= tt < 1.6 else [None, None])
+        draw_char(img, CX, GY, o)
+        if 1.0 <= tt < 1.6: hand(img, (B[0] - 130, B[1] - 20))
+        if 1.2 <= tt < 1.5: shake = 14
+        if tt >= 1.8: put_text(img, 'CHECKMATE.', 620, 230, 120, (255, 255, 255), scale=back(seg(tt, 1.8, 2.0)), rot=6)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: karaoke
+def mic(img, cx, cy):
+    d = ImageDraw.Draw(img)
+    d.line(box(cx, cy, cx + 10, cy + 90), fill=(40, 40, 50), width=L(14))
+    put_sphere(img, (170, 170, 180), cx - 4, cy - 10, 60, 60, 0.7)
+
+
+def gag_karaoke(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    hp = (CX + 150, mouth_y() + 30)
+    if v == 'N':
+        o.update(mouth='o' if (tt * 2) % 1 < 0.5 else 'smile', mo=0.4, eyes='happy', look=(1, 0), hands=[None, hp])
+        draw_char(img, CX, GY, o); mic(img, hp[0] + 20, hp[1] - 60); hand(img, hp)
+        for k in range(3):
+            a = ((tt + k * 0.4) % 1.2) / 1.2
+            put_text(img, 'la', hp[0] + 120 + 80 * a, hp[1] - 120 - 160 * a, 44, (200, 220, 255))
+    else:
+        loud = sm(seg(tt, 1.0, 1.5))
+        o.update(mouth='open', mo=0.6 + 0.4 * loud, eyes='happy' if tt < 1.0 else 'crazy', look=(0, -0.4), hands=[None, hp],
+                 sy=1.0 + 0.08 * loud * math.sin(gt * 40))
+        draw_char(img, CX, GY, o); mic(img, hp[0] + 20, hp[1] - 60); hand(img, hp)
+        if tt >= 1.0:
+            d = ImageDraw.Draw(img, 'RGBA')
+            for k in range(4):
+                r_ = 80 + ((tt * 500 + k * 120) % 480)
+                d.arc(box(hp[0] - r_, hp[1] - 60 - r_, hp[0] + r_, hp[1] - 60 + r_), -60, 60, fill=(255, 255, 255, 160), width=L(6))
+            put_text(img, 'AAAAAAH!', 640, 200, 130, (255, 120, 170), scale=1.0 + 0.05 * math.sin(tt * 40), rot=-6)
+            shake = 8 * loud
+        if tt >= 2.6:
+            d = ImageDraw.Draw(img)
+            for a in (0, 50, 110, 160): ex, ey = rotv(0, -60, a); d.line(box(810, 200, 810 + ex, 200 + ey), fill=(255, 255, 255), width=L(4))
+        if tt >= 3.6: put_text(img, 'HIGH NOTE.', 620, 330, 96, (255, 255, 255), scale=back(seg(tt, 3.6, 3.8)), rot=6)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: kaykay
+def board(img, cx, cy, ang=0.0):
+    spr = Image.new('RGBA', (L(240), L(70)), (0, 0, 0, 0)); d = ImageDraw.Draw(spr)
+    d.rounded_rectangle([0, 0, L(239), L(26)], radius=L(13), fill=(230, 90, 60), outline=DARK, width=L(3))
+    for x in (40, 200): d.ellipse([L(x - 16), L(32), L(x + 16), L(64)], fill=(250, 220, 80), outline=DARK)
+    put_rot(img, spr, cx, cy, ang)
+
+
+def gag_skate(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        x = lerp(CX - 60, CX + 380, sm(seg(tt, 0.3, 2.6)))
+        o.update(mouth='smile', eyes='happy', look=(1, 0))
+        board(img, x, GY + 10)
+        draw_char(img, x, GY - 40, o)
+    else:
+        u = seg(tt, 0.6, 1.6)
+        x = lerp(CX, CX + 300, u) if tt < 1.6 else CX + 300
+        jump = 360 * math.sin(math.pi * u) if 0.6 <= tt < 1.6 else 0
+        spin = 360 * u if 0.6 <= tt < 1.6 else 0
+        landed = tt >= 1.6
+        if not landed:
+            board(img, x, GY + 10 - jump * 0.7, spin * 2)
+            spr = Image.new('RGBA', img.size, (0, 0, 0, 0))
+            o.update(mouth='grin', mo=1.0, eyes='crazy', brow='angry', look=(1, 0))
+            draw_char(spr, x, GY - 40 - jump, o)
+            img.alpha_composite(spr.rotate(-spin, center=(L(x), L(GY - 190 - jump)), resample=Image.BICUBIC))
+        else:
+            board(img, x + 120, GY + 10, 15)
+            o.update(mouth='o', eyes='happy', look=(0, 0), sy=1.0)
+            spr = Image.new('RGBA', img.size, (0, 0, 0, 0)); draw_char(spr, x, GY, o)
+            img.alpha_composite(spr.rotate(180, center=(L(x), L(GY - 150)), resample=Image.BICUBIC))
+            if tt < 1.9: shake = 16
+            put_text(img, 'NAILED IT.', 620, 220, 120, (255, 255, 255), scale=back(seg(tt, 1.8, 2.0)), rot=6)
+        if 0.6 <= tt < 1.6: put_text(img, 'KICKFLIP!', 640, 180, 110, (230, 90, 60), rot=-6)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: mum
+def candle(img, x, y, flame=True, s=1.0, gt=0.0):
+    put(img, cyl((250, 240, 225), 34 * s, 90 * s, 6), x, y)
+    if flame:
+        put_sphere(img, (255, 200, 60), x + 2 * math.sin(gt * 20 + x), y - 60 * s, 18 * s, 34 * s, 0.2)
+        put_sphere(img, (255, 250, 200), x, y - 56 * s, 8 * s, 16 * s, 0.1)
+
+
+def gag_candle(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        candle(img, 840, TTOP - 40, flame=tt >= 0.8, gt=gt)
+        o.update(mouth='smile', eyes='happy' if tt > 1.0 else 'normal', look=(1, 0))
+        draw_char(img, CX, GY, o)
+        if tt > 1.2: put_text(img, 'relaxing...', 620, 320, 58, (255, 220, 150), scale=back(seg(tt, 1.2, 1.4)), rot=-4)
+    else:
+        n = int(30 * sm(seg(tt, 0.4, 2.6)))
+        for k in range(n):
+            r_ = random.Random(k)
+            x = r_.uniform(80, 1040); y = r_.choice([TTOP - 40, GY + 6, 600 + r_.uniform(0, 160)]) if x > 640 else GY + 6 - r_.uniform(0, 40)
+            candle(img, x, y, s=r_.uniform(0.6, 1.0), gt=gt)
+        glow = Image.new('RGBA', img.size, (255, 140, 40, int(70 * sm(seg(tt, 1.0, 2.6))))); img.alpha_composite(glow)
+        sweat = tt >= 2.6
+        o.update(mouth='grin' if not sweat else 'open', mo=0.6, eyes='happy' if tt < 2.6 else 'crazy', look=(0, 0), color=lerpc(CHAR['color'], (255, 90, 60), 0.3 * sm(seg(tt, 2.0, 3.0))))
+        info = draw_char(img, CX, GY, o)
+        if sweat:
+            for k in range(3):
+                dy = ((tt - 2.6 + k * 0.3) % 0.9) * 120
+                put_sphere(img, (150, 200, 255), CX - 90 + k * 90, info['cy'] - 80 + dy, 18, 26, 0.6)
+        if tt >= 2.8: put_text(img, 'COZY.', 620, 230, 140, (255, 220, 150), scale=back(seg(tt, 2.8, 3.0)), rot=6)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: dart
+BOARD = (840, 320)
+
+
+def dartboard(img, hits):
+    for r_, c in ((110, (30, 30, 35)), (85, (240, 230, 200)), (60, (200, 50, 50)), (35, (240, 230, 200)), (14, (200, 50, 50))):
+        put_sphere(img, c, BOARD[0], BOARD[1], 2 * r_, 2 * r_, 0.1)
+    d = ImageDraw.Draw(img)
+    for x, y in hits:
+        d.line(box(x, y, x + 36, y + 14), fill=(60, 60, 70), width=L(6)); d.polygon([(L(x + 36), L(y + 14)), (L(x + 52), L(y + 4)), (L(x + 50), L(y + 24))], fill=(255, 90, 90))
+
+
+def gag_darts(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        hit = tt >= 1.2
+        dartboard(img, [(BOARD[0] - 40, BOARD[1] - 30)] if hit else [])
+        o.update(mouth='smile', eyes='happy' if hit else 'normal', look=(1, -0.6), hands=[None, (CX + 200, GY - 330)] if tt < 1.0 else [None, None])
+        draw_char(img, CX, GY, o)
+        if tt < 1.0: hand(img, (CX + 200, GY - 330))
+        if hit: put_text(img, 'not bad.', 640, 360, 58, (255, 255, 255), scale=back(seg(tt, 1.2, 1.4)), rot=-4)
+    else:
+        throws = [0.8, 1.3, 1.8, 2.3, 2.8]
+        spots = [(150, 140), (620, 520), (1000, 600), (520, 120), (BOARD[0] - 26, BOARD[1] - 8)]
+        hits = [s for th, s in zip(throws, spots) if tt >= th]
+        dartboard(img, hits)
+        d = ImageDraw.Draw(img)
+        o.update(mouth='grin', mo=1.0, eyes='happy', look=(1, -0.6), hands=[None, (CX + 200, GY - 330)])
+        info = draw_char(img, CX, GY, o)
+        d = ImageDraw.Draw(img)
+        d.rectangle(box(CX - 130, info['cy'] - 70, CX + 130, info['cy'] - 10), fill=(30, 30, 40))      # göz bandı
+        hand(img, (CX + 200, GY - 330))
+        if any(th <= tt < th + 0.2 for th in throws[:4]): put_text(img, 'MISS', 640, 200, 90, (255, 255, 255), rot=-6)
+        if tt >= 2.8:
+            put_text(img, 'BULLSEYE. PRO.', 600, 220, 100, (255, 230, 60), scale=back(seg(tt, 2.8, 3.0)), rot=6, max_w=980)
+            confetti(img, 131, 2.8, tt, BOARD)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: bulaşık
+def plate(img, x, y, s=1.0, dirty=True):
+    put_sphere(img, (245, 245, 250), x, y, 120 * s, 34 * s, 0.6)
+    if dirty: put_sphere(img, (200, 120, 60), x + 10 * s, y - 4 * s, 40 * s, 12 * s, 0.2)
+
+
+def gag_dishes(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        clean = int(3 * sm(seg(tt, 0.4, 2.4)))
+        for k in range(3): plate(img, 840, TTOP - 10 - k * 18, dirty=k >= clean)
+        o.update(mouth='smile', eyes='happy' if tt > 2.4 else 'normal', look=(1, 0.3))
+        draw_char(img, CX, GY, o)
+        particles(img, 141, 0.4, tt, 20, (840, TTOP - 60), (-60, 60), (-200, -60), 300, [(220, 240, 255)], (14, 24), life=0.8, emit=2.0)
+    else:
+        trash_bin(img)
+        k = int(6 * sm(seg(tt, 0.4, 2.8)))
+        for i in range(6):
+            if i >= k: plate(img, 760, TTOP - 10 - i * 18)
+            else:
+                a = clamp((tt - 0.4 - i * 0.4) / 0.4)
+                if a < 1: plate(img, lerp(760, BIN[0], a), lerp(TTOP - 60, BIN[1] - 90, a) - 120 * math.sin(math.pi * a), 0.9)
+        o.update(mouth='grin', mo=1.0, eyes='crazy', brow='angry', look=(1, 0.3))
+        draw_char(img, CX, GY, o)
+        if 0.4 <= tt < 2.8 and (tt * 2.5) % 1 < 0.3: put_text(img, 'CRASH', BIN[0], BIN[1] - 220, 60, (255, 255, 255))
+        if tt >= 3.0: put_text(img, 'NO MORE DISHES.', 600, 230, 96, (255, 255, 255), scale=back(seg(tt, 3.0, 3.2)), rot=6, max_w=980)
+    return shake
+
+
+GAGS.update({
+    'microwave': dict(debut='2026-12-05', title='MICROWAVE', name='Microwave', wall=(230, 235, 240), fn=gag_microwave,
+                      N=[(0.2, 'click'), (2.6, 'ding'), (2.8, 'ding')],
+                      P=[(0.0, 'sting'), (0.2, 'click'), (3.1, 'click'), (3.2, 'horn')]),
+    'doorbell': dict(debut='2026-12-05', title='DOORBELL', name='Doorbell', wall=(235, 225, 215), fn=gag_doorbell,
+                     N=[(0.0, 'ding'), (0.3, 'ding'), (1.8, 'click')],
+                     P=[(0.0, 'ding'), (0.3, 'ding'), (0.5, 'sting'), (1.5, 'ding'), (2.5, 'ding'), (3.5, 'ding')]),
+    'fridge': dict(debut='2026-12-05', title='CHECKING THE FRIDGE', name='Fridge', wall=(225, 235, 240), fn=gag_fridge,
+                   N=[(0.4, 'psst'), (2.0, 'click')],
+                   P=[(0.3, 'psst'), (1.0, 'click'), (1.5, 'psst'), (2.2, 'click'), (2.7, 'psst'), (3.4, 'click'), (3.6, 'sting')]),
+    'laundry': dict(debut='2026-12-05', title='FOLDING LAUNDRY', name='Laundry', wall=(230, 230, 245), fn=gag_laundry,
+                    N=[(0.6, 'whoosh_s'), (1.2, 'whoosh_s'), (1.8, 'whoosh_s'), (2.5, 'ding')],
+                    P=[(0.0, 'sting'), (0.4, 'whoosh'), (1.0, 'whoosh'), (1.6, 'pop'), (2.0, 'pop'), (2.4, 'pop'), (2.8, 'pop'), (3.4, 'boing')]),
+    'chess': dict(debut='2026-12-05', title='PLAYING CHESS', name='Chess', wall=(225, 220, 210), fn=gag_chess,
+                  N=[(1.0, 'click'), (1.6, 'ding')],
+                  P=[(0.0, 'sting'), (1.2, 'whoosh'), (1.3, 'smash'), (1.8, 'ding')]),
+    'karaoke': dict(debut='2026-12-12', title='KARAOKE NIGHT', name='Karaoke', wall=(70, 55, 110), fn=gag_karaoke,
+                    N=[(0.3 + i * 0.5, 'ding') for i in range(5)],
+                    P=[(0.0, 'sting'), (1.0, 'horn'), (1.0, 'blow', 1.6), (2.6, 'smash'), (3.6, 'clap')]),
+    'skate': dict(debut='2026-12-12', title='SKATEBOARD', name='Skateboard', wall=(215, 225, 235), fn=gag_skate,
+                  N=[(0.3, 'rattle', 2.2)],
+                  P=[(0.0, 'sting'), (0.6, 'whoosh'), (1.6, 'bonk'), (1.65, 'smash'), (1.9, 'boing')]),
+    'candle': dict(debut='2026-12-12', title='SCENTED CANDLE', name='Candle', wall=(240, 225, 210), fn=gag_candle,
+                   N=[(0.8, 'click'), (1.2, 'ahh')],
+                   P=[(0.0, 'sting')] + [(0.4 + i * 0.22, 'click') for i in range(10)] + [(2.8, 'fizz', 1.2)]),
+    'darts': dict(debut='2026-12-12', title='PLAYING DARTS', name='Darts', wall=(220, 230, 220), fn=gag_darts,
+                  N=[(1.0, 'whoosh_s'), (1.2, 'click')],
+                  P=[(0.0, 'sting')] + [(th, 'whoosh_s') for th in (0.7, 1.2, 1.7, 2.2, 2.7)] + [(2.8, 'horn'), (2.85, 'clap')]),
+    'dishes': dict(debut='2026-12-12', title='DOING THE DISHES', name='Dishes', wall=(220, 235, 240), fn=gag_dishes,
+                   N=[(0.4, 'fizz', 2.0), (2.4, 'ding')],
+                   P=[(0.0, 'sting')] + [(0.8 + i * 0.4, 'smash') for i in range(6)] + [(3.0, 'boing')]),
+})
+
+
 def total(plan=None):
     return INTRO + GAG * len((plan or PLAN)['gags']) + OUTRO
 
