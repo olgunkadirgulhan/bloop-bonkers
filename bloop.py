@@ -3942,10 +3942,10 @@ def load_clip(f):
 
 @lru_cache(None)
 def anime_clips(kind, voice='puck'):
-    """Anime ünlemleri: voices/<Ses>/ex/<tür>_<n>.wav (voice_lib), yoksa voices/puck/<tür>_<n>.wav (ilk kütüphane)."""
+    """Anime ünlemleri: voices/<Ses>/ex/<tür>_<n>.wav (voice_lib), yoksa voices/legacy/<tür>_<n>.wav (ilk kütüphane)."""
     import glob
     files = sorted(glob.glob(os.path.join(HERE, 'voices', voice, 'ex', f'{kind}_*.wav'))) or \
-        sorted(glob.glob(os.path.join(HERE, 'voices', 'puck', f'{kind}_*.wav')))
+        sorted(glob.glob(os.path.join(HERE, 'voices', 'legacy', f'{kind}_*.wav')))
     return [x for x in (load_clip(f) for f in files) if x is not None]
 
 

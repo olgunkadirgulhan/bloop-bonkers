@@ -76,12 +76,10 @@ EXCLAIM = {
     'talk': ['Itadakimasu!', 'Hmph!', 'Hayaku!', 'Mou!', 'Ikuzo!', 'Ne, ne!', 'Daijoubu?', 'Oops!'],
 }
 
-# karakter → ses (kız karakterler Leda/Zephyr, diğerleri Puck/Fenrir)
+# karakter → ses: kız karakterler Zephyr, diğerleri Puck (Leda/Fenrir çılgın tonda Whisper doğrulamasını geçemedi)
 FEMALE = {'mimi', 'luna', 'nova', 'pepper', 'jojo', 'kiki'}
 
 
 def voices_for(cast):
     """(replik sesi, ünlem sesi)"""
-    if cast in FEMALE:
-        return 'Leda', ('Zephyr' if sum(map(ord, cast)) % 2 else 'Leda')
-    return 'Puck', ('Fenrir' if cast in ('chonk', 'duke', 'boris', 'grumbo', 'rex') else 'Puck')
+    return ('Zephyr', 'Zephyr') if cast in FEMALE else ('Puck', 'Puck')

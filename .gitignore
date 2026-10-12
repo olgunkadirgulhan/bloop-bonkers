@@ -6,3 +6,4 @@ secrets*.env
 .env
 .venv/
 social/
+!voices/**/*.wav
