@@ -35,6 +35,8 @@ jobs:
         env:
           LOG_FILE: history.json
           SLOTS: "14:00,18:00,23:00"  # 2026-10-12: 4→3/gün (YPP "seri üretim" görünümü azalsın)
+          SLOTS_BOOST: "13:00,16:00,19:00,23:00"  # kullanıcı isteği: 2 hafta 4/gün, sonra otomatik 3
+          BOOST_UNTIL: "2026-10-26"
         run: python3 .github/slot_guard.py
 
   make:

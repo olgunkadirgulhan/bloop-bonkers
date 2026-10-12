@@ -64,7 +64,10 @@ def main():
             return output(True, mode)
 
     kinds = set(os.environ.get('SHORT_KINDS', 'short').split(','))
-    slots = [s.strip() for s in os.environ['SLOTS'].split(',') if s.strip()]
+    raw = os.environ['SLOTS']
+    if os.environ.get('SLOTS_BOOST') and datetime.now(timezone.utc).strftime('%Y-%m-%d') <= os.environ.get('BOOST_UNTIL', ''):
+        raw = os.environ['SLOTS_BOOST']  # geçici artış (tarih geçince kendiliğinden normale döner)
+    slots = [s.strip() for s in raw.split(',') if s.strip()]
     due = int(os.environ.get('PER_SLOT') or 1) * sum(1 for s in slots if s <= hhmm)
     made = sum(1 for _, k in done if k in kinds)
     print(f'{hhmm} UTC: shorts due {due}, uploaded today {made}')
