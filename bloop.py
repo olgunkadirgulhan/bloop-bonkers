@@ -60,6 +60,11 @@ FORMATS = {
     'clock': ('ME AT 8 AM', 'ME AT 3 AM', 'WHICH ONE ARE YOU?'),
 }
 
+# Tek ekran "bir günü" formatı (2026-10-12): bölünmüş ekran yok, karakterin kaotik günü saat kartlarıyla anlatılır.
+# FORMATS'a girmez (bölüm/derleme araçları 3'lü bölünmüş ekran formatı bekliyor); run.py ayrıca seçer.
+DAY_TIMES = {3: ('8:00 AM', '2:00 PM', '11:00 PM'), 4: ('7:00 AM', '12:30 PM', '6:00 PM', '11:59 PM')}
+DAYSEG = 5.0
+
 CHAR = dict(CAST['bloop'])
 PLAN = {}
 
@@ -3682,7 +3687,10 @@ GAGS.update({
 
 
 def total(plan=None):
-    return INTRO + GAG * len((plan or PLAN)['gags']) + OUTRO
+    p = plan or PLAN
+    if p.get('format') == 'day':
+        return INTRO + DAYSEG * len(p['gags']) + OUTRO
+    return INTRO + GAG * len(p['gags']) + OUTRO
 
 
 # ---------------------------------------------------------------- kare
@@ -3709,7 +3717,49 @@ def outro_panel(v, gt):
     return img
 
 
+def render_day(i):
+    """Tek ekran: üstte saat kartı + durum adı, ortada tek büyük panel, altta kaos ölçeri."""
+    T = i / FPS
+    gags = [GAGS[k] for k in PLAN['gags']]; n = len(gags); name = CHAR['name'].upper()
+    frame = Image.new('RGB', (W, H), (24, 20, 38))
+    py = 350; Z = 1.22; ph2 = int(PH * Z)
+    paste = frame.paste
+    def big(p, xy):  # tek panel daha büyük: 1.22x ölçek, yanlardan kırp
+        p = p.resize((int(W * Z), ph2), Image.LANCZOS)
+        paste(p.crop(((p.width - W) // 2, 0, (p.width - W) // 2 + W, ph2)), xy)
+    frame.paste = big
+    end = INTRO + DAYSEG * n
+    if T < INTRO:
+        img = bg(gags[0]['wall'], 'N'); gags[0]['fn'](img, 'N', -1, T)
+        frame.paste(finish_panel(img, 0, T, False), (0, py))
+        top, sub, tstart, k = f"{name}'S DAY", 'WHAT COULD GO WRONG?', 0.0, -1
+    elif T < end:
+        k = int((T - INTRO) // DAYSEG); gl = T - INTRO - k * DAYSEG; g = gags[k]
+        img = bg(g['wall'], 'P'); sh = g['fn'](img, 'P', gl - 0.2, T)
+        frame.paste(finish_panel(img, sh, T, False), (0, py))
+        top, sub, tstart = DAY_TIMES.get(n, DAY_TIMES[4])[min(k, 3)], g['title'], INTRO + k * DAYSEG
+    else:
+        frame.paste(finish_panel(outro_panel('P', T), 0, T, False), (0, py))
+        top, sub, tstart, k = f'RATE {name}\'S DAY', 'COMMENT 1-10!', end, n
+    frame.paste = paste
+    d = ImageDraw.Draw(frame)
+    put_text_px(frame, top, W // 2, 140, 120, (255, 230, 60), scale=back(seg(T, tstart, tstart + 0.25)), rot=-3, max_w=1000)
+    put_text_px(frame, sub, W // 2, 275, 64, (255, 255, 255), scale=back(seg(T, tstart + 0.1, tstart + 0.35)), max_w=1030)
+    d.rectangle([0, py - 6, W, py], fill=DARK); d.rectangle([0, py + ph2, W, py + ph2 + 6], fill=DARK)
+    # kaos ölçeri: her durumla dolar
+    y0 = py + ph2 + 90
+    put_text_px(frame, 'CHAOS METER', W // 2, y0, 52, (255, 255, 255))
+    fill = 0.0 if k < 0 else min(1.0, (k + seg(T, tstart, tstart + 0.6) if k < n else n) / n)
+    d.rounded_rectangle([120, y0 + 50, W - 120, y0 + 110], radius=30, fill=(50, 40, 70), outline=DARK, width=5)
+    if fill > 0.02:
+        d.rounded_rectangle([126, y0 + 56, 126 + int((W - 252) * fill), y0 + 104], radius=24,
+                            fill=lerpc((90, 220, 120), (240, 60, 60), fill))
+    return frame
+
+
 def render_frame(i):
+    if PLAN.get('format') == 'day':
+        return render_day(i)
     T = i / FPS
     gags = [GAGS[k] for k in PLAN['gags']]
     A, B, Q = FORMATS[PLAN['format']]
@@ -3852,16 +3902,76 @@ def music(dur, seed):
     return out / np.abs(out).max() * 0.22
 
 
+VOWELS = {'a': (800, 1200), 'e': (500, 1900), 'i': (320, 2300), 'o': (500, 900), 'u': (350, 800)}
+
+
+def voice_pitch():
+    """Karakter başına sabit ses perdesi (Bloop orta, Chonk/Duke/Boris kalın, Mimi/Nova/Luna ince)."""
+    keys = list(CAST)
+    base = {'chonk': 150, 'duke': 135, 'boris': 145, 'grumbo': 160, 'mimi': 330, 'nova': 320, 'luna': 310, 'pip': 280}
+    return base.get(PLAN.get('cast'), 200 + 9 * (keys.index(PLAN.get('cast', 'bloop')) % 9))
+
+
+def babble(kind, pitch, seed=0):
+    """Anlamsız ama konuşma gibi duyulan karakter sesi (Simlish tarzı): heceler = harmonik toplamı + formant zarfı."""
+    rnd = random.Random(seed)
+    plan = {'hm': (2, 0.16, 0.9, 1.0), 'giggle': (5, 0.09, 1.5, 1.25), 'yell': (1, 0.32, 1.25, 1.2),
+            'yay': (2, 0.2, 1.1, 1.35), 'evil': (6, 0.12, 0.85, 0.9), 'talk': (4, 0.12, 1.0, 1.0)}[kind]
+    n_syl, d, loud, up = plan
+    out = []
+    for j in range(n_syl):
+        v = rnd.choice('aeiou') if kind not in ('giggle', 'evil') else ('e' if kind == 'giggle' else 'a')
+        f1, f2 = VOWELS[v]
+        tt = t_arr(d)
+        if kind == 'yay': f0 = pitch * np.linspace(1.0, up * 1.2, len(tt)) if j else pitch * np.ones(len(tt))
+        elif kind == 'evil': f0 = pitch * (1.1 - 0.05 * j) * np.ones(len(tt))
+        elif kind == 'giggle': f0 = pitch * up * (1 + 0.04 * j) * np.ones(len(tt))
+        else: f0 = pitch * (up if j == 0 else rnd.uniform(0.85, 1.15)) * np.linspace(1.05, 0.95, len(tt))
+        ph = 2 * np.pi * np.cumsum(f0) / SR
+        x = np.zeros(len(tt))
+        for h in range(1, 24):
+            fh = h * f0.mean()
+            a = np.exp(-((fh - f1) / 160) ** 2) + 0.7 * np.exp(-((fh - f2) / 220) ** 2) + 0.15 / h
+            x += a * np.sin(h * ph)
+        env = np.minimum(1, t_arr(d) / 0.015) * np.minimum(1, (d - t_arr(d)) / 0.05)
+        if kind in ('giggle', 'evil'):  # nefesli "h" başı
+            x = x * env + 0.25 * lpf(noise(d), 3) * np.exp(-t_arr(d) * 40)
+        out.append(x * env)
+        out.append(np.zeros(int(SR * (0.03 if kind != 'evil' else 0.05))))
+    x = np.concatenate(out)
+    return x / (np.abs(x).max() + 1e-9) * 0.42 * loud
+
+
+LOUD_EV = ('smash', 'bang', 'splat', 'bonk', 'burp', 'freeze', 'sting')
+
+
 def build_audio(path):
     tot = total(); n = int(SR * tot); mix = music(tot, PLAN['seed'])
     def place(t0, x):
         i0 = int(t0 * SR); mix[i0:i0 + len(x)] += x[:max(0, n - i0)]
+    pv = voice_pitch(); vs = PLAN.get('seed', 1)
     for t0 in (0.0, 0.45): place(t0, sfx('pop'))
-    for k, key in enumerate(PLAN['gags']):
-        g = GAGS[key]; base = INTRO + k * GAG
-        for ev in g['N']: place(base + ev[0], sfx(ev[1], *ev[2:]))
-        for ev in g['P']: place(base + NDUR + ev[0], sfx(ev[1], *ev[2:]))
-    place(INTRO + GAG * len(PLAN['gags']), sfx('ding'))
+    if PLAN.get('format') == 'day':
+        place(0.6, babble('talk', pv, vs))
+        for k, key in enumerate(PLAN['gags']):
+            g = GAGS[key]; base = INTRO + k * DAYSEG + 0.2
+            place(base - 0.15, sfx('whoosh_s')); place(base + 0.05, babble('giggle', pv, vs + k))
+            for ev in g['P']:
+                place(base + ev[0], sfx(ev[1], *ev[2:]))
+                if ev[1] in LOUD_EV: place(base + ev[0] + 0.15, babble('yell', pv, vs + 7 * k))
+        end = INTRO + DAYSEG * len(PLAN['gags'])
+        place(end, sfx('ding')); place(end + 0.5, babble('evil', pv, vs))
+    else:
+        for k, key in enumerate(PLAN['gags']):
+            g = GAGS[key]; base = INTRO + k * GAG
+            place(base + 0.1, babble('hm', pv, vs + k))
+            for ev in g['N']: place(base + ev[0], sfx(ev[1], *ev[2:]))
+            place(base + NDUR + 0.1, babble('giggle', pv, vs + 3 * k))
+            for ev in g['P']:
+                place(base + NDUR + ev[0], sfx(ev[1], *ev[2:]))
+                if ev[1] in LOUD_EV: place(base + NDUR + ev[0] + 0.15, babble('yell', pv, vs + 5 * k))
+        end = INTRO + GAG * len(PLAN['gags'])
+        place(end, sfx('ding')); place(end + 0.4, babble('yay', pv, vs)); place(end + 1.3, babble('evil', pv, vs))
     mix = mix / np.abs(mix).max() * 0.92
     pcm = (np.repeat(mix[:, None], 2, axis=1) * 32767).astype(np.int16)
     with wave.open(path, 'wb') as w:

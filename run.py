@@ -30,7 +30,10 @@ TITLES = {
 }
 FOOD = {'cookie', 'icecream', 'ketchup', 'cake', 'soda', 'coffee', 'popcorn', 'sandwich', 'pizza', 'chips', 'lemon', 'donut',
         'spaghetti', 'hotsauce', 'pancake', 'cereal', 'egg', 'watermelon', 'banana', 'toast', 'hotdog', 'boba', 'candybowl'}
-TAGS = {'psycho': 'normalvspsycho', 'level': 'level1vslevel100', 'expect': 'expectationvsreality',
+# tek ekran "bir günü" formatı (bloop.render_day): son 3 Short'ta yoksa seçilir → ~4 videoda 1
+TITLES['day'] = ["{c}'s Worst Day Ever 😂 ({g})", 'A Totally Normal Day for {c}... 💀 ({g})', '{c} vs Everyday Life 😂 {g}',
+                 'POV: You Are {c} for a Day 🤪 ({g})', "Rate {c}'s Day 1-10 😂 {g}", "{c}'s Chaotic Day: {g} 💀"]
+TAGS = {'day': 'dayinthelife', 'psycho': 'normalvspsycho', 'level': 'level1vslevel100', 'expect': 'expectationvsreality',
         'boss': 'bosswatching', 'public': 'inpublicvsathome', 'clock': '3am'}
 
 
@@ -103,6 +106,8 @@ def pick_plan(hist, rnd, perf=({}, {})):
     last2 = [v['format'] for v in past[-2:]]
     fmts = [f for f in bloop.FORMATS if not (len(last2) == 2 and last2[0] == last2[1] == f)]   # 3. kez üst üste yok
     fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
+    if past and all(v['format'] != 'day' for v in past[-3:]):   # çeşitlilik: tek ekran formatı düzenli araya girer
+        fmt = 'day'
     last_cast = past[-1]['cast'] if past else None
     casts = [c for c in bloop.CAST if c != last_cast]
     cast = rnd.choices(casts, weights=[3 if c == 'bloop' else 2 for c in casts])[0]
@@ -153,21 +158,25 @@ def metadata(plan, hist, rnd):
     opts = [t.format(g=g, c=c) for t in TITLES[plan['format']]]
     if plan['format'] == 'psycho' and all(k in FOOD for k in plan['gags'][:2]):   # başlıktaki ilk iki durum yemekse
         opts = [t.format(g=g, c=c) for t in TITLES['psycho_food']] + opts[:1]
-    if plan.get('room') == 'spooky' or any(bloop.GAGS[k].get('months') == (10,) for k in plan['gags']):
+    if plan['format'] != 'day' and (plan.get('room') == 'spooky' or any(bloop.GAGS[k].get('months') == (10,) for k in plan['gags'])):
         A_, B_ = (' '.join(w if w in ('AM', 'PM', 'NOT') else w.capitalize() for w in x.split()) for x in bloop.FORMATS[plan['format']][:2])
         opts = [f'{A_} vs {B_}: Halloween Edition 🎃 ({g})', f'Halloween: {A_} vs {B_} 👻 {g}',
                 f'{c} on Halloween 🎃 {A_} vs {B_} ({g})']
     rnd.shuffle(opts)
     title = next((t for t in opts if t not in used), opts[0] + f' #{len(hist["videos"]) + 1}')
-    A, B, _ = bloop.FORMATS[plan['format']]
+    A, B, _ = bloop.FORMATS.get(plan['format'], ('', '', ''))
     ep = next((v for v in reversed(hist['videos']) if v.get('kind') == 'episode' and v.get('privacy') == 'public'), None)  # Shorts → uzun bölüm
-    desc = (f'Which one are YOU? Comment 1 or 2! 👇\n\n'
-            f'{c} tries {", ".join(n.lower() for n in names[:-1])} and {names[-1].lower()}: '
-            f'{A.lower()} vs {B.lower()}.\n\n'
+    intro = (f"Rate {c}'s day from 1 to 10! 👇\n\n{c}'s totally normal day: "
+             + ' → '.join(f'{tm.lower()} {n.lower()}' for tm, n in zip(bloop.DAY_TIMES.get(len(names), bloop.DAY_TIMES[4]), names))
+             + '. What could go wrong?\n\n') if plan['format'] == 'day' else (
+        f'Which one are YOU? Comment 1 or 2! 👇\n\n'
+        f'{c} tries {", ".join(n.lower() for n in names[:-1])} and {names[-1].lower()}: '
+        f'{A.lower()} vs {B.lower()}.\n\n')
+    desc = (intro
             + (f'🎬 Full episode ({ep["title"].split("|")[0].strip()}): https://youtu.be/{ep["id"]}\n\n' if ep else '') +
             f'New Bloop Bonkers Shorts every day. Subscribe for more chaos! 🟣\n\n'
             f'#shorts #animation #funny #cartoon #{TAGS[plan["format"]]} #bloopbonkers')
-    tags = ['bloop bonkers', f'{A.lower()} vs {B.lower()}', 'funny animation', '3d animation', 'cartoon',
+    tags = ['bloop bonkers', f'{A.lower()} vs {B.lower()}' if A else 'day in the life', 'funny animation', '3d animation', 'cartoon',
             'funny shorts', 'relatable', c.lower()] + [n.lower() for n in names]
     return title, desc, tags
 
@@ -210,7 +219,7 @@ def social(mp4, title, url, plan):
     """Günün ilk videosu → social/ (artifact 'social-<run>'): fenek-shorts telegram-relay bunu TikTok/Instagram
     açıklamalarıyla Fenek botundan gönderir."""
     import shutil
-    A, B, _ = bloop.FORMATS[plan['format']]
+    A, B, _ = bloop.FORMATS.get(plan['format'], ('normal', 'chaos', ''))
     tag = TAGS[plan['format']]
     tiktok = f"{title}\nWhich one are YOU? 1 or 2? 👇\n\n#{tag} #animation #funny #relatable #cartoon #fyp"
     insta = (f"{title}\n\nWhich one are you, {A.lower()} or {B.lower()}? Comment 1 or 2 👇\n"
