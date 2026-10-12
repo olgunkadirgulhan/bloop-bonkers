@@ -273,8 +273,12 @@ def run_once():
     done = set(state['replied'])
     since = datetime.now(timezone.utc) - timedelta(days=7)
     try:
-        threads = yt.commentThreads().list(part='snippet,replies', allThreadsRelatedToChannelId=cid, maxResults=50,
-                                           order='time', textFormat='plainText').execute().get('items', [])
+        threads, req = [], yt.commentThreads().list(part='snippet,replies', allThreadsRelatedToChannelId=cid,
+                                                    maxResults=100, order='time', textFormat='plainText')
+        while req and len(threads) < 400:  # son 7 gün: tek sayfa (50) yoğun günlerde yorumların çoğunu kaçırıyordu
+            r = req.execute()
+            threads += r.get('items', [])
+            req = yt.commentThreads().list_next(req, r)
     except Exception as e:  # noqa: BLE001 — yorumlar kapalı kanal vb.
         print(f'yorumlar alınamadı: {e}'); return
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
