@@ -387,6 +387,9 @@ def head_top(sy=1.0): return GY - 26 - 2 * R * sy
 
 def draw_char(img, cx, gy, o):
     t = o.get('t', 0.0)
+    lvl = speaking(t)
+    if lvl > 0.12:   # dudak senkronu: ses yüksekliğine göre ağız açıklığı
+        o = dict(o, mouth='open', mo=min(1.0, 0.3 + 0.9 * lvl))
     b = math.sin(t * 3.4) * 0.018
     sx = o.get('sx', 1.0) * (1 - b); sy = o.get('sy', 1.0) * (1 + b)
     col = o.get('color', CHAR['color']); acc = CHAR['acc']
@@ -3737,11 +3740,13 @@ def render_day(i):
         top, sub, tstart, k = f"{name}'S DAY", 'WHAT COULD GO WRONG?', 0.0, -1
     elif T < end:
         k = int((T - INTRO) // DAYSEG); gl = T - INTRO - k * DAYSEG; g = gags[k]
+        SPEAKER[0] = 'P'
         img = bg(g['wall'], 'P'); sh = g['fn'](img, 'P', gl - 0.2, T)
+        SPEAKER[0] = None
         frame.paste(finish_panel(img, sh, T, False), (0, py))
         top, sub, tstart = DAY_TIMES.get(n, DAY_TIMES[4])[min(k, 3)], g['title'], INTRO + k * DAYSEG
     else:
-        frame.paste(finish_panel(outro_panel('P', T), 0, T, False), (0, py))
+        SPEAKER[0] = 'P'; frame.paste(finish_panel(outro_panel('P', T), 0, T, False), (0, py)); SPEAKER[0] = None
         top, sub, tstart, k = f'RATE {name}\'S DAY', 'COMMENT 1-10!', end, n
     frame.paste = paste
     d = ImageDraw.Draw(frame)
@@ -3777,14 +3782,18 @@ def render_frame_raw(i):
     elif T < INTRO + GAG * len(gags):
         k = int((T - INTRO) // GAG); gl = T - INTRO - k * GAG; g = gags[k]
         title = g['title']; tstart = INTRO + k * GAG
+        SPEAKER[0] = 'N' if gl < NDUR else None
         img = bg(g['wall'], 'N'); sn = g['fn'](img, 'N', min(gl, NDUR), T)
         frame.paste(finish_panel(img, sn if gl < NDUR else 0, T, gl >= NDUR), (0, TOP))
+        SPEAKER[0] = 'P' if gl >= NDUR else None
         img = bg(g['wall'], 'P'); sp = g['fn'](img, 'P', gl - NDUR, T)
+        SPEAKER[0] = None
         frame.paste(finish_panel(img, sp, T, gl < NDUR), (0, TOP + PH))
     else:
         title = Q; tstart = INTRO + GAG * len(gags)
-        frame.paste(finish_panel(outro_panel('N', T), 0, T, False), (0, TOP))
-        frame.paste(finish_panel(outro_panel('P', T), 0, T, False), (0, TOP + PH))
+        SPEAKER[0] = 'N'; frame.paste(finish_panel(outro_panel('N', T), 0, T, False), (0, TOP))
+        SPEAKER[0] = 'P'; frame.paste(finish_panel(outro_panel('P', T), 0, T, False), (0, TOP + PH))
+        SPEAKER[0] = None
     d = ImageDraw.Draw(frame)
     put_text_px(frame, title, W // 2, TOP // 2 + 4, 76, (255, 255, 255), scale=back(seg(T, tstart, tstart + 0.25)), max_w=1030)
     for y0, txt, c in ((TOP, f'1. {A}', (60, 190, 90)), (TOP + PH, f'2. {B}', (225, 50, 60))):
@@ -4011,14 +4020,12 @@ def synth_babble(kind, pitch, seed=0):
 LOUD_EV = ('smash', 'bang', 'splat', 'bonk', 'burp', 'freeze', 'sting')
 
 
-def build_audio(path):
-    tot = total(); n = int(SR * tot); mus = music(tot, PLAN['seed'])
-    mix = np.zeros(n); vo = np.zeros(n)
-    def place(t0, x):
-        i0 = int(t0 * SR); mix[i0:i0 + len(x)] += x[:max(0, n - i0)]
-    def say(t0, x):   # karakter sesi ayrı izde: müziği bu sırada kısarız
-        if x is None: return
-        i0 = int(t0 * SR); vo[i0:i0 + len(x)] += x[:max(0, n - i0)]
+def audio_events():
+    """(efektler, sesler): [(t0, dizi)], [(t0, dizi, kim)] — kim: 'N' üst panel / 'P' alt panel (dudak senkronu için)."""
+    fx, vox = [], []
+    def place(t0, x): fx.append((t0, x))
+    def say(t0, x, who='P'):
+        if x is not None: vox.append((t0, x, who))
     pv = voice_pitch(); vs = PLAN.get('seed', 1)
     for t0 in (0.0, 0.45): place(t0, sfx('pop'))
     if PLAN.get('format') == 'day':
@@ -4038,7 +4045,7 @@ def build_audio(path):
         for k, key in enumerate(PLAN['gags']):
             g = GAGS[key]; base = INTRO + k * GAG
             ln, lp = line_clip(key, 'N'), line_clip(key, 'P')
-            say(base + 0.1, ln if ln is not None else babble('hm', pv, vs + k))
+            say(base + 0.1, ln if ln is not None else babble('hm', pv, vs + k), 'N')
             for ev in g['N']: place(base + ev[0], sfx(ev[1], *ev[2:]))
             say(base + NDUR + 0.1, lp if lp is not None else babble('giggle', pv, vs + 3 * k))
             yelled = False
@@ -4047,7 +4054,46 @@ def build_audio(path):
                 if ev[1] in LOUD_EV and not yelled and ev[0] > (lp is not None and len(lp) / SR + 0.2 or 0):
                     say(base + NDUR + ev[0] + 0.15, babble('yell', pv, vs + 5 * k)); yelled = True
         end = INTRO + GAG * len(PLAN['gags'])
-        place(end, sfx('ding')); say(end + 0.4, babble('yay', pv, vs)); say(end + 1.3, babble('evil', pv, vs))
+        place(end, sfx('ding')); say(end + 0.4, babble('yay', pv, vs), 'N'); say(end + 1.3, babble('evil', pv, vs))
+    return fx, vox
+
+
+@lru_cache(4)
+def speech_levels(key):
+    """Kare başına konuşma genliği {'N': dizi, 'P': dizi} (30 fps)."""
+    _, vox = audio_events()
+    nf = int(total() * FPS) + 2
+    lv = {'N': np.zeros(nf), 'P': np.zeros(nf)}
+    hop = SR // FPS
+    for t0, x, who in vox:
+        k = len(x) // hop
+        if k == 0: continue
+        rms = np.sqrt((x[:k * hop].reshape(k, hop) ** 2).mean(axis=1))
+        i0 = int(round(t0 * FPS))
+        seg_ = lv[who][i0:i0 + k]; seg_ += rms[:len(seg_)]
+    for w in lv: lv[w] /= (lv[w].max() + 1e-9)
+    return lv
+
+
+SPEAKER = [None]   # render sırasında etkin panelin kimliği ('N'/'P'); None = konuşma yok
+
+
+def speaking(t):
+    w = SPEAKER[0]
+    if w is None: return 0.0
+    lv = speech_levels(str(PLAN.get('seed')) + PLAN.get('format', '') + PLAN.get('cast', ''))[w]
+    i = int(t * FPS)
+    return float(lv[i]) if 0 <= i < len(lv) else 0.0
+
+
+def build_audio(path):
+    tot = total(); n = int(SR * tot); mus = music(tot, PLAN['seed'])
+    mix = np.zeros(n); vo = np.zeros(n)
+    fx, vox = audio_events()
+    for t0, x in fx:
+        i0 = int(t0 * SR); mix[i0:i0 + len(x)] += x[:max(0, n - i0)]
+    for t0, x, _ in vox:   # karakter sesi ayrı izde: müziği bu sırada kısarız
+        i0 = int(t0 * SR); vo[i0:i0 + len(x)] += x[:max(0, n - i0)]
     env = np.convolve(np.abs(vo), np.ones(int(SR * 0.25)) / int(SR * 0.25), mode='same')
     duck = 1 - 0.65 * np.clip(env / (env.max() + 1e-9) * 4, 0, 1)
     mix = mus[:n] * duck[:len(mus[:n])] + mix + vo * 1.15
