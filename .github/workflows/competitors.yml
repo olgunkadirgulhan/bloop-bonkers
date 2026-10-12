@@ -1,0 +1,21 @@
+name: competitors
+on:
+  workflow_dispatch:
+jobs:
+  c:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -q google-api-python-client google-auth
+      - run: python tools/competitors.py
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+      - uses: actions/upload-artifact@v5
+        with:
+          name: competitors
+          path: competitors.json
