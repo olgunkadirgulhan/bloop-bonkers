@@ -25,6 +25,15 @@ def main():
                         client_secret=os.environ['YT_CLIENT_SECRET'], token_uri='https://oauth2.googleapis.com/token')
     ya = build('youtubeAnalytics', 'v2', credentials=creds, cache_discovery=False)
     end = date.today().isoformat(); start = (date.today() - timedelta(days=90)).isoformat()
+    if ids == ['daily']:                                # kanal: günlük izlenme / izlenme süresi / abone + içerik türü
+        r = ya.reports().query(ids='channel==MINE', startDate=(date.today() - timedelta(days=14)).isoformat(), endDate=end,
+                               dimensions='day', metrics='views,estimatedMinutesWatched,subscribersGained', sort='day').execute()
+        print('gün          izlenme   izl.saat  +abone')
+        for d, v, m, sg in r.get('rows', []): print(f'{d}  {int(v):>8}  {m / 60:>8.1f}  {int(sg):>6}')
+        r = ya.reports().query(ids='channel==MINE', startDate=start, endDate=end, dimensions='creatorContentType',
+                               metrics='views,estimatedMinutesWatched').execute()
+        for t, v, m in r.get('rows', []): print(f'tür {t}: {int(v)} izlenme, {m / 60:.1f} saat')
+        return
     print(f'{"video":<12} {"izlenme":>8} {"ort. süre":>9} {"izlenen %":>9}  saat   başlık')
     for vid in ids:
         r = ya.reports().query(ids='channel==MINE', startDate=start, endDate=end, filters=f'video=={vid}',
