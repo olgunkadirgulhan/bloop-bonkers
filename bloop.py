@@ -3910,11 +3910,40 @@ VOWELS = {'a': (800, 1200), 'e': (500, 1900), 'i': (320, 2300), 'o': (500, 900),
 def voice_pitch():
     """Karakter başına sabit ses perdesi (Bloop orta, Chonk/Duke/Boris kalın, Mimi/Nova/Luna ince)."""
     keys = list(CAST)
-    base = {'chonk': 150, 'duke': 135, 'boris': 145, 'grumbo': 160, 'mimi': 330, 'nova': 320, 'luna': 310, 'pip': 280}
+    base = {'chonk': 165, 'duke': 160, 'boris': 165, 'grumbo': 170, 'mimi': 300, 'nova': 290, 'luna': 285, 'pepper': 280,
+            'jojo': 290, 'kiki': 275, 'pip': 240}
     return base.get(PLAN.get('cast'), 200 + 9 * (keys.index(PLAN.get('cast', 'bloop')) % 9))
 
 
+@lru_cache(None)
+def anime_clips(kind):
+    """voices/puck/<tür>_<n>.wav: Gemini TTS ile bir kez üretilmiş anime ünlemleri (Nani?!, Kyaa!, Yatta!, Hehehe...)."""
+    import glob
+    out = []
+    for f in sorted(glob.glob(os.path.join(HERE, 'voices', 'puck', f'{kind}_*.wav'))):
+        with wave.open(f) as w:
+            x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float64) / 32768
+        nz = np.nonzero(np.abs(x) > 0.02)[0]
+        if len(nz): out.append(x[max(0, nz[0] - 200):nz[-1] + 800])
+    return out
+
+
+def anime_voice(kind, pitch, seed=0):
+    """Ünlem klibi; karakterin perdesine göre (200 Hz = olduğu gibi) hızlandırılıp inceltilir/kalınlaştırılır."""
+    clips = anime_clips(kind) or anime_clips({'talk': 'hm', 'yay': 'giggle'}.get(kind, 'hm'))
+    if not clips: return None
+    x = clips[random.Random(seed).randrange(len(clips))]
+    r = min(1.6, max(0.8, pitch / 200))
+    x = np.interp(np.arange(0, len(x) - 1, r), np.arange(len(x)), x)
+    return x / (np.abs(x).max() + 1e-9) * 0.75
+
+
 def babble(kind, pitch, seed=0):
+    a = anime_voice(kind, pitch, seed)
+    return a if a is not None else synth_babble(kind, pitch, seed)
+
+
+def synth_babble(kind, pitch, seed=0):
     """Anlamsız ama konuşma gibi duyulan karakter sesi (Simlish tarzı): heceler = harmonik toplamı + formant zarfı."""
     rnd = random.Random(seed)
     plan = {'hm': (2, 0.16, 0.9, 1.0), 'giggle': (5, 0.09, 1.5, 1.25), 'yell': (1, 0.32, 1.25, 1.2),
