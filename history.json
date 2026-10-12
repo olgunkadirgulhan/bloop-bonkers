@@ -513,6 +513,72 @@
       ],
       "room": "hotel",
       "seed": 452502
+    },
+    {
+      "id": "32s74WO0gFA",
+      "date": "2026-10-12 23:51",
+      "kind": "episode",
+      "title": "Level 1 vs Level 100: 14 Situations 🤪 | Bloop Bonkers Full Episode 2",
+      "privacy": "public",
+      "format": "level",
+      "items": [
+        [
+          "icecream",
+          "bloop"
+        ],
+        [
+          "costume",
+          "jojo"
+        ],
+        [
+          "hotsauce",
+          "ziggy"
+        ],
+        [
+          "sneeze",
+          "pepper"
+        ],
+        [
+          "coffee",
+          "boris"
+        ],
+        [
+          "popcorn",
+          "mimi"
+        ],
+        [
+          "cake",
+          "kiki"
+        ],
+        [
+          "plant",
+          "chonk"
+        ],
+        [
+          "toothpaste",
+          "pip"
+        ],
+        [
+          "pizza",
+          "rex"
+        ],
+        [
+          "selfie",
+          "zip"
+        ],
+        [
+          "spaghetti",
+          "grumbo"
+        ],
+        [
+          "candybowl",
+          "nova"
+        ],
+        [
+          "ketchup",
+          "luna"
+        ]
+      ]
     }
   ]
 }
