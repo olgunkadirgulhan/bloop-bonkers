@@ -1,0 +1,24 @@
+name: trend-check
+on:
+  workflow_dispatch:
+    inputs:
+      queries:
+        default: "countryballs;countries when;countryball animation"
+      days:
+        default: "30"
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -q google-api-python-client google-auth
+      - run: python tools/trend_check.py
+        env:
+          QUERIES: ${{ inputs.queries }}
+          DAYS: ${{ inputs.days }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
