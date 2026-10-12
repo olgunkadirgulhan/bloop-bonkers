@@ -31,9 +31,11 @@ TITLES = {
 FOOD = {'cookie', 'icecream', 'ketchup', 'cake', 'soda', 'coffee', 'popcorn', 'sandwich', 'pizza', 'chips', 'lemon', 'donut',
         'spaghetti', 'hotsauce', 'pancake', 'cereal', 'egg', 'watermelon', 'banana', 'toast', 'hotdog', 'boba', 'candybowl'}
 # tek ekran "bir günü" formatı (bloop.render_day): son 3 Short'ta yoksa seçilir → ~4 videoda 1
+TITLES['see'] = ['What They See vs What I See 😂 {g}', 'What Others See vs What I See ({g}) 💀',
+                 '{c}: What They See vs What I See 🤪 ({g})', 'What They See vs Reality 😂 {g}']
 TITLES['day'] = ["{c}'s Worst Day Ever 😂 ({g})", 'A Totally Normal Day for {c}... 💀 ({g})', '{c} vs Everyday Life 😂 {g}',
                  'POV: You Are {c} for a Day 🤪 ({g})', "Rate {c}'s Day 1-10 😂 {g}", "{c}'s Chaotic Day: {g} 💀"]
-TAGS = {'day': 'dayinthelife', 'psycho': 'normalvspsycho', 'level': 'level1vslevel100', 'expect': 'expectationvsreality',
+TAGS = {'day': 'dayinthelife', 'see': 'whattheyseevswhatisee', 'psycho': 'normalvspsycho', 'level': 'level1vslevel100', 'expect': 'expectationvsreality',
         'boss': 'bosswatching', 'public': 'inpublicvsathome', 'clock': '3am'}
 
 
@@ -42,7 +44,7 @@ def load():
 
 
 # Kanal verisi yokken başlangıç ağırlıkları: 'psycho' ilk gün viral oldu (31 bin izlenme)
-PRIOR = {'psycho': 9.0}   # 2026-10-10: psycho 18K-100K, diğer formatlar 1.7-5K izlenme
+PRIOR = {'psycho': 9.0, 'see': 4.0}   # 2026-10-10: psycho 18K-100K, diğer formatlar 1.7-5K izlenme
 
 
 def performance(hist):
@@ -134,7 +136,10 @@ def pick_plan(hist, rnd, perf=({}, {})):
     seen_sets = {tuple(sorted(v['gags'])) for v in past}
     last_first = past[-1]['gags'][0] if past else None
     for _ in range(200):
-        n, left, gags = (4 if rnd.random() < 0.7 else 3), list(pool), []
+        # rakip analizi (2026-10-12): viral Shorts 8-20 sn, bizimkiler 30-37 sn → daha çok 2 durumluk (~20 sn) video
+        n = rnd.choices([2, 3, 4], weights=[4, 4, 2])[0]
+        if fmt == 'day': n = max(n, 3)
+        left, gags = list(pool), []
         while len(gags) < n:                         # ağırlıklı, tekrarsız seçim
             g = rnd.choices(left, weights=[gw[k] for k in left])[0]
             gags.append(g); left.remove(g)

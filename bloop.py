@@ -58,6 +58,8 @@ FORMATS = {
     'boss': ('BOSS WATCHING', 'BOSS NOT WATCHING', 'BE HONEST...'),
     'public': ('IN PUBLIC', 'AT HOME', 'WHICH ONE ARE YOU?'),
     'clock': ('ME AT 8 AM', 'ME AT 3 AM', 'WHICH ONE ARE YOU?'),
+    # 2026-10-12 rakip analizi: 'What parents see vs what I see' 212M izlenme → kendi versiyonumuz
+    'see': ('WHAT THEY SEE', 'WHAT I SEE', 'SO TRUE?'),
 }
 
 # Tek ekran "bir günü" formatı (2026-10-12): bölünmüş ekran yok, karakterin kaotik günü saat kartlarıyla anlatılır.
