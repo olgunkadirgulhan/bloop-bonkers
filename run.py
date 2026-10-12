@@ -19,12 +19,17 @@ PLAYLISTS = HERE / 'playlists.json'
 TITLES = {
     'psycho': ['Normal vs Psychopath 😂 {g}', 'NORMAL vs PSYCHO: {g} Edition 🤪', 'Normal People vs Psychopaths ({g}) 💀',
                '{c}: Normal vs Psycho ({g}) 😂'],
+    # 2026-10-12 YouTube arama önerileri: "normal vs psychopath food / eating" (yemek durumlarında kullanılır)
+    'psycho_food': ['Normal vs Psychopath: Food Edition 🍕 {g}', 'Normal vs Psychopath Eating {g} 😂',
+                    'How Psychopaths Eat {g} 💀 Normal vs Psychopath'],
     'level': ['Level 1 vs Level 100: {g} 🔥', '{g}: Level 1 vs Level 100 😂', 'Level 1 vs Level 100 ({g}) 💀'],
     'expect': ['Expectation vs Reality: {g} 😭', '{g}: Expectation vs Reality 💀', 'Expectation vs Reality ({g}) 😂'],
     'boss': ['Boss Watching vs Boss NOT Watching 😂 {g}', 'When the Boss Isn\'t Watching... ({g}) 💀', 'Boss Watching vs Not Watching: {g} 👀'],
     'public': ['In Public vs At Home 😂 {g}', 'Me in Public vs Me at Home ({g}) 🤪', 'In Public vs At Home: {g} 💀'],
     'clock': ['Me at 8 AM vs Me at 3 AM 😂 {g}', '8 AM Me vs 3 AM Me ({g}) 💀', 'Me at 8 AM vs 3 AM: {g} 🌙'],
 }
+FOOD = {'cookie', 'icecream', 'ketchup', 'cake', 'soda', 'coffee', 'popcorn', 'sandwich', 'pizza', 'chips', 'lemon', 'donut',
+        'spaghetti', 'hotsauce', 'pancake', 'cereal', 'egg', 'watermelon', 'banana', 'toast', 'hotdog', 'boba', 'candybowl'}
 TAGS = {'psycho': 'normalvspsycho', 'level': 'level1vslevel100', 'expect': 'expectationvsreality',
         'boss': 'bosswatching', 'public': 'inpublicvsathome', 'clock': '3am'}
 
@@ -122,10 +127,12 @@ def metadata(plan, hist, rnd):
     c = bloop.CAST[plan['cast']]['name']
     used = {v['title'] for v in hist['videos']}
     opts = [t.format(g=g, c=c) for t in TITLES[plan['format']]]
+    if plan['format'] == 'psycho' and all(k in FOOD for k in plan['gags'][:2]):   # başlıktaki ilk iki durum yemekse
+        opts = [t.format(g=g, c=c) for t in TITLES['psycho_food']] + opts[:1]
     if plan.get('room') == 'spooky' or any(bloop.GAGS[k].get('months') == (10,) for k in plan['gags']):
-        A_, B_, _ = bloop.FORMATS[plan['format']]
-        opts = [f'{A_.title()} vs {B_.title()}: Halloween Edition 🎃 ({g})', f'Halloween: {A_.title()} vs {B_.title()} 👻 {g}',
-                f'{c} on Halloween 🎃 {A_.title()} vs {B_.title()}']
+        A_, B_ = (' '.join(w if w in ('AM', 'PM', 'NOT') else w.capitalize() for w in x.split()) for x in bloop.FORMATS[plan['format']][:2])
+        opts = [f'{A_} vs {B_}: Halloween Edition 🎃 ({g})', f'Halloween: {A_} vs {B_} 👻 {g}',
+                f'{c} on Halloween 🎃 {A_} vs {B_} ({g})']
     rnd.shuffle(opts)
     title = next((t for t in opts if t not in used), opts[0] + f' #{len(hist["videos"]) + 1}')
     A, B, _ = bloop.FORMATS[plan['format']]
