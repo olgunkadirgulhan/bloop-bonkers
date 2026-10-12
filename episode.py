@@ -90,6 +90,7 @@ def scene(out, k, n, gag, cast, seed, room='living', fmt='psycho'):
 
 EP_FORMATS = ['psycho', 'level', 'expect', 'public', 'clock', 'boss']
 EP_SIZE = 14
+HALLOWEEN = False
 
 
 def plan_episode(hist, rnd):
@@ -134,6 +135,8 @@ def main():
     fmt = EP_FORMATS[(n_ep - 1) % len(EP_FORMATS)]   # her bölüm farklı kıyas çerçevesi
     A, B, Q = bloop.FORMATS[fmt]
     AB = f'{A.title()} vs {B.title()}'
+    global HALLOWEEN
+    _n = datetime.now(timezone.utc); HALLOWEEN = _n.month == 10 and _n.day >= 26   # son hafta: Cadılar Bayramı özel bölümü
     items = plan_episode(hist, rnd)
     n = len(items)
     out = HERE / 'output' / f'episode-{n_ep}'
@@ -154,7 +157,7 @@ def main():
         card_mp4(out / f'card{k}.mp4', [(f'SITUATION #{k}' + ('  ·  NEW!' if new else ''), 400, 110, (255, 120, 170) if new else Y8),
                                          (title, 560, 130, W8),
                                          ('First time on the channel!' if new else teasers[(k - 1) % len(teasers)], 720, 60, (200, 200, 220))])
-        parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), bloop.ROOMS[(k - 1) % len(bloop.ROOMS)], fmt)]
+        parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), ('spooky' if HALLOWEEN and k % 2 else bloop.ROOMS[(k - 1) % len(bloop.ROOMS)]), fmt)]
     names = [bloop.GAGS[g]['name'] for g, _ in items]
     cols = 2 if n <= 14 else 3                          # oy kartı: 24 durum da sığsın
     rows = -(-n // cols)
@@ -182,7 +185,8 @@ def main():
     bloop.put_text_px(th, f'{n} SITUATIONS', OW // 2, 1000, 110, Y8)
     th.resize((1280, 720)).save(out / 'thumb.png')
     print(f'bölüm hazır: {final}', flush=True)
-    title = f'{AB}: {n} Situations 🤪 | Bloop Bonkers Full Episode {n_ep}'
+    title = (f'{AB}: Halloween Special 🎃 {n} Situations | Bloop Bonkers Episode {n_ep}' if HALLOWEEN else
+             f'{AB}: {n} Situations 🤪 | Bloop Bonkers Full Episode {n_ep}')
     desc = (f'{n} everyday situations, {AB.lower()}, each one shown once'
             + (f' ({sum(1 for g, _ in items if bloop.GAGS[g].get("debut"))} of them brand new, not in any Short yet)' if any(bloop.GAGS[g].get('debut') for g, _ in items) else '') + '. '
             'Which one is MOST you? Comment the number! 👇\n\n'

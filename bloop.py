@@ -196,7 +196,8 @@ ROOMS = ('living', 'kitchen', 'bedroom', 'office', 'bathroom', 'garage', 'cafe',
 FLOORS = {'living': (196, 138, 88), 'kitchen': (214, 204, 186), 'bedroom': (176, 120, 150), 'office': (150, 152, 165),
           'bathroom': (225, 228, 238), 'garage': (128, 128, 134), 'cafe': (150, 100, 70),
           'library': (120, 80, 55), 'gym': (70, 72, 80), 'diner': (235, 235, 235),
-          'arcade': (60, 42, 80), 'studio': (105, 90, 82), 'greenhouse': (150, 132, 100), 'spaceship': (140, 145, 158), 'hotel': (150, 40, 52)}
+          'arcade': (60, 42, 80), 'studio': (105, 90, 82), 'greenhouse': (150, 132, 100), 'spaceship': (140, 145, 158), 'hotel': (150, 40, 52),
+          'spooky': (70, 52, 62)}   # spooky: yalnız Cadılar Bayramı döneminde (ROOMS dışında)
 
 
 @lru_cache(None)
@@ -212,6 +213,8 @@ def background(wall, room='living'):
         stripe = (((xx % 60) < 3) | ((yy % 60) < 3)) * -0.10 + 0.0 * yy
     elif room == 'garage':     # beton paneller
         stripe = ((xx // 160) % 2) * -0.03 + (((xx % 160) < 3) * -0.08) + 0.0 * yy
+    elif room == 'spooky':     # karanlık, eski duvar kâğıdı
+        stripe = -0.42 + ((xx // 70) % 2 == 0) * 0.05 + 0.0 * yy
     elif room == 'arcade':     # karanlık + neon şeritler
         stripe = -0.5 + (((yy % 120) < 6) * 0.9) + 0.0 * xx
     elif room == 'studio':     # akustik sünger
@@ -275,6 +278,19 @@ def background(wall, room='living'):
         d.rectangle(box(80, 110, 92, 230), fill=(120, 80, 50)); d.rectangle(box(62, 100, 110, 130), fill=(110, 110, 120))
         d.rectangle(box(170, 110, 182, 260), fill=(150, 150, 160)); d.ellipse(box(158, 92, 194, 128), outline=(150, 150, 160), width=L(10))
         d.rounded_rectangle(box(220, 120, 280, 280), radius=L(8), fill=(220, 60, 50))
+    elif room == 'spooky':     # gece penceresi + yarasalar + örümcek ağı + balkabağı
+        d.rectangle(box(676, 76, 944, 326), fill=(25, 25, 60))
+        d.ellipse(box(840, 100, 910, 170), fill=(250, 240, 200))
+        for bx, by in ((730, 150), (790, 230), (880, 260)):
+            d.polygon([(L(bx - 26), L(by)), (L(bx - 8), L(by - 8)), (L(bx), L(by + 4)), (L(bx + 8), L(by - 8)), (L(bx + 26), L(by))], fill=(15, 10, 20))
+        d.rectangle(box(806, 76, 814, 314), fill=(90, 80, 70)); d.rectangle(box(676, 195, 944, 203), fill=(90, 80, 70))
+        for a in range(0, 91, 18):
+            ex, ey = rotv(0, 230, -a); d.line(box(0, 0, ex * -1 if False else abs(ex), abs(ey)), fill=(220, 220, 230), width=L(2))
+        for r_ in (60, 120, 180): d.arc(box(-r_, -r_, r_, r_), 0, 90, fill=(220, 220, 230), width=L(2))
+        put_sphere(img, (255, 140, 30), 180, 250, 150, 120, 0.4)
+        d = ImageDraw.Draw(img)
+        for dx in (-30, 30): d.polygon([(L(180 + dx - 16), L(240)), (L(180 + dx), L(222)), (L(180 + dx + 16), L(240))], fill=(255, 230, 90))
+        d.chord(box(140, 250, 220, 290), 0, 180, fill=(255, 230, 90))
     elif room == 'arcade':     # oyun makinesi
         d.rounded_rectangle(box(60, 60, 280, 360), radius=L(16), fill=(30, 20, 60), outline=(80, 220, 255), width=L(6))
         d.rectangle(box(90, 100, 250, 220), fill=(20, 200, 140)); d.rectangle(box(110, 130, 140, 150), fill=(255, 230, 60))
@@ -3188,6 +3204,98 @@ GAGS.update({
     'bottleflip': dict(debut='2026-11-28', title='BOTTLE FLIP', name='Bottle Flip', wall=(220, 235, 245), fn=gag_bottleflip,
                        N=[(0.6, 'whoosh_s'), (1.4, 'bonk')],
                        P=[(0.0, 'sting'), (0.5, 'whoosh_s'), (1.3, 'click'), (1.5, 'whoosh_s'), (2.3, 'click'), (2.5, 'whoosh_s'), (3.3, 'click'), (3.5, 'horn')]),
+})
+
+
+# ================================================================ 2026-10-12 Cadılar Bayramı (Ekim)
+CANDY = [(255, 90, 90), (255, 200, 60), (120, 200, 255), (180, 120, 255), (120, 220, 120)]
+CBOWL = (840, TTOP - 30)
+
+
+def candy_bowl(img, cx, cy, n=12, s=1.0):
+    put_sphere(img, (255, 140, 30), cx, cy, 230 * s, 110 * s, 0.4)
+    d = ImageDraw.Draw(img)
+    for dx, w in ((-40, 22), (40, 22)): d.polygon([(L(cx + dx * s - w * s), L(cy - 20 * s)), (L(cx + dx * s), L(cy - 2 * s)), (L(cx + dx * s + w * s), L(cy - 20 * s))], fill=(40, 25, 20))
+    d.arc(box(cx - 50 * s, cy - 6 * s, cx + 50 * s, cy + 34 * s), 20, 160, fill=(40, 25, 20), width=L(6 * s))
+    for k in range(n):
+        r_ = random.Random(k)
+        put_rot(img, sphere(r_.choice(CANDY), 44 * s, 26 * s, 0.6), cx + r_.uniform(-80, 80) * s, cy - 50 * s + r_.uniform(-14, 10) * s, r_.uniform(-40, 40))
+
+
+def gag_candybowl(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    hd = hand_default(1); my = mouth_y()
+    if v == 'N':
+        took = tt >= 0.8
+        candy_bowl(img, *CBOWL, n=11 if took else 12)
+        hr = lp(hd, (CBOWL[0], CBOWL[1] - 70), sm(seg(tt, 0.3, 0.8))) if tt < 0.8 else lp((CBOWL[0], CBOWL[1] - 70), (CX + 110, my), sm(seg(tt, 0.8, 1.2)))
+        o.update(hands=[None, hr], mouth='chew' if 1.2 <= tt < 2.4 else 'smile', eyes='happy' if tt > 2.4 else 'normal', look=(1, 0.2))
+        draw_char(img, CX, GY, o)
+        if took and tt < 1.3: put_rot(img, sphere(CANDY[0], 44, 26, 0.6), hr[0], hr[1] - 30, 20)
+        hand(img, hr)
+        if tt > 2.4: put_text(img, 'just one.', 620, 320, 60, (255, 255, 255), scale=back(seg(tt, 2.4, 2.6)), rot=-4)
+    else:
+        bp = lp(CBOWL, (CX + 30, my - 230), sm(seg(tt, 0.4, 1.0)))
+        tip = sm(seg(tt, 1.0, 1.4))
+        o.update(mouth='open' if 1.2 <= tt < 2.8 else ('chew' if tt < 3.6 else 'grin'), mo=1.0, eyes='crazy', brow='angry', look=(0, -0.8) if tt > 1.0 else (1, 0),
+                 puff=sm(seg(tt, 2.2, 2.8)) * (1 - sm(seg(tt, 3.6, 4.2))), hands=[(bp[0] - 130, bp[1] + 20), (bp[0] + 130, bp[1] + 20)] if tt >= 0.4 else [None, None])
+        draw_char(img, CX, GY, o)
+        particles(img, 111, 1.3, tt, 50, (bp[0], bp[1] + 40), (-90, 90), (100, 300), 1400, CANDY, (20, 34), life=0.6, emit=1.4)
+        if tt < 3.0:
+            spr = Image.new('RGBA', img.size, (0, 0, 0, 0)); candy_bowl(spr, bp[0], bp[1], n=int(12 * (1 - sm(seg(tt, 1.3, 2.7)))))
+            img.alpha_composite(spr.rotate(-160 * tip, center=(L(bp[0]), L(bp[1])), resample=Image.BICUBIC))
+        else:
+            put_sphere(img, (255, 140, 30), CX, head_top() + 10, 250, 120, 0.4)   # boş kova şapka oldu
+        if tt >= 0.4 and tt < 3.0:
+            hand(img, (bp[0] - 130, bp[1] + 20)); hand(img, (bp[0] + 130, bp[1] + 20))
+        if 1.3 <= tt < 2.8: put_text(img, 'TRICK OR TREAT!', 600, 200, 96, (255, 140, 30), scale=1.0 + 0.04 * math.sin(tt * 30), rot=-6, max_w=980)
+        if tt >= 3.6: put_text(img, 'ALL TREATS.', 620, 250, 110, (255, 255, 255), scale=back(seg(tt, 3.6, 3.8)), rot=6)
+    return shake
+
+
+# ---------------------------------------------------------------- gag: kostüm
+def ghost_sheet(img, cx, gy, k, gt):
+    d = ImageDraw.Draw(img)
+    top = gy - 26 - 2 * R - 30
+    h = (2 * R + 70) * k
+    pts = [(cx - R - 30, top + h)] + [(cx - R - 30 + i * (2 * R + 60) / 6, top + h + (18 if i % 2 else -6) + 6 * math.sin(gt * 6 + i)) for i in range(7)]
+    d.chord(box(cx - R - 30, top, cx + R + 30, top + 2 * R + 40), 180, 360, fill=(248, 248, 255), outline=DARK, width=L(5))
+    if k > 0.2:
+        d.polygon([(L(cx - R - 30), L(top + R + 20))] + [(L(x), L(y)) for x, y in pts[1:]] + [(L(cx + R + 30), L(top + R + 20))], fill=(248, 248, 255))
+    for s_ in (-1, 1): d.ellipse(box(cx + s_ * 50 - 26, top + 110, cx + s_ * 50 + 26, top + 170), fill=(20, 20, 30))
+
+
+def gag_costume(img, v, t, gt):
+    tt = max(t, 0.0); shake = 0.0; o = dict(t=gt)
+    if v == 'N':
+        on = sm(seg(tt, 0.5, 1.1))
+        o.update(mouth='smile', eyes='happy' if tt > 1.3 else 'normal', look=(1, -0.4))
+        info = draw_char(img, CX, GY, o)
+        d = ImageDraw.Draw(img)
+        hy = lerp(head_top() - 300, head_top() + 8, on)                      # küçük cadı şapkası
+        d.polygon([(L(CX - 90), L(hy)), (L(CX + 90), L(hy)), (L(CX + 20), L(hy - 170))], fill=(60, 30, 90), outline=DARK)
+        d.rounded_rectangle(box(CX - 130, hy - 10, CX + 130, hy + 14), radius=L(10), fill=(60, 30, 90), outline=DARK, width=L(4))
+        if tt > 1.4: put_text(img, 'cute witch.', 620, 320, 60, (200, 160, 255), scale=back(seg(tt, 1.4, 1.6)), rot=-4)
+    else:
+        k = sm(seg(tt, 0.4, 1.2))
+        boo = 1.6 <= tt < 2.4
+        scared = tt >= 2.4
+        jump = 200 * math.sin(math.pi * clamp((tt - 2.4) / 0.5)) if 2.4 <= tt < 2.9 else 0
+        o.update(mouth='open', mo=1.0, eyes='crazy', look=(-1, 0) if scared else (1, 0))
+        draw_char(img, CX, GY - jump, o)
+        if k > 0: ghost_sheet(img, CX, GY - jump, k, gt)
+        if boo: put_text(img, 'BOO!', 640, 230, 170, (255, 255, 255), scale=back(seg(tt, 1.6, 1.75)), rot=-8); shake = 14
+        if scared: put_text(img, '...SCARED MYSELF.', 600, 260, 84, (255, 140, 30), scale=back(seg(tt, 2.5, 2.7)), rot=5, max_w=980)
+    return shake
+
+
+GAGS.update({
+    'candybowl': dict(title='TRICK OR TREAT', name='Candy Bowl', wall=(90, 70, 120), fn=gag_candybowl, months=(10,),
+                      N=[(0.8, 'rattle', 0.3), (1.3, 'crunch'), (1.8, 'crunch')],
+                      P=[(0.0, 'sting'), (1.2, 'rattle', 1.6), (2.8, 'gulp'), (3.2, 'crunch'), (3.6, 'burp')]),
+    'costume': dict(title='HALLOWEEN COSTUME', name='Costume', wall=(80, 70, 110), fn=gag_costume, months=(10,),
+                    N=[(0.5, 'whoosh_s'), (1.1, 'pop'), (1.4, 'ding')],
+                    P=[(0.0, 'sting'), (0.4, 'whoosh'), (1.6, 'bang'), (1.65, 'horn'), (2.4, 'boing')]),
 })
 
 

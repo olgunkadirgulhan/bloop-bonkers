@@ -110,6 +110,9 @@ def pick_plan(hist, rnd, perf=({}, {})):
             break
     last_room = past[-1].get('room') if past else None
     room = rnd.choice([r for r in bloop.ROOMS if r != last_room])
+    now = datetime.now(timezone.utc)
+    if now.month == 10 and now.day >= 15 and last_room != 'spooky' and rnd.random() < 0.6:   # Cadılar Bayramı dönemi
+        room = 'spooky'
     return dict(format=fmt, cast=cast, gags=gags, room=room, seed=rnd.randrange(10 ** 6))
 
 
@@ -119,6 +122,10 @@ def metadata(plan, hist, rnd):
     c = bloop.CAST[plan['cast']]['name']
     used = {v['title'] for v in hist['videos']}
     opts = [t.format(g=g, c=c) for t in TITLES[plan['format']]]
+    if plan.get('room') == 'spooky' or any(bloop.GAGS[k].get('months') == (10,) for k in plan['gags']):
+        A_, B_, _ = bloop.FORMATS[plan['format']]
+        opts = [f'{A_.title()} vs {B_.title()}: Halloween Edition 🎃 ({g})', f'Halloween: {A_.title()} vs {B_.title()} 👻 {g}',
+                f'{c} on Halloween 🎃 {A_.title()} vs {B_.title()}']
     rnd.shuffle(opts)
     title = next((t for t in opts if t not in used), opts[0] + f' #{len(hist["videos"]) + 1}')
     A, B, _ = bloop.FORMATS[plan['format']]
