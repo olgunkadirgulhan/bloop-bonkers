@@ -466,6 +466,22 @@
       ],
       "room": "cafe",
       "seed": 992773
+    },
+    {
+      "id": "WWjTzTwlSzE",
+      "date": "2026-10-12 14:49",
+      "kind": "short",
+      "title": "Grumbo's Worst Day Ever 😂 (Pizza & Gift)",
+      "privacy": "public",
+      "format": "day",
+      "cast": "grumbo",
+      "gags": [
+        "pizza",
+        "gift",
+        "toothpaste"
+      ],
+      "room": "office",
+      "seed": 48602
     }
   ]
 }
