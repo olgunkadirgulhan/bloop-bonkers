@@ -3760,6 +3760,10 @@ def render_day(i):
 
 
 def render_frame(i):
+    return render_frame_raw(i)
+
+
+def render_frame_raw(i):
     if PLAN.get('format') == 'day':
         return render_day(i)
     T = i / FPS
@@ -3800,7 +3804,20 @@ def render_frame(i):
     return frame
 
 
-def _frame_bytes(i): return render_frame(i).tobytes()
+@lru_cache(2)
+def _first_frame(key):
+    return render_frame_raw(0)
+
+
+def render_frame_loop(i):
+    """Shorts başa sarar: son 0.45 sn ilk kareye karışır, video kesintisiz dönüyor gibi görünür (tekrar izlenme)."""
+    T = i / FPS; tot = total(); f = render_frame_raw(i)
+    if T > tot - 0.45:
+        f = Image.blend(f, _first_frame(str(PLAN.get('seed'))), seg(T, tot - 0.45, tot))
+    return f
+
+
+def _frame_bytes(i): return render_frame_loop(i).tobytes()
 
 
 # ---------------------------------------------------------------- ses
@@ -3916,21 +3933,39 @@ def voice_pitch():
 
 
 @lru_cache(None)
-def anime_clips(kind):
-    """voices/puck/<tür>_<n>.wav: Gemini TTS ile bir kez üretilmiş anime ünlemleri (Nani?!, Kyaa!, Yatta!, Hehehe...)."""
+def load_clip(f):
+    with wave.open(f) as w:
+        x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float64) / 32768
+    nz = np.nonzero(np.abs(x) > 0.02)[0]
+    return x[max(0, nz[0] - 200):nz[-1] + 800] if len(nz) else None
+
+
+@lru_cache(None)
+def anime_clips(kind, voice='puck'):
+    """Anime ünlemleri: voices/<Ses>/ex/<tür>_<n>.wav (voice_lib), yoksa voices/puck/<tür>_<n>.wav (ilk kütüphane)."""
     import glob
-    out = []
-    for f in sorted(glob.glob(os.path.join(HERE, 'voices', 'puck', f'{kind}_*.wav'))):
-        with wave.open(f) as w:
-            x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float64) / 32768
-        nz = np.nonzero(np.abs(x) > 0.02)[0]
-        if len(nz): out.append(x[max(0, nz[0] - 200):nz[-1] + 800])
-    return out
+    files = sorted(glob.glob(os.path.join(HERE, 'voices', voice, 'ex', f'{kind}_*.wav'))) or \
+        sorted(glob.glob(os.path.join(HERE, 'voices', 'puck', f'{kind}_*.wav')))
+    return [x for x in (load_clip(f) for f in files) if x is not None]
+
+
+def line_clip(gag, which):
+    """Durum repliği (voices/<Ses>/lines/<durum>_<N|P>.wav); karakterin sesi voice_lines.voices_for ile seçilir."""
+    import voice_lines
+    v = voice_lines.voices_for(PLAN.get('cast', 'bloop'))[0]
+    f = os.path.join(HERE, 'voices', v, 'lines', f'{gag}_{which}.wav')
+    x = load_clip(f) if os.path.exists(f) else None
+    if x is None: return None
+    r = 1.0 + ((sum(map(ord, PLAN.get('cast', 'bloop'))) % 7) - 3) * 0.02   # karakter başına hafif perde farkı
+    x = np.interp(np.arange(0, len(x) - 1, r), np.arange(len(x)), x)
+    return x / (np.abs(x).max() + 1e-9) * 0.8
 
 
 def anime_voice(kind, pitch, seed=0):
     """Ünlem klibi; karakterin perdesine göre (200 Hz = olduğu gibi) hızlandırılıp inceltilir/kalınlaştırılır."""
-    clips = anime_clips(kind) or anime_clips({'talk': 'hm', 'yay': 'giggle'}.get(kind, 'hm'))
+    import voice_lines
+    ev = voice_lines.voices_for(PLAN.get('cast', 'bloop'))[1]
+    clips = anime_clips(kind, ev) or anime_clips({'talk': 'hm', 'yay': 'giggle'}.get(kind, 'hm'), ev)
     if not clips: return None
     x = clips[random.Random(seed).randrange(len(clips))]
     r = min(1.6, max(0.8, pitch / 200))
@@ -3977,32 +4012,46 @@ LOUD_EV = ('smash', 'bang', 'splat', 'bonk', 'burp', 'freeze', 'sting')
 
 
 def build_audio(path):
-    tot = total(); n = int(SR * tot); mix = music(tot, PLAN['seed'])
+    tot = total(); n = int(SR * tot); mus = music(tot, PLAN['seed'])
+    mix = np.zeros(n); vo = np.zeros(n)
     def place(t0, x):
         i0 = int(t0 * SR); mix[i0:i0 + len(x)] += x[:max(0, n - i0)]
+    def say(t0, x):   # karakter sesi ayrı izde: müziği bu sırada kısarız
+        if x is None: return
+        i0 = int(t0 * SR); vo[i0:i0 + len(x)] += x[:max(0, n - i0)]
     pv = voice_pitch(); vs = PLAN.get('seed', 1)
     for t0 in (0.0, 0.45): place(t0, sfx('pop'))
     if PLAN.get('format') == 'day':
-        place(0.6, babble('talk', pv, vs))
+        say(0.6, babble('talk', pv, vs))
         for k, key in enumerate(PLAN['gags']):
             g = GAGS[key]; base = INTRO + k * DAYSEG + 0.2
-            place(base - 0.15, sfx('whoosh_s')); place(base + 0.05, babble('giggle', pv, vs + k))
+            place(base - 0.15, sfx('whoosh_s'))
+            say(base + 0.05, line_clip(key, 'P') if line_clip(key, 'P') is not None else babble('giggle', pv, vs + k))
+            yelled = False
             for ev in g['P']:
                 place(base + ev[0], sfx(ev[1], *ev[2:]))
-                if ev[1] in LOUD_EV: place(base + ev[0] + 0.15, babble('yell', pv, vs + 7 * k))
+                if ev[1] in LOUD_EV and not yelled and ev[0] > 1.6:
+                    say(base + ev[0] + 0.15, babble('yell', pv, vs + 7 * k)); yelled = True
         end = INTRO + DAYSEG * len(PLAN['gags'])
-        place(end, sfx('ding')); place(end + 0.5, babble('evil', pv, vs))
+        place(end, sfx('ding')); say(end + 0.5, babble('evil', pv, vs))
     else:
         for k, key in enumerate(PLAN['gags']):
             g = GAGS[key]; base = INTRO + k * GAG
-            place(base + 0.1, babble('hm', pv, vs + k))
+            ln, lp = line_clip(key, 'N'), line_clip(key, 'P')
+            say(base + 0.1, ln if ln is not None else babble('hm', pv, vs + k))
             for ev in g['N']: place(base + ev[0], sfx(ev[1], *ev[2:]))
-            place(base + NDUR + 0.1, babble('giggle', pv, vs + 3 * k))
+            say(base + NDUR + 0.1, lp if lp is not None else babble('giggle', pv, vs + 3 * k))
+            yelled = False
             for ev in g['P']:
                 place(base + NDUR + ev[0], sfx(ev[1], *ev[2:]))
-                if ev[1] in LOUD_EV: place(base + NDUR + ev[0] + 0.15, babble('yell', pv, vs + 5 * k))
+                if ev[1] in LOUD_EV and not yelled and ev[0] > (lp is not None and len(lp) / SR + 0.2 or 0):
+                    say(base + NDUR + ev[0] + 0.15, babble('yell', pv, vs + 5 * k)); yelled = True
         end = INTRO + GAG * len(PLAN['gags'])
-        place(end, sfx('ding')); place(end + 0.4, babble('yay', pv, vs)); place(end + 1.3, babble('evil', pv, vs))
+        place(end, sfx('ding')); say(end + 0.4, babble('yay', pv, vs)); say(end + 1.3, babble('evil', pv, vs))
+    env = np.convolve(np.abs(vo), np.ones(int(SR * 0.25)) / int(SR * 0.25), mode='same')
+    duck = 1 - 0.65 * np.clip(env / (env.max() + 1e-9) * 4, 0, 1)
+    mix = mus[:n] * duck[:len(mus[:n])] + mix + vo * 1.15
+    mix *= np.clip((tot - t_arr(tot)[:n]) / 0.25, 0, 1)   # döngüye temiz geçiş
     mix = mix / np.abs(mix).max() * 0.92
     pcm = (np.repeat(mix[:, None], 2, axis=1) * 32767).astype(np.int16)
     with wave.open(path, 'wb') as w:
