@@ -1,9 +1,9 @@
 name: episode
-# Uzun bölüm (yatay): her durum bölümde bir kez; haftada 3 (Pzt + Çar + Cum 17:00 UTC). episode.py 1,5 gün kuralıyla korur
+# Uzun bölüm (yatay): her durum bölümde bir kez; her gün 17:00 UTC (2026-10-13: 1. bölüm %40 izlenme oranı). episode.py 20 saat kuralıyla korur
 on:
   schedule:
-    - cron: "0 17 * * 1,3,5"
-    - cron: "30 19 * * 1,3,5"   # yedek: GitHub zamanlayıcı bazen atlıyor; bölüm çıktıysa episode.py atlar
+    - cron: "0 17 * * *"
+    - cron: "30 19 * * *"   # yedek: GitHub zamanlayıcı bazen atlıyor; bölüm çıktıysa episode.py atlar
   workflow_dispatch:
     inputs:
       privacy:
