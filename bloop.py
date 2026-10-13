@@ -3965,11 +3965,16 @@ def line_clip(gag, which):
     # 3 varyant (<durum>_<N|P>.wav, ..._N2, ..._N3): mevcut olanlardan videoya göre biri (aynı cümle hep tekrar etmesin)
     cands = [f for f in (os.path.join(HERE, 'voices', v, 'lines', f'{gag}_{which}{suf}.wav') for suf in ('', '2', '3'))
              if os.path.exists(f)]
+    up = 1.0
+    if not cands and v != 'Puck':   # 2026-10-13: kızların psikopat replikleri (Zephyr/Kore) doğrulanamadı → Puck repliği ince tona
+        cands = [f for f in (os.path.join(HERE, 'voices', 'Puck', 'lines', f'{gag}_{which}{suf}.wav') for suf in ('', '2', '3'))
+                 if os.path.exists(f)]
+        up = 1.22
     if not cands: return None
     f = cands[random.Random(f"{PLAN.get('seed')}-{gag}-{which}").randrange(len(cands))]
     x = load_clip(f)
     if x is None: return None
-    r = 1.0 + ((sum(map(ord, PLAN.get('cast', 'bloop'))) % 7) - 3) * 0.02   # karakter başına hafif perde farkı
+    r = up * (1.0 + ((sum(map(ord, PLAN.get('cast', 'bloop'))) % 7) - 3) * 0.02)   # karakter başına hafif perde farkı
     x = np.interp(np.arange(0, len(x) - 1, r), np.arange(len(x)), x)
     return x / (np.abs(x).max() + 1e-9) * 0.8
 
