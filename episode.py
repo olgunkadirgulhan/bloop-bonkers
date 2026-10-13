@@ -88,7 +88,7 @@ def scene(out, k, n, gag, cast, seed, room='living', fmt='psycho'):
     return dst
 
 
-EP_FORMATS = ['psycho', 'level', 'expect', 'public', 'clock', 'boss']
+EP_FORMATS = ['psycho', 'level', 'public', 'clock', 'boss']   # 'expect' Dex'e ait (2026-10-14)
 # 2026-10-13 kurgular (kullanıcı: "tekrar olmasın diye kurguları arttır"): her bölüm farklı yapı + farklı çerçeve
 # (6 kurgu x 6 çerçeve = 36 bölüm tipi). Sıra n_ep'e göre döner; ardışık iki bölüm aynı kurguyu almaz.
 KURGUS = ['situations', 'day', 'battle', 'ranked', 'room', 'theme']

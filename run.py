@@ -102,11 +102,14 @@ def trend_gags(pool):
     return hits
 
 
+RETIRED = {'expect'}   # 2026-10-14: 'Expectation vs Reality' Dex'in formatı (kanallar birbirine benzemesin)
+
+
 def pick_plan(hist, rnd, perf=({}, {})):
     fperf, gperf = perf
     past = [v for v in hist['videos'] if v.get('kind', 'short') == 'short' and v.get('format')][-12:]  # derlemeler hariç
     last2 = [v['format'] for v in past[-2:]]
-    fmts = [f for f in bloop.FORMATS if not (len(last2) == 2 and last2[0] == last2[1] == f)]   # 3. kez üst üste yok
+    fmts = [f for f in bloop.FORMATS if f not in RETIRED and not (len(last2) == 2 and last2[0] == last2[1] == f)]   # 3. kez üst üste yok
     fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
     if past and all(v['format'] != 'day' for v in past[-3:]):   # çeşitlilik: tek ekran formatı düzenli araya girer
         fmt = 'day'
