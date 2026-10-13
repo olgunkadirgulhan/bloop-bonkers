@@ -595,6 +595,22 @@
       ],
       "room": "office",
       "seed": 742667
+    },
+    {
+      "id": "RHehNDUq03I",
+      "date": "2026-10-13 16:49",
+      "kind": "short",
+      "title": "A Totally Normal Day for Grumbo... 💀 (Balloon & Spaghetti)",
+      "privacy": "public",
+      "format": "day",
+      "cast": "grumbo",
+      "gags": [
+        "balloon",
+        "spaghetti",
+        "pizza"
+      ],
+      "room": "library",
+      "seed": 24192
     }
   ]
 }
