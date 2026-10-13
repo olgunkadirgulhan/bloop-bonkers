@@ -89,11 +89,29 @@ def scene(out, k, n, gag, cast, seed, room='living', fmt='psycho'):
 
 
 EP_FORMATS = ['psycho', 'level', 'expect', 'public', 'clock', 'boss']
+# 2026-10-13 kurgular (kullanıcı: "tekrar olmasın diye kurguları arttır"): her bölüm farklı yapı + farklı çerçeve
+# (6 kurgu x 6 çerçeve = 36 bölüm tipi). Sıra n_ep'e göre döner; ardışık iki bölüm aynı kurguyu almaz.
+KURGUS = ['situations', 'day', 'battle', 'ranked', 'room', 'theme']
+DAY = {  # "Bir günüm": durumun günün hangi saatine ait olduğu (sıralama + kart)
+    'alarm': '7:00 AM', 'coffee': '7:30 AM', 'toothpaste': '7:45 AM', 'cereal': '8:00 AM', 'egg': '8:10 AM', 'pancake': '8:20 AM',
+    'toast': '8:30 AM', 'laundry': '9:00 AM', 'phone': '9:30 AM', 'shoelace': '9:45 AM', 'microwave': '12:00 PM', 'pizza': '12:30 PM',
+    'sandwich': '12:45 PM', 'chips': '1:30 PM', 'hotdog': '1:45 PM', 'phonecall': '2:00 PM', 'pen': '2:30 PM', 'fan': '3:00 PM',
+    'plant': '3:30 PM', 'lemon': '4:00 PM', 'boba': '4:30 PM', 'dumbbell': '5:00 PM', 'skate': '5:30 PM', 'doorbell': '6:00 PM',
+    'spaghetti': '7:00 PM', 'hotsauce': '7:15 PM', 'dishes': '8:00 PM', 'fridge': '9:00 PM', 'popcorn': '9:30 PM', 'candle': '10:00 PM',
+    'karaoke': '10:30 PM', 'nap': '11:30 PM'}
+THEMES = {  # tema bölümleri: (başlık, durumlar)
+    'food': ('Food Edition 🍕', {'cookie', 'icecream', 'ketchup', 'cake', 'soda', 'popcorn', 'sandwich', 'pizza', 'chips', 'lemon', 'donut',
+                                'spaghetti', 'hotsauce', 'pancake', 'cereal', 'egg', 'watermelon', 'banana', 'toast', 'hotdog', 'boba'}),
+    'morning': ('Morning Routine Edition ☀️', {'alarm', 'coffee', 'toothpaste', 'cereal', 'egg', 'pancake', 'toast', 'shoelace', 'phone', 'laundry'}),
+    'party': ('Party Edition 🎉', {'balloon', 'cake', 'gift', 'gum', 'karaoke', 'soda', 'popcorn', 'cards', 'selfie', 'candybowl', 'costume', 'boba'}),
+    'home': ('Home Alone Edition 🏠', {'fridge', 'doorbell', 'dishes', 'laundry', 'plant', 'candle', 'nap', 'microwave', 'fan', 'tissue', 'phonecall'}),
+}
+
 EP_SIZE = 14
 HALLOWEEN = False
 
 
-def plan_episode(hist, rnd):
+def plan_episode(hist, rnd, kurgu='situations', theme=None):
     month = datetime.now(timezone.utc).month
     gags = [k for k, g in bloop.GAGS.items() if month in g.get('months', range(1, 13))]
     # bölüm özeli: bu bölüm yalnız en yakın 'debut' grubunu tanıtır, sonraki grup bir sonraki bölüme kalır
@@ -105,9 +123,13 @@ def plan_episode(hist, rnd):
     last_used = {}
     for i, v in enumerate(v for v in hist['videos'] if v.get('kind') == 'episode'):
         for g, *_ in v.get('items', []): last_used[g] = i
+    if kurgu == 'day':
+        gags = [k for k in gags if k in DAY]
+    elif kurgu == 'theme':
+        gags = [k for k in gags if k in THEMES[theme][1]]
     rnd.shuffle(gags)
     gags.sort(key=lambda k: (not (bloop.GAGS[k].get('debut') and k not in shown), last_used.get(k, -1)))
-    gags = gags[:EP_SIZE]
+    gags = gags[:{'day': 12, 'ranked': 12, 'battle': 12}.get(kurgu, EP_SIZE)]
     rnd.shuffle(gags)
     for first in ('cookie', 'icecream', 'pizza', 'coffee'):   # güçlü bir durumla aç
         if first in gags:
@@ -116,6 +138,11 @@ def plan_episode(hist, rnd):
         gags.remove('gift'); gags.append('gift')
     casts = list(bloop.CAST)
     rnd.shuffle(casts)
+    if kurgu == 'day':                                 # tek karakterin sabahtan geceye günü
+        gags.sort(key=lambda k: datetime.strptime(DAY[k], '%I:%M %p'))
+        return [(g, casts[0]) for g in gags]
+    if kurgu == 'battle':                              # iki karakter sırayla
+        return [(g, casts[i % 2]) for i, g in enumerate(gags)]
     return [(g, casts[i % len(casts)]) for i, g in enumerate(gags)]
 
 
@@ -139,16 +166,34 @@ def main():
     AB = f'{A.title()} vs {B.title()}'
     global HALLOWEEN
     _n = datetime.now(timezone.utc); HALLOWEEN = _n.month == 10 and _n.day >= 26   # son hafta: Cadılar Bayramı özel bölümü
-    items = plan_episode(hist, rnd)
+    last_k = eps[-1].get('kurgu') if eps else None
+    kurgu = KURGUS[(n_ep - 1) % len(KURGUS)]
+    if kurgu == last_k:
+        kurgu = KURGUS[n_ep % len(KURGUS)]
+    theme = rnd.choice([t for t in THEMES if t != (eps[-1].get('theme') if eps else None)]) if kurgu == 'theme' else None
+    one_room = rnd.choice(bloop.ROOMS) if kurgu == 'room' else None
+    items = plan_episode(hist, rnd, kurgu, theme)
+    if kurgu == 'theme' and len(items) < 9:            # az durumlu tema → yemek teması (en geniş)
+        theme = 'food'; items = plan_episode(hist, rnd, kurgu, theme)
+    if HALLOWEEN and kurgu == 'room':
+        one_room = 'spooky'
+    print(f'kurgu: {kurgu} {theme or one_room or ""} · çerçeve: {fmt}', flush=True)
     n = len(items)
     out = HERE / 'output' / f'episode-{n_ep}'
     out.mkdir(parents=True, exist_ok=True)
     W8, Y8 = (255, 255, 255), (255, 214, 60)
     parts = []
     n_new = sum(1 for g, _ in items if bloop.GAGS[g].get('debut'))
-    card_mp4(out / 'intro.mp4', [(f'{A} vs {B}', 380, 150, (120, 235, 130)),
-                                 (f'{n} SITUATIONS' + (f'  ·  {n_new} NEW' if n_new else ''), 580, 150, W8),
-                                 ('Count how many times you are #2', 760, 64, Y8)], 3.6)
+    c0, c1 = bloop.CAST[items[0][1]]['name'], bloop.CAST[items[min(1, n - 1)][1]]['name']
+    room_name = (one_room or '').replace('spooky', 'haunted house').title()
+    big = {'situations': f'{n} SITUATIONS', 'day': f'A DAY WITH {c0.upper()}', 'battle': f'{c0.upper()} VS {c1.upper()}',
+           'ranked': f'TOP {n} MOST PSYCHO', 'room': f'{room_name.upper()} CHAOS', 'theme': THEMES[theme][0].split(' ')[0].upper() + ' EDITION' if theme else ''}[kurgu]
+    sub = {'situations': 'Count how many times you are #2', 'day': 'From 7 AM to midnight. Normal... or psycho?',
+           'battle': 'Who is MORE psycho? Keep score!', 'ranked': 'Counting down to the most psycho move',
+           'room': f'{n} situations, one {room_name.lower()}', 'theme': f'{n} situations'}[kurgu]
+    card_mp4(out / 'intro.mp4', [(f'{A} vs {B}', 380, 120, (120, 235, 130)),
+                                 (big + (f'  ·  {n_new} NEW' if n_new else ''), 580, 130, W8),
+                                 (sub, 760, 64, Y8)], 3.6)
     parts.append(out / 'intro.mp4')
     teasers = ['What would YOU do?', f'{A.title()}... or {B.title()}?', 'Be honest.', 'Guess what happens next.',
                'This one is personal.', 'We have all been here.', 'Watch the right side.']
@@ -156,16 +201,21 @@ def main():
         print(f'#{k}/{n}: {gag} ({cast})', flush=True)
         title = bloop.GAGS[gag]['title']
         new = bool(bloop.GAGS[gag].get('debut'))
-        card_mp4(out / f'card{k}.mp4', [(f'SITUATION #{k}' + ('  ·  NEW!' if new else ''), 400, 110, (255, 120, 170) if new else Y8),
+        head = {'day': DAY.get(gag, ''), 'battle': f'ROUND {k}: {bloop.CAST[cast]["name"].upper()}', 'ranked': f'#{n - k + 1}'}.get(kurgu, f'SITUATION #{k}')
+        card_mp4(out / f'card{k}.mp4', [(head + ('  ·  NEW!' if new else ''), 400, 110, (255, 120, 170) if new else Y8),
                                          (title, 560, 130, W8),
                                          ('First time on the channel!' if new else teasers[(k - 1) % len(teasers)], 720, 60, (200, 200, 220))])
-        parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), ('spooky' if HALLOWEEN and k % 2 else bloop.ROOMS[(k - 1) % len(bloop.ROOMS)]), fmt)]
+        room = one_room or ('spooky' if HALLOWEEN and k % 2 else bloop.ROOMS[(k - 1 + n_ep) % len(bloop.ROOMS)])
+        if kurgu == 'day':                               # günün saatine göre mekân
+            h = datetime.strptime(DAY.get(gag, '12:00 PM'), '%I:%M %p').hour
+            room = 'bedroom' if h < 8 or h >= 23 else 'kitchen' if h < 9 or 12 <= h < 14 or 19 <= h < 21 else 'office' if h < 17 else 'living'
+        parts += [out / f'card{k}.mp4', scene(out, k, n, gag, cast, rnd.randrange(10 ** 6), room, fmt)]
     names = [bloop.GAGS[g]['name'] for g, _ in items]
     cols = 2 if n <= 14 else 3                          # oy kartı: 24 durum da sığsın
     rows = -(-n // cols)
     gap = min(100, 700 // rows)
     img = Image.new('RGB', (OW, OH), BG)
-    bloop.put_text_px(img, 'WHICH ONE IS MOST YOU?', OW // 2, 120, 84, Y8)
+    bloop.put_text_px(img, {'battle': f'WHO WON: {c0.upper()} OR {c1.upper()}?', 'ranked': 'DO YOU AGREE WITH #1?', 'day': f'WHICH MOMENT IS MOST YOU?'}.get(kurgu, 'WHICH ONE IS MOST YOU?'), OW // 2, 120, 84, Y8, max_w=1800)
     for i, nm in enumerate(names):
         col, row = divmod(i, rows)
         x = OW // 2 + (col - (cols - 1) / 2) * (860 if cols == 2 else 600)
@@ -184,11 +234,17 @@ def main():
     # küçük resim: 1. sahnenin psycho anı
     ff('-ss', str(bloop.GAG * 0.8), '-i', str(out / 'scene1.mp4'), '-frames:v', '1', str(out / 'thumb_raw.png'))
     th = Image.open(out / 'thumb_raw.png').convert('RGB')
-    bloop.put_text_px(th, f'{n} SITUATIONS', OW // 2, 1000, 110, Y8)
+    bloop.put_text_px(th, big, OW // 2, 1000, 100, Y8, max_w=1800)
     th.resize((1280, 720)).save(out / 'thumb.png')
     print(f'bölüm hazır: {final}', flush=True)
-    title = (f'{AB}: Halloween Special 🎃 {n} Situations | Bloop Bonkers Episode {n_ep}' if HALLOWEEN else
-             f'{AB}: {n} Situations 🤪 | Bloop Bonkers Full Episode {n_ep}')
+    title = {'situations': f'{AB}: {n} Situations 🤪',
+             'day': f'A Day With {c0}: {AB} ({n} Moments) ☀️',
+             'battle': f'{c0} vs {c1}: Who Is More Psycho? {AB} ⚔️',
+             'ranked': f'Top {n} Most Psycho Moves, Ranked 🏆 {AB}',
+             'room': f'{room_name} Chaos: {AB} ({n} Situations) 🏠',
+             'theme': f'{AB}: {THEMES[theme][0]} ({n} Situations)' if theme else ''}[kurgu]
+    title = (title.replace('🤪', '🎃') + ' | Halloween Special') if HALLOWEEN else title + f' | Bloop Bonkers Ep {n_ep}'
+    title = title[:100]
     desc = (f'{n} everyday situations, {AB.lower()}, each one shown once'
             + (f' ({sum(1 for g, _ in items if bloop.GAGS[g].get("debut"))} of them brand new, not in any Short yet)' if any(bloop.GAGS[g].get('debut') for g, _ in items) else '') + '. '
             'Which one is MOST you? Comment the number! 👇\n\n'
@@ -212,14 +268,14 @@ def main():
         if 'episodes' not in pl:
             pl['episodes'] = upload.client().playlists().insert(part='snippet,status', body={
                 'snippet': {'title': 'Full Episodes 🎬 Normal vs Psycho', 'description': 'Every Bloop Bonkers full episode: '
-                            'everyday situations, normal vs psycho, each one shown once. New episodes every Mon, Wed and Fri.'},
+                            'everyday situations, normal vs psycho, each one shown once. New episodes every day.'},
                 'status': {'privacyStatus': 'public'}}).execute()['id']
             plf.write_text(json.dumps(pl, indent=2) + '\n')
         upload.add_to_playlist(pl['episodes'], vid)
     except Exception as e:
         print('playlist:', e)
     hist['videos'].append(dict(id=vid, date=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M'), kind='episode',
-                               title=title, privacy=privacy, format=fmt, items=[list(x) for x in items]))
+                               title=title, privacy=privacy, format=fmt, kurgu=kurgu, theme=theme or one_room, items=[list(x) for x in items]))
     HISTORY.write_text(json.dumps(hist, indent=2, ensure_ascii=False) + '\n')
 
 
