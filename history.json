@@ -611,6 +611,22 @@
       ],
       "room": "library",
       "seed": 24192
+    },
+    {
+      "id": "oG-iz1WDr0I",
+      "date": "2026-10-13 18:50",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Phone & Soda) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "boris",
+      "gags": [
+        "phone",
+        "soda",
+        "hotsauce"
+      ],
+      "room": "gym",
+      "seed": 877949
     }
   ]
 }
