@@ -100,7 +100,7 @@ def plan_episode(hist, rnd):
     shown = {g for v in hist['videos'] if v.get('kind') == 'episode' for g, *_ in v.get('items', [])}
     pending = sorted({bloop.GAGS[k]['debut'] for k in gags if bloop.GAGS[k].get('debut') and k not in shown})
     gags = [k for k in gags if not bloop.GAGS[k].get('debut') or k in shown or bloop.GAGS[k]['debut'] == pending[0]]
-    # günde 1 bölüm: her bölüm EP_SIZE durum; yeni (debut) durumlar önce, sonra bölümlerde en uzun süredir
+    # günde 2 bölüm: her bölüm EP_SIZE durum; yeni (debut) durumlar önce, sonra bölümlerde en uzun süredir
     # görünmeyenler → aynı durum ardışık bölümlerde tekrar etmez
     last_used = {}
     for i, v in enumerate(v for v in hist['videos'] if v.get('kind') == 'episode'):
@@ -128,10 +128,12 @@ def main():
     rnd = random.Random()
     eps = [v for v in hist['videos'] if v.get('kind') == 'episode']
     n_ep = len(eps) + 1
-    if '--force' not in sys.argv and eps:          # takvim her gün tetikler
+    if '--force' not in sys.argv and eps:          # günde en fazla 2 bölüm, aralarında en az 3 saat (yedek tetikler tekrar üretmez)
+        now_ = datetime.now(timezone.utc)
         last = datetime.strptime(eps[-1]['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)
-        if (datetime.now(timezone.utc) - last).total_seconds() < 12 * 3600:
-            print(f'son bölüm {eps[-1]["date"]}: 12 saat dolmadı, atlandı'); return
+        today_n = sum(1 for v in eps if v['date'].startswith(now_.strftime('%Y-%m-%d')))
+        if today_n >= 2 or (now_ - last).total_seconds() < 3 * 3600:
+            print(f'bugün {today_n} bölüm, son {eps[-1]["date"]}: atlandı'); return
     fmt = EP_FORMATS[(n_ep - 1) % len(EP_FORMATS)]   # her bölüm farklı kıyas çerçevesi
     A, B, Q = bloop.FORMATS[fmt]
     AB = f'{A.title()} vs {B.title()}'

@@ -34,7 +34,7 @@ jobs:
       - id: g
         env:
           LOG_FILE: history.json
-          SLOTS: "14:00,16:30,18:30,20:30"   # 2026-10-13 veri: UTC 18-21 en iyi, 21-24 en zayıf → slotlar 14:00-20:30 arasına
+          SLOTS: "14:00,18:00,20:30"   # 2026-10-13: günde 3 Short (+2 uzun bölüm, kullanıcı kararı); veri: UTC 18-21 en iyi
         run: python3 .github/slot_guard.py
 
   make:
