@@ -3691,6 +3691,342 @@ GAGS.update({
 })
 
 
+# ================================================================ 2026-10-13 durum fabrikası (kullanıcı: durumları 3 katına çıkar)
+# Her durum = bir nesne (şekil + renkler + etiket) + normal davranış + psikopat davranışı + kendi espri yazıları.
+# Elle çizilmiş 62 durumun yanında; nesne, davranış ve yazı her durumda farklı.
+FPROP = (850, TTOP - 60)
+
+
+@lru_cache(512)
+def prop_spr(shape, c1, c2, c3, label, s=1.0):
+    w = L(170 * s); spr = Image.new('RGBA', (w, w), (0, 0, 0, 0)); d = ImageDraw.Draw(spr)
+    u = lambda v: int(v * w / 170)
+    ol = dict(outline=DARK, width=max(2, u(4)))
+    if shape == 'round':
+        d.ellipse([u(25), u(30), u(145), u(150)], fill=c1, **ol)
+        d.ellipse([u(50), u(50), u(80), u(75)], fill=tuple(min(255, x + 70) for x in c1))
+        if c2: d.ellipse([u(78), u(12), u(110), u(40)], fill=c2, **ol)
+        if c3: d.arc([u(30), u(40), u(140), u(140)], 200, 340, fill=c3, width=u(8))
+    elif shape == 'stack':
+        for i, (c, h) in enumerate(((c1, 30), (c3 or c2, 14), (c2, 22), (c1, 34))):
+            y0 = u(130 - i * 24 - h)
+            d.rounded_rectangle([u(20), y0, u(150), y0 + u(h)], radius=u(h / 2), fill=c, **ol)
+    elif shape == 'box':
+        d.rounded_rectangle([u(35), u(20), u(135), u(155)], radius=u(10), fill=c1, **ol)
+        d.rectangle([u(45), u(70), u(125), u(115)], fill=c2)
+        if label:
+            f = font(u(26)); tw = d.textlength(label, font=f); d.text((u(85) - tw / 2, u(78)), label, font=f, fill=c3 or DARK)
+    elif shape == 'cup':
+        d.rounded_rectangle([u(30), u(45), u(120), u(150)], radius=u(14), fill=c1, **ol)
+        d.ellipse([u(36), u(40), u(114), u(62)], fill=c2)
+        d.arc([u(105), u(70), u(155), u(125)], 270, 90, fill=c1, width=u(12))
+        if c3:
+            for k in range(3): d.arc([u(45 + k * 22), u(5), u(65 + k * 22), u(38)], 180, 360, fill=c3, width=u(4))
+    elif shape == 'bottle':
+        d.rounded_rectangle([u(50), u(55), u(120), u(160)], radius=u(18), fill=c1, **ol)
+        d.rectangle([u(70), u(20), u(100), u(60)], fill=c1, **ol)
+        d.rectangle([u(66), u(10), u(104), u(28)], fill=c2, **ol)
+        if label:
+            d.rectangle([u(55), u(95), u(115), u(130)], fill=c3 or (255, 255, 255))
+            f = font(u(20)); tw = d.textlength(label, font=f); d.text((u(85) - tw / 2, u(102)), label, font=f, fill=DARK)
+    elif shape == 'cone':
+        d.polygon([(u(85), u(160)), (u(30), u(45)), (u(140), u(45))], fill=c1, **ol)
+        d.ellipse([u(30), u(10), u(140), u(70)], fill=c2, **ol)
+        if c3:
+            for x, y in ((60, 35), (95, 25), (110, 45)): d.ellipse([u(x - 8), u(y - 8), u(x + 8), u(y + 8)], fill=c3)
+    elif shape == 'stick':
+        d.rounded_rectangle([u(70), u(10), u(100), u(160)], radius=u(14), fill=c1, **ol)
+        d.ellipse([u(55), u(0), u(115), u(55)], fill=c2, **ol)
+        if c3: d.rectangle([u(70), u(110), u(100), u(125)], fill=c3)
+    elif shape == 'hat':     # sivri ucu yukarıda (parti/büyücü şapkası, trafik konisi, çadır)
+        d.polygon([(u(85), u(5)), (u(25), u(140)), (u(145), u(140))], fill=c1, **ol)
+        d.rounded_rectangle([u(15), u(130), u(155), u(155)], radius=u(10), fill=c2 or c1, **ol)
+        if c3: d.ellipse([u(72), u(0), u(98), u(26)], fill=c3, **ol)
+    elif shape == 'crown':
+        d.polygon([(u(20), u(140)), (u(20), u(50)), (u(52), u(90)), (u(85), u(30)), (u(118), u(90)), (u(150), u(50)), (u(150), u(140))], fill=c1, **ol)
+        for x in (52, 85, 118): d.ellipse([u(x - 9), u(110), u(x + 9), u(128)], fill=c3 or (230, 60, 90))
+    elif shape == 'diamond':
+        d.polygon([(u(85), u(5)), (u(150), u(80)), (u(85), u(160)), (u(20), u(80))], fill=c1, **ol)
+        d.line([(u(85), u(5)), (u(85), u(160))], fill=c2 or DARK, width=u(4)); d.line([(u(20), u(80)), (u(150), u(80))], fill=c2 or DARK, width=u(4))
+    elif shape == 'disc':
+        d.ellipse([u(15), u(60), u(155), u(130)], fill=c1, **ol)
+        d.ellipse([u(45), u(75), u(125), u(115)], fill=c2)
+        if c3:
+            for k in range(5):
+                x = u(40 + k * 22); d.ellipse([x - u(5), u(85), x + u(5), u(95)], fill=c3)
+    return spr
+
+
+def fprop(img, spec, cx, cy, s=1.0, ang=0.0):
+    put_rot(img, prop_spr(spec['shape'], spec['c1'], spec.get('c2'), spec.get('c3'), spec.get('label', ''), max(0.1, round(s * 20) / 20)), cx, cy, ang)
+
+
+def fsay(img, txt, tt, t0, y=210, sz=104, col=(255, 230, 60), rot=-7, t1=99.0):
+    if t0 <= tt < t1 and txt: put_text(img, txt, 610, y, sz, col, scale=back(seg(tt, t0, t0 + 0.2)), rot=rot, max_w=980)
+
+
+def fnormal(img, spec, tt, gt):
+    o = dict(t=gt); hd = hand_default(1); my = mouth_y()
+    if spec['food'] or spec['n'] == 'use':
+        pp = lp(FPROP, (CX + 140, my - 10), sm(seg(tt, 0.4, 1.0))) if tt < 2.3 else lp((CX + 140, my - 10), FPROP, sm(seg(tt, 2.3, 2.8)))
+        sc = 1.0 - (0.35 * sm(seg(tt, 1.2, 2.2)) if spec['food'] else 0)
+        hr = (pp[0] - 50, pp[1] + 40) if 0.4 <= tt < 2.8 else lp(hd, (FPROP[0] - 50, FPROP[1] + 40), sm(seg(tt, 0.1, 0.4)))
+        o.update(hands=[None, hr], mouth='chew' if spec['food'] and 1.2 <= tt < 2.3 else 'smile', eyes='happy' if tt > 1.2 else 'normal', look=(1, 0))
+        draw_char(img, CX, GY, o); fprop(img, spec, pp[0], pp[1], 1.05 * sc); hand(img, hr)
+    else:   # admire: kaldırıp beğenerek bakar
+        pp = lp(FPROP, (CX + 230, GY - 380), sm(seg(tt, 0.4, 1.0)))
+        hr = (pp[0] - 40, pp[1] + 60)
+        o.update(hands=[None, hr], mouth='smile', eyes='happy' if tt > 1.0 else 'normal', look=(1, -0.6))
+        draw_char(img, CX, GY, o); fprop(img, spec, pp[0], pp[1], 1.15); hand(img, hr)
+        if tt > 1.1: particles(img, 301, 1.1, tt, 6, (pp[0], pp[1] - 60), (-80, 80), (-160, -60), 0, [(255, 240, 150)], (10, 16), life=1.0, emit=1.2)
+    if tt > 1.8 and spec.get('ntxt'): put_text(img, spec['ntxt'], 640, 320, 56, (255, 255, 255), scale=back(seg(tt, 1.8, 2.0)), rot=-4, max_w=900)
+
+
+def fpsycho(img, spec, tt, gt):
+    o = dict(t=gt); my = mouth_y(); m = spec['p']; shake = 0.0; mid, end = spec['mid'], spec['end']
+    if m == 'gulp_all':
+        n = 8; eaten = int(n * clamp((tt - 0.8) / 2.0)) if tt >= 0.8 else 0
+        for k in range(eaten, n): fprop(img, spec, FPROP[0] + (k % 2) * 30 - 15, FPROP[1] + 30 - k * 40, 0.78)
+        if 0.8 <= tt < 2.8:
+            a = ((tt - 0.8) * n / 2.0) % 1.0
+            fprop(img, spec, lerp(FPROP[0], CX + 40, a), lerp(FPROP[1] - 240, my, a) - 120 * math.sin(math.pi * a), 0.7, 360 * a)
+        o.update(mouth='open' if 0.8 <= tt < 2.8 else ('chew' if tt < 3.6 else 'grin'), mo=1.0, eyes='crazy', brow='angry' if tt < 2.8 else None,
+                 look=(1, 0), puff=sm(seg(tt, 2.4, 2.9)) * (1 - sm(seg(tt, 3.4, 3.9))))
+        draw_char(img, CX, GY, o); fsay(img, mid, tt, 0.8, t1=3.6); fsay(img, end, tt, 3.6, 250, 104, (255, 255, 255), 6)
+    elif m == 'explode':
+        g = 1 + 2.2 * sm(seg(tt, 0.6, 2.5)); boom = tt >= 2.6
+        o.update(mouth='grin' if not boom else 'open', mo=1.0, eyes='crazy', brow='angry' if not boom else None, look=(1, -0.2),
+                 color=lerpc(CHAR['color'], spec['c1'], 0.45 * sm(seg(tt, 2.6, 2.9))), hands=[None, (CX + 200, GY - 260)] if not boom else [None, None])
+        draw_char(img, CX, GY, o)
+        if not boom: fprop(img, spec, CX + 280 + 20 * g, GY - 300 - 20 * g, 0.9 * g, math.sin(tt * 30) * 4 * g); hand(img, (CX + 200, GY - 260))
+        else:
+            particles(img, 311, 2.6, tt, 60, (CX + 300, GY - 340), (-900, 900), (-1100, 300), 1600, [spec['c1'], spec.get('c2') or spec['c1']], (16, 40), life=1.6)
+            if tt < 2.9: flash(img, 0.25 * (1 - seg(tt, 2.6, 2.9))); shake = 18
+        fsay(img, mid, tt, 2.6, 200, 150, (255, 140, 40), -8, t1=3.7); fsay(img, end, tt, 3.7, 300, 96, (255, 255, 255), 6)
+    elif m == 'spam':
+        k = int((tt - 0.6) / 0.18) if 0.6 <= tt < 3.8 else (-1 if tt < 0.6 else 17)
+        up = 0.6 <= tt < 3.8 and (tt * 5.5) % 1 < 0.5
+        pp = (CX + 150, my - 10) if up else (CX + 230, GY - 180)
+        o.update(hands=[None, (pp[0] - 40, pp[1] + 40)], mouth='open' if up else 'grin', mo=1.0, eyes='crazy', look=(1, 0),
+                 eye_s=1.0 + (0.08 * math.sin(gt * 60) if tt > 1.6 else 0))
+        draw_char(img, CX, GY, o); fprop(img, spec, pp[0], pp[1], 0.95); hand(img, (pp[0] - 40, pp[1] + 40))
+        if k >= 0: put_text(img, f'x{min(k + 1, 18) * spec.get("mult", 1)}', 780, 230, 110, (255, 255, 255), rot=-6)
+        fsay(img, end, tt, 3.9, 330, 100, (255, 230, 60), 6)
+    elif m == 'wear':
+        on = sm(seg(tt, 0.6, 1.4)); top = head_top()
+        pp = lp(FPROP, (CX, top - 50), on)
+        o.update(mouth='grin', mo=0.8, eyes='happy' if tt > 1.4 else 'crazy', look=(0, -0.4) if tt < 1.4 else (1, 0), sy=1.0 + 0.03 * math.sin(gt * 6))
+        draw_char(img, CX, GY, o); fprop(img, spec, pp[0], pp[1], 0.8 + 0.6 * on, -10 * on + (6 * math.sin(gt * 5) if tt > 1.4 else 0))
+        if tt > 1.4: particles(img, 321, 1.4, tt, 14, (CX, top - 60), (-200, 200), (-300, -80), 200, [(255, 240, 150), (255, 255, 255)], (10, 18), life=1.0, emit=2.4)
+        fsay(img, mid, tt, 1.4, t1=3.4); fsay(img, end, tt, 3.4, 300, 100, (255, 255, 255), 6)
+    elif m == 'giant':
+        drop = sm(seg(tt, 1.0, 1.5)); squash = drop * (1 - sm(seg(tt, 3.3, 3.8)))
+        o.update(mouth='grin' if tt < 1.0 else ('flat' if tt < 3.3 else 'open'), mo=1.0, eyes='crazy' if tt < 1.5 else 'happy', look=(0, -1) if tt < 1.5 else (0, 0),
+                 sy=1.0 - 0.55 * squash, sx=1.0 + 0.4 * squash)
+        draw_char(img, CX, GY, o)
+        if tt >= 0.4:
+            y = lerp(-300, GY - 26 - 2 * R * (1 - 0.55 * squash) - 170, drop) if tt < 3.3 else lerp(GY - 300, -400, sm(seg(tt, 3.3, 3.9)))
+            fprop(img, spec, CX, y, 3.2)
+        if 1.5 <= tt < 1.8: shake = 20
+        fsay(img, mid, tt, 0.4, 200, 100, (255, 230, 60), t1=3.5); fsay(img, end, tt, 3.5, 300, 100, (255, 255, 255), 6)
+    elif m == 'launch':
+        pts = [(CX + 200, GY - 320), (980, 200), (120, 260), (900, 560), (CX, head_top() - 40)]
+        u_ = clamp((tt - 0.6) / 2.4) * (len(pts) - 1); i = min(int(u_), len(pts) - 2); f = u_ - i
+        bx, by = lerp(pts[i][0], pts[i + 1][0], f), lerp(pts[i][1], pts[i + 1][1], f)
+        hit = tt >= 3.0
+        o.update(mouth='grin' if not hit else 'o', mo=1.0, eyes='crazy' if not hit else 'happy', brow='angry' if tt < 0.6 else None,
+                 look=((bx - CX) / 600, (by - 500) / 500), hands=[None, (CX + 200, GY - 320)] if tt < 0.7 else [None, None],
+                 sy=1.0 - (0.15 if 3.0 <= tt < 3.2 else 0))
+        draw_char(img, CX, GY, o)
+        fprop(img, spec, bx if not hit else CX + 40 * math.sin(gt * 9), by if not hit else head_top() - 50, 0.85, tt * 500)
+        if 0.6 <= tt < 3.0 and (u_ % 1) < 0.12: put_text(img, 'BOING', bx, by - 80, 56, (255, 255, 255))
+        if 3.0 <= tt < 3.25: shake = 12; put_text(img, 'BONK!', 640, 220, 130, (255, 255, 255), rot=-8)
+        fsay(img, end, tt, 3.5, 300, 100, (255, 230, 60), 6)
+    elif m == 'float':
+        g = 1 + 0.8 * sm(seg(tt, 0.4, 1.4)); lift = 170 * sm(seg(tt, 1.6, 3.4)) * (1 - sm(seg(tt, 3.8, 4.1)))
+        o.update(mouth='open' if 1.6 <= tt < 3.8 else 'grin', mo=1.0, eyes='happy' if 1.6 <= tt < 3.8 else 'crazy', look=(0, -0.8),
+                 hands=[None, (CX + 60, GY - lift - 2 * R - 30)])
+        draw_char(img, CX, GY - lift, o)
+        ImageDraw.Draw(img).line(box(CX + 60, GY - lift - 2 * R - 30, CX + 60, GY - lift - 2 * R - 80 * g), fill=(250, 250, 250), width=L(3))
+        fprop(img, spec, CX + 60, GY - lift - 2 * R - 80 * g - 55 * g, 0.75 * g, 8 * math.sin(gt * 3))
+        hand(img, (CX + 60, GY - lift - 2 * R - 30))
+        if 3.9 <= tt < 4.2: shake = 12
+        fsay(img, mid, tt, 1.6, 560, 96, (255, 255, 255), t1=4.0); fsay(img, end, tt, 4.0, 560, 96, (255, 230, 60), 6)
+    elif m == 'color':
+        pp = lp(FPROP, (CX + 60, my), sm(seg(tt, 0.4, 1.1)))
+        k = sm(seg(tt, 1.4, 2.6))
+        o.update(mouth='open' if 0.9 <= tt < 1.4 else 'grin', mo=1.0, eyes='crazy' if tt < 2.6 else 'happy', look=(1, 0) if tt < 1.4 else (0, -0.3),
+                 color=lerpc(CHAR['color'], spec['c1'], 0.85 * k), sx=1.0 + 0.06 * math.sin(gt * 20) * k, sy=1.0 + 0.06 * math.cos(gt * 20) * k)
+        info = draw_char(img, CX, GY, o)
+        if tt < 1.3: fprop(img, spec, pp[0], pp[1], 0.95 * (1 - 0.6 * seg(tt, 1.0, 1.3)))
+        if tt >= 1.4: particles(img, 331, 1.4, tt, 24, (CX, info['cy']), (-260, 260), (-420, -120), 300, [spec['c1'], (255, 255, 255)], (10, 20), life=0.9, emit=2.4)
+        fsay(img, mid, tt, 1.4, t1=3.4); fsay(img, end, tt, 3.4, 300, 100, (255, 255, 255), 6)
+    return shake
+
+
+def make_fgag(spec):
+    def fn(img, v, t, gt):
+        tt = max(t, 0.0)
+        if v == 'N':
+            fnormal(img, spec, tt, gt); return 0.0
+        if spec['p'] == 'giant': fprop(img, spec, *FPROP, 1.0)
+        return fpsycho(img, spec, tt, gt)
+    return fn
+
+
+FSFX_N = {True: [(0.6, 'pop'), (1.3, 'crunch'), (1.8, 'crunch')], False: [(0.6, 'whoosh_s'), (1.2, 'ding')]}
+FSFX_P = {'gulp_all': [(0.0, 'sting')] + [(0.9 + i * 0.25, 'gulp') for i in range(8)] + [(3.1, 'burp')],
+          'explode': [(0.0, 'sting'), (0.6, 'inhale', 1.8), (2.6, 'bang'), (3.4, 'boing')],
+          'spam': [(0.0, 'sting')] + [(0.6 + i * 0.36, 'click') for i in range(9)] + [(3.9, 'ding')],
+          'wear': [(0.0, 'sting'), (0.6, 'whoosh'), (1.4, 'ding'), (1.6, 'clap'), (1.9, 'clap')],
+          'giant': [(0.0, 'sting'), (1.0, 'whoosh'), (1.5, 'smash'), (3.4, 'boing')],
+          'launch': [(0.0, 'sting'), (0.6, 'whoosh'), (1.2, 'boing'), (1.8, 'boing'), (2.4, 'boing'), (3.0, 'bonk')],
+          'float': [(0.0, 'sting'), (0.4, 'inhale', 1.0), (1.6, 'whoosh'), (3.9, 'boing')],
+          'color': [(0.0, 'sting'), (1.0, 'gulp'), (1.4, 'fizz', 1.2), (3.4, 'ding')]}
+
+
+def register_factory(rows, debut0='2026-10-15', per_group=5):
+    from datetime import date as _date, timedelta as _td
+    d0 = _date.fromisoformat(debut0)
+    for i, r in enumerate(rows):
+        gid, title, name, shape, c1, c2, c3, label, food, n, p, mid, end = r[:13]
+        spec = dict(shape=shape, c1=c1, c2=c2, c3=c3, label=label, food=food, n=n, p=p, mid=mid, end=end,
+                    ntxt=r[13] if len(r) > 13 else None, mult=r[14] if len(r) > 14 else 1)
+        wall = tuple(int(lerp(x, 245, 0.72)) for x in c1)
+        GAGS[gid] = dict(debut=str(d0 + _td(days=i // (per_group * 2))), title=title, name=name, wall=wall, fn=make_fgag(spec),
+                         N=FSFX_N[bool(food)], P=FSFX_P[p], factory=True)
+
+# (id, başlık, ad, şekil, c1, c2, c3, etiket, yiyecek, normal, psikopat, orta yazı, son yazı[, normal yazı, sayaç çarpanı])
+FROWS = [
+    ('apple', 'EATING AN APPLE', 'Apple', 'round', (220, 40, 50), (90, 160, 60), None, '', True, 'use', 'gulp_all', 'TEN APPLES.', 'DOCTOR? NEVER.'),
+    ('orange', 'PEELING AN ORANGE', 'Orange', 'round', (255, 150, 30), (80, 150, 60), None, '', True, 'use', 'color', 'ORANGE MODE!', 'VITAMIN C OVERLOAD.'),
+    ('burger', 'BURGER LUNCH', 'Burger', 'stack', (215, 150, 80), (120, 60, 40), (90, 170, 60), '', True, 'use', 'gulp_all', 'BURGER TOWER!', 'STILL HUNGRY.'),
+    ('taco', 'TACO TUESDAY', 'Taco', 'cone', (240, 200, 90), (120, 70, 40), (90, 170, 60), '', True, 'use', 'explode', 'TACO BOOM!', 'CRUNCH TIME.'),
+    ('sushi', 'EATING SUSHI', 'Sushi', 'disc', (40, 40, 45), (250, 250, 250), (255, 120, 90), '', True, 'use', 'gulp_all', 'SUSHI TRAIN!', 'NO CHOPSTICKS.'),
+    ('cupcake', 'CUPCAKE', 'Cupcake', 'cup', (230, 130, 170), (255, 240, 250), None, '', True, 'use', 'color', 'SUGAR RUSH!', 'PINK FOREVER.'),
+    ('cheese', 'CHEESE PLATE', 'Cheese', 'cone', (255, 210, 70), (255, 225, 110), (230, 180, 40), '', True, 'use', 'gulp_all', 'CHEESE PARTY!', 'SAY CHEESE.'),
+    ('carrot', 'EATING A CARROT', 'Carrot', 'stick', (255, 140, 40), (80, 170, 70), (230, 110, 30), '', True, 'use', 'spam', '', 'NIGHT VISION.'),
+    ('grapes', 'GRAPES', 'Grapes', 'round', (130, 60, 170), (80, 150, 60), None, '', True, 'use', 'gulp_all', 'ALL THE GRAPES!', 'GRAPE EXPECTATIONS.'),
+    ('strawberry', 'STRAWBERRIES', 'Strawberry', 'round', (230, 40, 60), (80, 160, 60), None, '', True, 'use', 'color', 'BERRY MODE!', 'JAM SESSION.'),
+    ('milk', 'GLASS OF MILK', 'Milk', 'box', (250, 250, 250), (80, 140, 230), (255, 255, 255), 'MILK', True, 'use', 'color', 'MILK MOUSTACHE!', 'GOT MILK.'),
+    ('juicebox', 'JUICE BOX', 'Juice Box', 'box', (255, 170, 40), (255, 230, 120), None, 'JUICE', True, 'use', 'explode', 'SQUEEZE!', 'JUICED.'),
+    ('tea', 'CUP OF TEA', 'Tea', 'cup', (240, 240, 245), (190, 120, 60), (230, 230, 240), '', True, 'use', 'spam', '', 'TEA TIME. FOREVER.'),
+    ('cocoa', 'HOT COCOA', 'Hot Cocoa', 'cup', (200, 90, 60), (110, 60, 40), (250, 250, 250), '', True, 'use', 'color', 'COCOA GLOW!', 'MARSHMALLOW MODE.'),
+    ('baguette', 'FRESH BAGUETTE', 'Baguette', 'stick', (220, 160, 90), (200, 140, 70), None, '', True, 'use', 'giant', 'GIANT BAGUETTE!', 'OUI.'),
+    ('croissant', 'CROISSANT', 'Croissant', 'cone', (230, 170, 80), (240, 190, 100), None, '', True, 'use', 'gulp_all', 'CROISSANT x8!', 'TRES CHAOS.'),
+    ('cookiejar', 'COOKIE JAR', 'Cookie Jar', 'bottle', (200, 230, 255), (220, 120, 60), (250, 220, 180), 'COOKIES', True, 'use', 'gulp_all', 'THE WHOLE JAR!', 'JAR EMPTY.'),
+    ('pretzel', 'PRETZEL SNACK', 'Pretzel', 'disc', (200, 130, 60), (150, 90, 40), (255, 255, 255), '', True, 'use', 'spam', '', 'SALTY.'),
+    ('bagel', 'BAGEL BREAKFAST', 'Bagel', 'disc', (220, 160, 80), (250, 240, 220), None, '', True, 'use', 'wear', 'BAGEL HAT!', 'BREAKFAST CROWN.'),
+    ('popsicle', 'POPSICLE', 'Popsicle', 'stick', (255, 90, 140), (255, 140, 180), (220, 180, 120), '', True, 'use', 'color', 'BRAIN FREEZE 2!', 'POPSICLE PERSON.'),
+    ('cottoncandy', 'COTTON CANDY', 'Cotton Candy', 'stick', (240, 230, 230), (255, 170, 210), None, '', True, 'use', 'float', 'CLOUD RIDE!', 'SUGAR CLOUD.'),
+    ('corn', 'CORN ON THE COB', 'Corn', 'stick', (255, 220, 70), (110, 180, 80), None, '', True, 'use', 'spam', '', 'TYPEWRITER STYLE.'),
+    ('pear', 'A PEAR', 'Pear', 'round', (190, 210, 80), (110, 80, 40), None, '', True, 'use', 'launch', '', 'PEAR-SHAPED.'),
+    ('cherry', 'CHERRIES', 'Cherries', 'round', (200, 20, 40), (80, 150, 60), None, '', True, 'use', 'gulp_all', 'CHERRY BOMB!', 'PITS INCLUDED.'),
+    ('avocado', 'AVOCADO TOAST', 'Avocado', 'round', (110, 150, 60), (160, 110, 60), None, '', True, 'use', 'color', 'GUACAMOLE MODE!', 'EXTRA GREEN.'),
+    ('meatball', 'MEATBALLS', 'Meatballs', 'round', (140, 70, 40), None, (200, 60, 40), '', True, 'use', 'gulp_all', 'MEATBALL MOUNTAIN!', 'MAMMA MIA.'),
+    ('noodles', 'INSTANT NOODLES', 'Noodles', 'cup', (250, 240, 230), (240, 210, 120), (230, 230, 240), '', True, 'use', 'explode', 'NOODLE BOOM!', 'INSTANT REGRET.'),
+    ('jelly', 'JELLY DESSERT', 'Jelly', 'round', (120, 220, 120), None, None, '', True, 'use', 'color', 'JELLY MODE!', 'WOBBLE WOBBLE.'),
+    ('cakeslice', 'SLICE OF CAKE', 'Cake Slice', 'cone', (250, 230, 200), (255, 150, 190), (255, 90, 90), '', True, 'use', 'giant', 'GIANT SLICE!', 'WORTH IT.'),
+    ('marshmallow', 'MARSHMALLOWS', 'Marshmallow', 'round', (250, 245, 245), None, None, '', True, 'use', 'gulp_all', 'CHUBBY BUNNY!', 'FLUFFY.'),
+    ('nachos', 'NACHOS', 'Nachos', 'cone', (250, 200, 70), (255, 170, 40), None, '', True, 'use', 'explode', 'CHEESE ERUPTION!', 'NACHO PROBLEM.'),
+    ('coconut', 'COCONUT', 'Coconut', 'round', (120, 80, 50), (110, 170, 70), None, '', True, 'use', 'launch', '', 'COCONUT HEAD.'),
+    ('smoothie', 'BERRY SMOOTHIE', 'Smoothie', 'bottle', (255, 130, 170), (250, 250, 250), (255, 255, 255), 'SMOOTHIE', True, 'use', 'color', 'BERRY BLAST!', 'BLENDED.'),
+    ('energy', 'ENERGY DRINK', 'Energy Drink', 'bottle', (60, 200, 120), (40, 40, 50), (255, 255, 255), 'ZAP', True, 'use', 'color', 'ZAP MODE!', "CAN'T STOP."),
+    ('lollipop', 'LOLLIPOP', 'Lollipop', 'stick', (230, 230, 230), (255, 90, 160), None, '', True, 'use', 'wear', 'LOLLIPOP HAT!', 'SWEET STYLE.'),
+    ('peanutbutter', 'PEANUT BUTTER', 'Peanut Butter', 'bottle', (250, 240, 220), (200, 40, 40), (200, 140, 70), 'PB', True, 'use', 'spam', '', 'STUCK.'),
+    ('fries', 'FRENCH FRIES', 'Fries', 'box', (230, 40, 40), (255, 210, 70), (255, 255, 255), 'FRIES', True, 'use', 'gulp_all', 'ALL THE FRIES!', 'FRY GUY.'),
+    ('pie', 'PUMPKIN PIE', 'Pie', 'disc', (230, 140, 50), (250, 180, 90), None, '', True, 'use', 'gulp_all', 'THE WHOLE PIE!', 'PIE FACE.'),
+    ('icecube', 'CHEWING ICE', 'Ice Cube', 'box', (200, 230, 250), (220, 240, 255), None, '', True, 'use', 'color', 'ICE MODE!', 'COOL. VERY COOL.'),
+    ('chili', 'CHILI PEPPER', 'Chili', 'stick', (220, 40, 30), (80, 160, 60), None, '', True, 'use', 'color', 'FIRE MODE!', 'TOO SPICY? NO.'),
+    ('mint', 'BREATH MINT', 'Mint', 'round', (120, 220, 190), (250, 250, 250), None, '', True, 'use', 'color', 'FRESH BREATH!', 'MINTY.'),
+    ('gummy', 'GUMMY BEARS', 'Gummy Bears', 'round', (255, 90, 90), None, None, '', True, 'use', 'gulp_all', 'GUMMY ARMY!', 'BEAR-LY FULL.'),
+    ('soup', 'BOWL OF SOUP', 'Soup', 'cup', (240, 240, 245), (230, 120, 60), (230, 230, 240), '', True, 'use', 'explode', 'SOUP VOLCANO!', 'SOUPER.'),
+    ('pizzabox', 'PIZZA DELIVERY', 'Pizza Box', 'box', (230, 200, 150), (200, 60, 40), (250, 250, 250), 'PIZZA', True, 'use', 'giant', 'FAMILY SIZE!', 'ALL MINE.'),
+    ('duck', 'RUBBER DUCK', 'Rubber Duck', 'round', (255, 220, 40), (255, 140, 40), None, '', False, 'admire', 'giant', 'GIANT DUCK!', 'QUACK.'),
+    ('basketball', 'BASKETBALL', 'Basketball', 'round', (240, 120, 40), None, (60, 40, 30), '', False, 'admire', 'launch', '', 'NOTHING BUT FACE.'),
+    ('beachball', 'BEACH BALL', 'Beach Ball', 'round', (250, 250, 250), (230, 60, 60), (60, 120, 230), '', False, 'admire', 'float', 'BEACH BALL RIDE!', "SURF'S UP."),
+    ('bowling', 'BOWLING BALL', 'Bowling Ball', 'round', (40, 40, 60), None, (80, 80, 100), '', False, 'admire', 'giant', 'STRIKE!', 'SPARE ME.'),
+    ('globe', 'SPINNING A GLOBE', 'Globe', 'round', (60, 140, 230), (230, 180, 60), (90, 180, 90), '', False, 'admire', 'spam', '', 'SEEN THE WORLD.'),
+    ('book', 'READING A BOOK', 'Book', 'box', (180, 60, 60), (240, 230, 210), (60, 40, 40), 'READ', False, 'admire', 'spam', '', '400 BOOKS. TODAY.', None, 20),
+    ('laptop', 'WORKING ON A LAPTOP', 'Laptop', 'box', (160, 170, 190), (60, 140, 220), (255, 255, 255), 'WORK', False, 'admire', 'explode', 'OVERHEATED!', 'REBOOT.'),
+    ('remote', 'TV REMOTE', 'Remote', 'box', (50, 50, 60), (200, 60, 60), (255, 255, 255), 'TV', False, 'admire', 'spam', '', 'CHANNEL 9999.', None, 50),
+    ('controller', 'VIDEO GAMES', 'Controller', 'disc', (70, 70, 90), (40, 40, 50), (230, 60, 80), '', False, 'admire', 'spam', '', 'BUTTON MASHER.', None, 10),
+    ('headset', 'NEW HEADPHONES', 'Headphones', 'disc', (60, 60, 70), (230, 60, 90), None, '', False, 'admire', 'wear', 'BASS BOOST!', "CAN'T HEAR YOU."),
+    ('shades', 'SUNGLASSES', 'Sunglasses', 'disc', (30, 30, 40), (60, 60, 80), None, '', False, 'admire', 'wear', 'TOO COOL!', 'INDOORS.'),
+    ('partyhat', 'PARTY HAT', 'Party Hat', 'hat', (250, 90, 160), (250, 220, 90), (80, 180, 250), '', False, 'admire', 'wear', 'PARTY MODE!', 'EVERY DAY.'),
+    ('flower', 'PICKING A FLOWER', 'Flower', 'round', (255, 120, 170), (250, 220, 60), None, '', False, 'admire', 'wear', 'FLOWER CROWN!', 'BLOOMING.'),
+    ('teddy', 'TEDDY BEAR', 'Teddy Bear', 'round', (180, 120, 70), (180, 120, 70), None, '', False, 'admire', 'giant', 'GIANT TEDDY!', 'BEAR HUG.'),
+    ('pillow', 'FLUFFING A PILLOW', 'Pillow', 'box', (240, 240, 250), (220, 220, 240), (120, 120, 160), 'ZZZ', False, 'admire', 'launch', '', 'PILLOW FIGHT CHAMP.'),
+    ('lamp', 'DESK LAMP', 'Lamp', 'stick', (240, 220, 150), (255, 240, 180), (80, 80, 90), '', False, 'admire', 'spam', '', 'ON. OFF. ON.'),
+    ('guitar', 'PLAYING GUITAR', 'Guitar', 'stick', (200, 120, 60), (120, 70, 40), (40, 40, 40), '', False, 'admire', 'explode', 'ROCK STAR!', 'ENCORE.'),
+    ('drum', 'PLAYING DRUMS', 'Drum', 'disc', (230, 60, 60), (250, 250, 250), (250, 200, 60), '', False, 'admire', 'spam', '', 'NEIGHBORS MOVED OUT.'),
+    ('trophy', 'WINNING A TROPHY', 'Trophy', 'cup', (250, 200, 50), (255, 220, 90), None, '', False, 'admire', 'wear', 'CHAMPION HAT!', 'I WON. SOMETHING.'),
+    ('camera', 'TAKING PHOTOS', 'Camera', 'box', (60, 60, 70), (120, 170, 220), (255, 255, 255), 'CAM', False, 'admire', 'spam', '', '1000 PHOTOS.', None, 50),
+    ('paint', 'PAINTING A WALL', 'Paint', 'cup', (230, 80, 80), (60, 150, 230), None, '', False, 'admire', 'color', 'PAINT BATH!', 'MASTERPIECE.'),
+    ('fishbowl', 'FISH BOWL', 'Fish Bowl', 'round', (170, 220, 250), (255, 150, 40), None, '', False, 'admire', 'wear', 'FISHBOWL HELMET!', 'SPACE FISH.'),
+    ('bubblewand', 'BLOWING BUBBLES', 'Bubbles', 'stick', (120, 200, 250), (200, 240, 255), None, '', False, 'admire', 'float', 'BUBBLE RIDE!', 'POP.'),
+    ('kite', 'FLYING A KITE', 'Kite', 'diamond', (230, 60, 60), (250, 200, 60), (60, 120, 230), '', False, 'admire', 'float', 'KITE FLIGHT!', 'NO WIND NEEDED.'),
+    ('soap', 'WASHING HANDS', 'Soap', 'round', (255, 180, 220), None, (255, 255, 255), '', False, 'use', 'color', 'SQUEAKY CLEAN!', 'BUBBLE PERSON.'),
+    ('sponge', 'CLEANING UP', 'Sponge', 'box', (250, 220, 60), (110, 190, 90), None, '', False, 'admire', 'spam', '', 'SPARKLING.'),
+    ('shampoo', 'WASHING HAIR', 'Shampoo', 'bottle', (90, 180, 230), (250, 250, 250), (255, 255, 255), 'SHAMPOO', False, 'admire', 'explode', 'FOAM EXPLOSION!', 'SILKY.'),
+    ('perfume', 'PERFUME', 'Perfume', 'bottle', (220, 160, 240), (250, 200, 60), (255, 255, 255), 'PARFUM', False, 'admire', 'spam', '', 'SMELLS LIKE CHAOS.'),
+    ('mirror', 'LOOKING IN THE MIRROR', 'Mirror', 'round', (200, 230, 250), (180, 150, 90), None, '', False, 'admire', 'spam', '', 'STILL PERFECT.'),
+    ('hairdryer', 'HAIR DRYER', 'Hair Dryer', 'stick', (230, 90, 150), (60, 60, 70), None, '', False, 'admire', 'float', 'BLOWN AWAY!', 'NEW HAIRSTYLE.'),
+    ('broom', 'SWEEPING', 'Broom', 'stick', (200, 150, 80), (220, 180, 90), (150, 90, 40), '', False, 'admire', 'float', 'BROOM RIDE!', 'NOT A WITCH.'),
+    ('calendar', 'MONDAY', 'Calendar', 'box', (250, 250, 250), (230, 60, 60), (60, 60, 60), 'MON', False, 'admire', 'spam', '', "IT'S FRIDAY NOW."),
+    ('envelope', 'SENDING A LETTER', 'Letter', 'box', (250, 240, 220), (230, 80, 80), None, 'MAIL', False, 'admire', 'launch', '', 'DELIVERED.'),
+    ('snowglobe', 'SNOW GLOBE', 'Snow Globe', 'round', (200, 230, 250), (120, 90, 60), None, '', False, 'admire', 'spam', '', 'BLIZZARD.'),
+    ('trafficcone', 'TRAFFIC CONE', 'Traffic Cone', 'hat', (255, 120, 40), (255, 255, 255), None, '', False, 'admire', 'wear', 'CONE HAT!', 'UNDER CONSTRUCTION.'),
+    ('piggybank', 'PIGGY BANK', 'Piggy Bank', 'round', (255, 160, 190), (255, 140, 170), None, '', False, 'admire', 'explode', 'JACKPOT!', 'BROKE AGAIN.'),
+    ('dice', 'BOARD GAME NIGHT', 'Dice', 'box', (250, 250, 250), (250, 250, 250), (40, 40, 40), '6', False, 'admire', 'spam', '', 'ALWAYS SIX.'),
+    ('cube', 'PUZZLE CUBE', 'Puzzle Cube', 'box', (230, 60, 60), (60, 120, 230), (250, 200, 50), '', False, 'admire', 'spam', '', 'SOLVED. (NOT REALLY.)'),
+    ('sunflower', 'SUNFLOWER', 'Sunflower', 'round', (250, 200, 40), (120, 80, 40), None, '', False, 'admire', 'giant', 'GIANT SUNFLOWER!', 'PHOTOSYNTHESIS.'),
+    ('cloud', 'RAINY CLOUD', 'Cloud', 'round', (210, 215, 230), None, None, '', False, 'admire', 'float', 'CLOUD NINE!', 'HEAD IN THE CLOUDS.'),
+    ('wand', 'MAGIC WAND', 'Magic Wand', 'stick', (250, 220, 80), (255, 240, 140), None, '', False, 'admire', 'color', 'MAGIC MODE!', 'SPARKLY.'),
+    ('rocket', 'TOY ROCKET', 'Rocket', 'stick', (250, 250, 250), (230, 60, 60), (60, 120, 230), '', False, 'admire', 'float', 'LIFT OFF!', 'HOUSTON?'),
+    ('telescope', 'STARGAZING', 'Telescope', 'stick', (90, 90, 120), (60, 60, 80), None, '', False, 'admire', 'spam', '', 'SAW EVERYTHING.'),
+    ('frisbee', 'FRISBEE', 'Frisbee', 'disc', (60, 200, 150), (80, 220, 170), None, '', False, 'admire', 'launch', '', 'CAUGHT IT. WITH FACE.'),
+    ('football', 'FOOTBALL', 'Football', 'round', (140, 80, 40), None, (255, 255, 255), '', False, 'admire', 'launch', '', 'TOUCHDOWN?'),
+    ('soccer', 'SOCCER BALL', 'Soccer Ball', 'round', (250, 250, 250), None, (40, 40, 40), '', False, 'admire', 'launch', '', 'GOAL... ISH.'),
+    ('golf', 'GOLF BALL', 'Golf Ball', 'round', (250, 250, 250), None, (220, 220, 220), '', False, 'admire', 'launch', '', 'HOLE IN ONE.'),
+    ('puck', 'HOCKEY PUCK', 'Hockey Puck', 'disc', (40, 40, 45), (60, 60, 70), None, '', False, 'admire', 'launch', '', 'SLAP SHOT.'),
+    ('pingpong', 'PING PONG', 'Ping Pong', 'round', (255, 160, 60), None, None, '', False, 'admire', 'spam', '', 'RALLY x500.', None, 30),
+    ('kettlebell', 'KETTLEBELL', 'Kettlebell', 'round', (50, 50, 60), (70, 70, 80), None, '', False, 'admire', 'giant', 'TOO HEAVY!', 'GAINS?'),
+    ('trumpet', 'TRUMPET PRACTICE', 'Trumpet', 'stick', (250, 200, 60), (250, 210, 80), None, '', False, 'admire', 'explode', 'TOOT!', 'WOKE THE CITY.'),
+    ('radio', 'RADIO', 'Radio', 'box', (90, 90, 110), (200, 200, 210), (40, 40, 40), 'FM', False, 'admire', 'spam', '', 'MAX VOLUME.'),
+    ('tablet', 'SCROLLING', 'Tablet', 'box', (40, 40, 50), (90, 160, 230), (255, 255, 255), '', False, 'admire', 'spam', '', 'SCROLLED THE INTERNET.', None, 100),
+    ('lightbulb', 'CHANGING A LIGHT BULB', 'Light Bulb', 'round', (255, 240, 150), (200, 200, 210), None, '', False, 'admire', 'explode', 'BRIGHT IDEA!', 'GENIUS.'),
+    ('watergun', 'WATER GUN', 'Water Gun', 'box', (60, 160, 240), (250, 200, 60), None, '', False, 'admire', 'explode', 'SOAKED!', 'SPLASH ZONE.'),
+    ('towel', 'SPA DAY', 'Towel', 'box', (120, 200, 230), (250, 250, 250), None, 'SPA', False, 'admire', 'wear', 'TOWEL TURBAN!', 'RELAXED. VERY.'),
+    ('slime', 'PLAYING WITH SLIME', 'Slime', 'round', (130, 230, 90), None, None, '', False, 'admire', 'color', 'SLIME TIME!', 'STICKY.'),
+    ('glitter', 'GLITTER', 'Glitter', 'bottle', (240, 180, 250), (250, 250, 250), (255, 255, 255), 'GLITTER', False, 'admire', 'explode', 'GLITTER BOMB!', 'FOREVER SHINY.'),
+    ('popper', 'PARTY POPPER', 'Party Popper', 'cone', (250, 90, 140), (250, 220, 80), (80, 180, 250), '', False, 'admire', 'explode', 'SURPRISE!', 'CELEBRATED MYSELF.'),
+    ('snowball', 'SNOWBALL', 'Snowball', 'round', (245, 250, 255), None, None, '', False, 'admire', 'launch', '', 'BRRR.'),
+    ('wizardhat', 'WIZARD HAT', 'Wizard Hat', 'hat', (70, 50, 140), (90, 70, 170), (250, 220, 80), '', False, 'admire', 'wear', 'WIZARD MODE!', 'MAGIC? MAYBE.'),
+    ('crown', 'GOLDEN CROWN', 'Crown', 'crown', (250, 200, 50), (255, 220, 90), (230, 60, 90), '', False, 'admire', 'wear', 'KING MODE!', 'BOW DOWN.'),
+    ('xylophone', 'XYLOPHONE', 'Xylophone', 'box', (230, 90, 90), (250, 200, 60), (60, 160, 230), '', False, 'admire', 'spam', '', 'SYMPHONY.', None, 5),
+    ('tambourine', 'TAMBOURINE', 'Tambourine', 'disc', (250, 220, 150), (200, 150, 90), (250, 250, 250), '', False, 'admire', 'spam', '', 'JINGLE JINGLE.'),
+    ('maracas', 'MARACAS', 'Maracas', 'stick', (250, 90, 90), (250, 200, 60), None, '', False, 'admire', 'spam', '', 'SHAKE IT.'),
+    ('cowbell', 'COWBELL', 'Cowbell', 'cup', (200, 200, 210), (150, 150, 160), None, '', False, 'admire', 'spam', '', 'MORE COWBELL.'),
+    ('yogaball', 'YOGA BALL', 'Yoga Ball', 'round', (120, 90, 220), None, None, '', False, 'admire', 'giant', 'GIANT BALL!', 'BOUNCY.'),
+    ('balloonanimal', 'BALLOON DOG', 'Balloon Dog', 'round', (60, 180, 240), (60, 180, 240), None, '', False, 'admire', 'float', 'UP UP AWAY!', 'GOOD BOY.'),
+    ('magnet', 'BIG MAGNET', 'Magnet', 'cone', (220, 50, 50), (200, 200, 210), None, '', False, 'admire', 'launch', '', 'ATTRACTIVE.'),
+    ('alarmclock2', 'SNOOZE BUTTON', 'Snooze', 'round', (90, 160, 230), (250, 250, 250), None, '', False, 'admire', 'spam', '', 'FIVE MORE MINUTES.', None, 5),
+    ('keyboard', 'TYPING', 'Keyboard', 'box', (60, 60, 70), (200, 200, 210), (40, 40, 40), 'ABC', False, 'admire', 'spam', '', '1000 WORDS PER MINUTE.', None, 50),
+    ('handfan', 'HAND FAN', 'Hand Fan', 'cone', (250, 120, 160), (250, 200, 220), None, '', False, 'admire', 'float', 'TOO MUCH BREEZE!', 'AIRBORNE.'),
+    ('megaphone', 'MEGAPHONE', 'Megaphone', 'cone', (250, 200, 50), (250, 250, 250), None, '', False, 'admire', 'explode', 'HELLO?!', 'INDOOR VOICE.'),
+    ('tent', 'CAMPING', 'Tent', 'hat', (90, 170, 90), (110, 190, 110), None, '', False, 'admire', 'giant', 'GIANT TENT!', 'GLAMPING.'),
+    ('lantern', 'PAPER LANTERN', 'Lantern', 'round', (255, 140, 60), (230, 60, 50), None, '', False, 'admire', 'float', 'LANTERN FLIGHT!', 'GLOWING UP.'),
+    ('sock', 'LOST SOCK', 'Sock', 'stick', (240, 90, 90), (250, 250, 250), None, '', False, 'admire', 'wear', 'SOCK HAT!', 'FOUND IT.'),
+    ('mug', 'WORLD BEST MUG', 'Mug', 'cup', (250, 250, 250), (230, 80, 80), None, '', False, 'admire', 'wear', 'MUG HAT!', 'WORLD BEST HAT.'),
+    ('present', 'SECRET SANTA', 'Present', 'box', (60, 160, 90), (230, 50, 60), (250, 250, 250), '', False, 'admire', 'giant', 'GIANT PRESENT!', 'IT WAS SOCKS.'),
+    ('bell', 'DESK BELL', 'Desk Bell', 'cup', (250, 200, 60), (200, 200, 210), None, '', False, 'admire', 'spam', '', 'SERVICE?!', None, 5),
+    ('stapler', 'STAPLER', 'Stapler', 'box', (220, 50, 50), (40, 40, 50), None, '', False, 'admire', 'spam', '', 'STAPLED EVERYTHING.'),
+    ('plantmister', 'PLANT MISTER', 'Plant Mister', 'bottle', (120, 200, 160), (60, 60, 70), (255, 255, 255), 'MIST', False, 'admire', 'color', 'PHOTOSYNTHESIS!', 'I AM A PLANT NOW.'),
+]
+
+register_factory(FROWS)
+
 def total(plan=None):
     p = plan or PLAN
     if p.get('format') == 'day':
