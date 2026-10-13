@@ -579,6 +579,22 @@
           "luna"
         ]
       ]
+    },
+    {
+      "id": "vGT92LBgZ_M",
+      "date": "2026-10-13 13:50",
+      "kind": "short",
+      "title": "Halloween: Expectation vs Reality 👻 Costume & Popcorn",
+      "privacy": "public",
+      "format": "expect",
+      "cast": "zip",
+      "gags": [
+        "costume",
+        "popcorn",
+        "icecream"
+      ],
+      "room": "office",
+      "seed": 742667
     }
   ]
 }
