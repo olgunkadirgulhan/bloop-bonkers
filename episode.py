@@ -130,8 +130,8 @@ def main():
     n_ep = len(eps) + 1
     if '--force' not in sys.argv and eps:          # takvim her gün tetikler
         last = datetime.strptime(eps[-1]['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)
-        if (datetime.now(timezone.utc) - last).total_seconds() < 20 * 3600:
-            print(f'son bölüm {eps[-1]["date"]}: 20 saat dolmadı, atlandı'); return
+        if (datetime.now(timezone.utc) - last).total_seconds() < 12 * 3600:
+            print(f'son bölüm {eps[-1]["date"]}: 12 saat dolmadı, atlandı'); return
     fmt = EP_FORMATS[(n_ep - 1) % len(EP_FORMATS)]   # her bölüm farklı kıyas çerçevesi
     A, B, Q = bloop.FORMATS[fmt]
     AB = f'{A.title()} vs {B.title()}'

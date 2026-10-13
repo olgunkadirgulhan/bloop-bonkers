@@ -1,5 +1,5 @@
 name: episode
-# Uzun bölüm (yatay): her durum bölümde bir kez; her gün 17:00 UTC (2026-10-13: 1. bölüm %40 izlenme oranı). episode.py 20 saat kuralıyla korur
+# Uzun bölüm (yatay): her durum bölümde bir kez; her gün 17:00 UTC (2026-10-13: 1. bölüm %40 izlenme oranı). episode.py 12 saat kuralıyla korur (aynı gün ikinci bölüm çıkmaz, geç kalan bölüm ertesi günü atlatmaz)
 on:
   schedule:
     - cron: "0 17 * * *"
