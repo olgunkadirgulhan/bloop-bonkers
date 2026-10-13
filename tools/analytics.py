@@ -25,6 +25,16 @@ def main():
                         client_secret=os.environ['YT_CLIENT_SECRET'], token_uri='https://oauth2.googleapis.com/token')
     ya = build('youtubeAnalytics', 'v2', credentials=creds, cache_discovery=False)
     end = date.today().isoformat(); start = (date.today() - timedelta(days=90)).isoformat()
+    if ids == ['geo']:                                  # kanal: ülke dağılımı + yaş/cinsiyet (son 90 gün)
+        r = ya.reports().query(ids='channel==MINE', startDate=start, endDate=end, dimensions='country',
+                               metrics='views,estimatedMinutesWatched', sort='-views', maxResults=15).execute()
+        tot = sum(row[1] for row in r.get('rows', [])) or 1
+        print('ülke  izlenme   pay   izl.saat')
+        for c, v, m in r.get('rows', []): print(f'{c:4} {int(v):>8}  {100 * v / tot:4.1f}%  {m / 60:8.1f}')
+        r = ya.reports().query(ids='channel==MINE', startDate=start, endDate=end, dimensions='ageGroup,gender',
+                               metrics='viewerPercentage', sort='-viewerPercentage').execute()
+        for a, g, p in r.get('rows', [])[:8]: print(f'{a:10} {g:7} %{p:.1f}')
+        return
     if ids == ['daily']:                                # kanal: günlük izlenme / izlenme süresi / abone + içerik türü
         r = ya.reports().query(ids='channel==MINE', startDate=(date.today() - timedelta(days=14)).isoformat(), endDate=end,
                                dimensions='day', metrics='views,estimatedMinutesWatched,subscribersGained', sort='day').execute()
