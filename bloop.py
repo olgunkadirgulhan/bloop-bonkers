@@ -3782,6 +3782,55 @@ def fnormal(img, spec, tt, gt):
     if tt > 1.8 and spec.get('ntxt'): put_text(img, spec['ntxt'], 640, 320, 56, (255, 255, 255), scale=back(seg(tt, 1.8, 2.0)), rot=-4, max_w=900)
 
 
+FST = {'tw': None, 'tt': 0.0, 'gid': ''}
+TWISTS = ['guest', 'twin', 'faint', 'bow', 'shrink', 'sleep', None]
+
+
+def fdc(img, x, gy, o):
+    """Psikopat karakterini çizer; sürpriz son (bayılma, küçülme, reverans, uyuma) burada uygulanır."""
+    tw, tt = FST['tw'], FST['tt']; k = sm(seg(tt, 3.95, 4.35))
+    if tw and k > 0:
+        o = dict(o)
+        if tw == 'shrink': o['sx'] = o.get('sx', 1.0) * (1 - 0.6 * k); o['sy'] = o.get('sy', 1.0) * (1 - 0.6 * k)
+        elif tw == 'bow': o['sy'] = o.get('sy', 1.0) * (1 - 0.2 * math.sin(math.pi * clamp((tt - 3.95) / 0.5))); o['eyes'] = 'happy'; o['mouth'] = 'smile'
+        elif tw == 'sleep': o['eyes'] = 'happy'; o['mouth'] = 'o'; o['mo'] = 0.3; o['brow'] = None
+        elif tw == 'faint':
+            o['eyes'] = 'crazy'; o['mouth'] = 'o'
+            layer = Image.new('RGBA', img.size, (0, 0, 0, 0)); info = draw_char(layer, x, gy, o)
+            img.alpha_composite(layer.rotate(-80 * k, center=(L(x + 130), L(gy)), resample=Image.BICUBIC)); return info
+    return draw_char(img, x, gy, o)
+
+
+def ftwist(img, spec, tt, gt):
+    """Sürpriz sonun sahnenin geri kalanı: yeni karakter, ikiz, alkış, zzz."""
+    tw = FST['tw']
+    if not tw or tt < 3.9: return
+    k = sm(seg(tt, 3.9, 4.3))
+    if tw in ('guest', 'twin'):
+        global CHAR
+        keep = CHAR
+        if tw == 'guest':
+            others = [c for c in CAST if CAST[c]['name'] != keep['name']]
+            CHAR = dict(CAST[others[sum(map(ord, FST['gid'])) % len(others)]])
+        try:
+            draw_char(img, lerp(1180, 830, k), GY, dict(t=gt, eyes='crazy' if tw == 'twin' else 'normal', mouth='grin' if tw == 'twin' else 'o', mo=0.8,
+                                                        look=(-1, 0), eye_s=1.0 + (0.25 if tw == 'guest' else 0)))
+        finally:
+            CHAR = keep
+        put_text(img, '?!' if tw == 'guest' else 'TWINS?!', 830, 450, 80, (255, 230, 60), scale=back(seg(tt, 4.1, 4.3)), rot=8)
+    elif tw == 'bow':
+        put_text(img, 'THANK YOU.', 600, 560, 70, (255, 255, 255), scale=back(seg(tt, 4.0, 4.2)), rot=-4)
+        particles(img, 341, 4.0, tt, 12, (CX, head_top() - 40), (-300, 300), (-500, -200), 900, [(255, 230, 60), (255, 120, 170)], (10, 18), life=0.8)
+    elif tw == 'sleep':
+        for q in range(3):
+            a = ((tt - 3.95) * 0.9 + q / 3) % 1.0
+            put_text(img, 'Z', CX + 120 + 60 * a, head_top() - 40 - 160 * a, 60 * (0.6 + a), (200, 210, 255), rot=-10)
+    elif tw == 'shrink':
+        put_text(img, '...tiny.', 600, 560, 64, (255, 255, 255), scale=back(seg(tt, 4.2, 4.4)), rot=-4)
+    elif tw == 'faint':
+        put_text(img, 'x_x', CX + 260, GY - 120, 70, (255, 255, 255), scale=back(seg(tt, 4.3, 4.5)))
+
+
 def fpsycho(img, spec, tt, gt):
     o = dict(t=gt); my = mouth_y(); m = spec['p']; shake = 0.0; mid, end = spec['mid'], spec['end']
     if m == 'gulp_all':
@@ -3792,12 +3841,12 @@ def fpsycho(img, spec, tt, gt):
             fprop(img, spec, lerp(FPROP[0], CX + 40, a), lerp(FPROP[1] - 240, my, a) - 120 * math.sin(math.pi * a), 0.7, 360 * a)
         o.update(mouth='open' if 0.8 <= tt < 2.8 else ('chew' if tt < 3.6 else 'grin'), mo=1.0, eyes='crazy', brow='angry' if tt < 2.8 else None,
                  look=(1, 0), puff=sm(seg(tt, 2.4, 2.9)) * (1 - sm(seg(tt, 3.4, 3.9))))
-        draw_char(img, CX, GY, o); fsay(img, mid, tt, 0.8, t1=3.6); fsay(img, end, tt, 3.6, 250, 104, (255, 255, 255), 6)
+        fdc(img, CX, GY, o); fsay(img, mid, tt, 0.8, t1=3.6); fsay(img, end, tt, 3.6, 250, 104, (255, 255, 255), 6)
     elif m == 'explode':
         g = 1 + 2.2 * sm(seg(tt, 0.6, 2.5)); boom = tt >= 2.6
         o.update(mouth='grin' if not boom else 'open', mo=1.0, eyes='crazy', brow='angry' if not boom else None, look=(1, -0.2),
                  color=lerpc(CHAR['color'], spec['c1'], 0.45 * sm(seg(tt, 2.6, 2.9))), hands=[None, (CX + 200, GY - 260)] if not boom else [None, None])
-        draw_char(img, CX, GY, o)
+        fdc(img, CX, GY, o)
         if not boom: fprop(img, spec, CX + 280 + 20 * g, GY - 300 - 20 * g, 0.9 * g, math.sin(tt * 30) * 4 * g); hand(img, (CX + 200, GY - 260))
         else:
             particles(img, 311, 2.6, tt, 60, (CX + 300, GY - 340), (-900, 900), (-1100, 300), 1600, [spec['c1'], spec.get('c2') or spec['c1']], (16, 40), life=1.6)
@@ -3809,21 +3858,21 @@ def fpsycho(img, spec, tt, gt):
         pp = (CX + 150, my - 10) if up else (CX + 230, GY - 180)
         o.update(hands=[None, (pp[0] - 40, pp[1] + 40)], mouth='open' if up else 'grin', mo=1.0, eyes='crazy', look=(1, 0),
                  eye_s=1.0 + (0.08 * math.sin(gt * 60) if tt > 1.6 else 0))
-        draw_char(img, CX, GY, o); fprop(img, spec, pp[0], pp[1], 0.95); hand(img, (pp[0] - 40, pp[1] + 40))
+        fdc(img, CX, GY, o); fprop(img, spec, pp[0], pp[1], 0.95); hand(img, (pp[0] - 40, pp[1] + 40))
         if k >= 0: put_text(img, f'x{min(k + 1, 18) * spec.get("mult", 1)}', 780, 230, 110, (255, 255, 255), rot=-6)
         fsay(img, end, tt, 3.9, 330, 100, (255, 230, 60), 6)
     elif m == 'wear':
         on = sm(seg(tt, 0.6, 1.4)); top = head_top()
         pp = lp(FPROP, (CX, top - 50), on)
         o.update(mouth='grin', mo=0.8, eyes='happy' if tt > 1.4 else 'crazy', look=(0, -0.4) if tt < 1.4 else (1, 0), sy=1.0 + 0.03 * math.sin(gt * 6))
-        draw_char(img, CX, GY, o); fprop(img, spec, pp[0], pp[1], 0.8 + 0.6 * on, -10 * on + (6 * math.sin(gt * 5) if tt > 1.4 else 0))
+        fdc(img, CX, GY, o); fprop(img, spec, pp[0], pp[1], 0.8 + 0.6 * on, -10 * on + (6 * math.sin(gt * 5) if tt > 1.4 else 0))
         if tt > 1.4: particles(img, 321, 1.4, tt, 14, (CX, top - 60), (-200, 200), (-300, -80), 200, [(255, 240, 150), (255, 255, 255)], (10, 18), life=1.0, emit=2.4)
         fsay(img, mid, tt, 1.4, t1=3.4); fsay(img, end, tt, 3.4, 300, 100, (255, 255, 255), 6)
     elif m == 'giant':
         drop = sm(seg(tt, 1.0, 1.5)); squash = drop * (1 - sm(seg(tt, 3.3, 3.8)))
         o.update(mouth='grin' if tt < 1.0 else ('flat' if tt < 3.3 else 'open'), mo=1.0, eyes='crazy' if tt < 1.5 else 'happy', look=(0, -1) if tt < 1.5 else (0, 0),
                  sy=1.0 - 0.55 * squash, sx=1.0 + 0.4 * squash)
-        draw_char(img, CX, GY, o)
+        fdc(img, CX, GY, o)
         if tt >= 0.4:
             y = lerp(-300, GY - 26 - 2 * R * (1 - 0.55 * squash) - 170, drop) if tt < 3.3 else lerp(GY - 300, -400, sm(seg(tt, 3.3, 3.9)))
             fprop(img, spec, CX, y, 3.2)
@@ -3837,7 +3886,7 @@ def fpsycho(img, spec, tt, gt):
         o.update(mouth='grin' if not hit else 'o', mo=1.0, eyes='crazy' if not hit else 'happy', brow='angry' if tt < 0.6 else None,
                  look=((bx - CX) / 600, (by - 500) / 500), hands=[None, (CX + 200, GY - 320)] if tt < 0.7 else [None, None],
                  sy=1.0 - (0.15 if 3.0 <= tt < 3.2 else 0))
-        draw_char(img, CX, GY, o)
+        fdc(img, CX, GY, o)
         fprop(img, spec, bx if not hit else CX + 40 * math.sin(gt * 9), by if not hit else head_top() - 50, 0.85, tt * 500)
         if 0.6 <= tt < 3.0 and (u_ % 1) < 0.12: put_text(img, 'BOING', bx, by - 80, 56, (255, 255, 255))
         if 3.0 <= tt < 3.25: shake = 12; put_text(img, 'BONK!', 640, 220, 130, (255, 255, 255), rot=-8)
@@ -3846,7 +3895,7 @@ def fpsycho(img, spec, tt, gt):
         g = 1 + 0.8 * sm(seg(tt, 0.4, 1.4)); lift = 170 * sm(seg(tt, 1.6, 3.4)) * (1 - sm(seg(tt, 3.8, 4.1)))
         o.update(mouth='open' if 1.6 <= tt < 3.8 else 'grin', mo=1.0, eyes='happy' if 1.6 <= tt < 3.8 else 'crazy', look=(0, -0.8),
                  hands=[None, (CX + 60, GY - lift - 2 * R - 30)])
-        draw_char(img, CX, GY - lift, o)
+        fdc(img, CX, GY - lift, o)
         ImageDraw.Draw(img).line(box(CX + 60, GY - lift - 2 * R - 30, CX + 60, GY - lift - 2 * R - 80 * g), fill=(250, 250, 250), width=L(3))
         fprop(img, spec, CX + 60, GY - lift - 2 * R - 80 * g - 55 * g, 0.75 * g, 8 * math.sin(gt * 3))
         hand(img, (CX + 60, GY - lift - 2 * R - 30))
@@ -3857,10 +3906,62 @@ def fpsycho(img, spec, tt, gt):
         k = sm(seg(tt, 1.4, 2.6))
         o.update(mouth='open' if 0.9 <= tt < 1.4 else 'grin', mo=1.0, eyes='crazy' if tt < 2.6 else 'happy', look=(1, 0) if tt < 1.4 else (0, -0.3),
                  color=lerpc(CHAR['color'], spec['c1'], 0.85 * k), sx=1.0 + 0.06 * math.sin(gt * 20) * k, sy=1.0 + 0.06 * math.cos(gt * 20) * k)
-        info = draw_char(img, CX, GY, o)
+        info = fdc(img, CX, GY, o)
         if tt < 1.3: fprop(img, spec, pp[0], pp[1], 0.95 * (1 - 0.6 * seg(tt, 1.0, 1.3)))
         if tt >= 1.4: particles(img, 331, 1.4, tt, 24, (CX, info['cy']), (-260, 260), (-420, -120), 300, [spec['c1'], (255, 255, 255)], (10, 20), life=0.9, emit=2.4)
         fsay(img, mid, tt, 1.4, t1=3.4); fsay(img, end, tt, 3.4, 300, 100, (255, 255, 255), 6)
+    elif m == 'stack':        # kule yapıp yıkar
+        n = int(11 * sm(seg(tt, 0.5, 2.6))); fallen = tt >= 2.9
+        o.update(mouth='grin' if not fallen else 'o', mo=1.0, eyes='crazy' if not fallen else 'happy', look=(1, -0.8) if not fallen else (1, 0.3),
+                 hands=[None, (720, TTOP - 30 - n * 46)] if 0.5 <= tt < 2.6 else [None, None])
+        fdc(img, CX, GY, o)
+        if not fallen:
+            for k in range(n): fprop(img, spec, 760 + math.sin(gt * 7 + k) * k * 2.2 * seg(tt, 1.8, 2.9), TTOP - 30 - k * 46, 0.62)
+            if 0.5 <= tt < 2.6: hand(img, (720, TTOP - 30 - n * 46))
+        else:
+            for k in range(11):
+                r_ = random.Random(k); a = clamp((tt - 2.9) / 0.5)
+                fprop(img, spec, lerp(760, 300 + r_.uniform(0, 700), a), lerp(TTOP - 30 - k * 46, GY + r_.uniform(-20, 20), a * a), 0.6, r_.uniform(-180, 180) * a)
+            if tt < 3.15: shake = 16
+        fsay(img, mid or 'TOWER!', tt, 1.2, t1=2.9); fsay(img, end, tt, 3.2, 300, 100, (255, 255, 255), 6)
+    elif m == 'juggle':       # hokkabazlık, sonra hepsi kafasına
+        drop = tt >= 3.0; k4 = 4
+        o.update(mouth='grin' if not drop else 'o', mo=1.0, eyes='crazy' if not drop else 'happy', look=(0, -0.9),
+                 hands=[(CX - 120, GY - 330 + 30 * math.sin(gt * 12)), (CX + 120, GY - 330 - 30 * math.sin(gt * 12))] if 0.6 <= tt < 3.0 else [None, None],
+                 sy=1.0 - (0.12 if 3.2 <= tt < 3.4 else 0))
+        fdc(img, CX, GY, o)
+        for q in range(k4):
+            if not drop and tt >= 0.6:
+                a = gt * 5 + q * math.tau / k4
+                fprop(img, spec, CX + 170 * math.cos(a), head_top() - 170 + 110 * math.sin(a), 0.6, a * 60)
+            elif drop:
+                f_ = clamp((tt - 3.0 - q * 0.08) / 0.3)
+                fprop(img, spec, CX - 60 + q * 40, lerp(head_top() - 260, head_top() - 10 + q * 6, f_), 0.6, 90 * q)
+        if 0.6 <= tt < 3.0: hand(img, (CX - 120, GY - 330 + 30 * math.sin(gt * 12))); hand(img, (CX + 120, GY - 330 - 30 * math.sin(gt * 12)))
+        if 3.2 <= tt < 3.45: shake = 12
+        fsay(img, mid or 'JUGGLE MASTER!', tt, 0.8, t1=3.0); fsay(img, end, tt, 3.4, 300, 100, (255, 255, 255), 6)
+    elif m == 'hide':         # etrafa bakıp gizlice yer/saklar
+        sneak = 0.3 <= tt < 1.6; grab = sm(seg(tt, 1.6, 2.0)); ate = tt >= 2.2
+        pp = lp(FPROP, (CX + 40, my), grab)
+        o.update(mouth='flat' if sneak else ('o' if not ate else 'smile'), mo=0.6, eyes='normal', look=((-1 if (tt * 1.6) % 2 < 1 else 1), 0) if sneak else (1, 0),
+                 brow='angry' if sneak else None, puff=sm(seg(tt, 2.0, 2.3)) * (1 - sm(seg(tt, 3.0, 3.4))))
+        fdc(img, CX, GY, o)
+        if tt < 2.1: fprop(img, spec, pp[0], pp[1], 0.85 * (1 - 0.5 * grab))
+        if sneak: fsay(img, mid or '*looks around*', tt, 0.3, 300, 70, (200, 200, 220), -3, 1.6)
+        if ate: fsay(img, 'WHAT?', tt, 2.4, 230, 110, (255, 255, 255), 6, 3.4); fsay(img, end, tt, 3.4, 300, 100, (255, 230, 60), 6)
+    elif m == 'spin':         # kasırga gibi döner
+        spin_ = 0.8 <= tt < 3.0
+        o.update(mouth='open' if spin_ else 'grin', mo=1.0, eyes='crazy' if not spin_ else 'happy', look=(0, 0),
+                 sx=(0.35 + 0.65 * abs(math.cos(gt * 16))) if spin_ else 1.0 + 0.06 * math.sin(gt * 10), sy=1.0 + 0.05 * math.sin(gt * 9) * (tt >= 3.0))
+        fdc(img, CX, GY, o)
+        if spin_:
+            a = gt * 16; fprop(img, spec, CX + 190 * math.cos(a), GY - 200 - 20 * math.sin(a), 0.7, a * 40)
+            dd = ImageDraw.Draw(img, 'RGBA')
+            for k in range(5):
+                y = GY - 60 - k * 70; w_ = 140 + k * 30
+                dd.arc(box(CX - w_, y - 20, CX + w_, y + 20), (gt * 900 + k * 70) % 360, (gt * 900 + k * 70 + 200) % 360, fill=(255, 255, 255, 150), width=L(5))
+        else: fprop(img, spec, FPROP[0] if tt < 0.8 else CX + 200, FPROP[1] if tt < 0.8 else GY - 60, 0.8)
+        fsay(img, mid or 'TORNADO MODE!', tt, 0.9, t1=3.0); fsay(img, end, tt, 3.2, 300, 100, (255, 255, 255), 6)
     return shake
 
 
@@ -3870,7 +3971,9 @@ def make_fgag(spec):
         if v == 'N':
             fnormal(img, spec, tt, gt); return 0.0
         if spec['p'] == 'giant': fprop(img, spec, *FPROP, 1.0)
-        return fpsycho(img, spec, tt, gt)
+        FST.update(tw=spec.get('tw'), tt=tt, gid=spec.get('gid', ''))
+        sh = fpsycho(img, spec, tt, gt); ftwist(img, spec, tt, gt)
+        return sh
     return fn
 
 
@@ -3882,19 +3985,34 @@ FSFX_P = {'gulp_all': [(0.0, 'sting')] + [(0.9 + i * 0.25, 'gulp') for i in rang
           'giant': [(0.0, 'sting'), (1.0, 'whoosh'), (1.5, 'smash'), (3.4, 'boing')],
           'launch': [(0.0, 'sting'), (0.6, 'whoosh'), (1.2, 'boing'), (1.8, 'boing'), (2.4, 'boing'), (3.0, 'bonk')],
           'float': [(0.0, 'sting'), (0.4, 'inhale', 1.0), (1.6, 'whoosh'), (3.9, 'boing')],
-          'color': [(0.0, 'sting'), (1.0, 'gulp'), (1.4, 'fizz', 1.2), (3.4, 'ding')]}
+          'color': [(0.0, 'sting'), (1.0, 'gulp'), (1.4, 'fizz', 1.2), (3.4, 'ding')],
+          'stack': [(0.0, 'sting')] + [(0.6 + i * 0.2, 'pop') for i in range(10)] + [(2.9, 'smash'), (3.1, 'bang')],
+          'juggle': [(0.0, 'sting')] + [(0.7 + i * 0.4, 'whoosh_s') for i in range(6)] + [(3.2, 'bonk'), (3.35, 'boing')],
+          'hide': [(0.0, 'sting'), (0.4, 'psst'), (1.7, 'whoosh_s'), (2.2, 'gulp'), (2.4, 'ding')],
+          'spin': [(0.0, 'sting'), (0.8, 'whoosh'), (1.4, 'whoosh'), (2.0, 'whoosh'), (2.6, 'whoosh'), (3.1, 'boing')]}
+FSFX_T = {'guest': [(4.0, 'boing')], 'twin': [(4.0, 'pop')], 'faint': [(4.3, 'bonk')], 'bow': [(4.0, 'clap'), (4.2, 'clap')],
+          'shrink': [(3.95, 'freeze')], 'sleep': [(4.0, 'yawn')], None: []}
+# 2026-10-13 davranış dağılımı dengesi (kullanıcı: aynı davranış tekrar etmesin): 31 'spam'ın çoğu yeni davranışlara
+FMODE = {'carrot': 'hide', 'tea': 'hide', 'pretzel': 'juggle', 'corn': 'spin', 'peanutbutter': 'hide', 'globe': 'spin', 'book': 'stack',
+         'drum': 'juggle', 'sponge': 'spin', 'perfume': 'spin', 'mirror': 'hide', 'snowglobe': 'spin', 'dice': 'juggle', 'cube': 'stack',
+         'telescope': 'hide', 'pingpong': 'juggle', 'radio': 'stack', 'xylophone': 'stack', 'tambourine': 'juggle', 'maracas': 'spin',
+         'cowbell': 'juggle', 'cheese': 'stack', 'cupcake': 'stack', 'jelly': 'juggle', 'mint': 'hide', 'icecube': 'stack',
+         'avocado': 'hide', 'orange': 'juggle', 'grapes': 'hide', 'meatball': 'stack'}
 
 
 def register_factory(rows, debut0='2026-10-15', per_group=5):
     from datetime import date as _date, timedelta as _td
-    d0 = _date.fromisoformat(debut0)
+    d0 = _date.fromisoformat(debut0); cnt = {}
     for i, r in enumerate(rows):
         gid, title, name, shape, c1, c2, c3, label, food, n, p, mid, end = r[:13]
-        spec = dict(shape=shape, c1=c1, c2=c2, c3=c3, label=label, food=food, n=n, p=p, mid=mid, end=end,
+        p = FMODE.get(gid, p)
+        cnt[p] = cnt.get(p, 0) + 1
+        tw = TWISTS[(cnt[p] + len(p)) % len(TWISTS)]            # her davranış içinde sürpriz son sırayla değişir
+        spec = dict(shape=shape, c1=c1, c2=c2, c3=c3, label=label, food=food, n=n, p=p, mid=mid, end=end, tw=tw, gid=gid,
                     ntxt=r[13] if len(r) > 13 else None, mult=r[14] if len(r) > 14 else 1)
         wall = tuple(int(lerp(x, 245, 0.72)) for x in c1)
         GAGS[gid] = dict(debut=str(d0 + _td(days=i // (per_group * 2))), title=title, name=name, wall=wall, fn=make_fgag(spec),
-                         N=FSFX_N[bool(food)], P=FSFX_P[p], factory=True)
+                         N=FSFX_N[bool(food)], P=FSFX_P[p] + FSFX_T[tw], factory=True, mode=p, twist=tw)
 
 # (id, başlık, ad, şekil, c1, c2, c3, etiket, yiyecek, normal, psikopat, orta yazı, son yazı[, normal yazı, sayaç çarpanı])
 FROWS = [
