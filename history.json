@@ -780,6 +780,23 @@
           "zip"
         ]
       ]
+    },
+    {
+      "id": "Zqm23pABhVc",
+      "date": "2026-10-14 21:49",
+      "kind": "short",
+      "title": "POV: You Are Zip for a Day 🤪 (Lemon & Donut)",
+      "privacy": "public",
+      "format": "day",
+      "cast": "zip",
+      "gags": [
+        "lemon",
+        "donut",
+        "strawberry",
+        "candybowl"
+      ],
+      "room": "bedroom",
+      "seed": 56944
     }
   ]
 }
