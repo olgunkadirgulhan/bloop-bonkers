@@ -704,6 +704,22 @@
       ],
       "room": "cafe",
       "seed": 842235
+    },
+    {
+      "id": "_Anz1BRmjhg",
+      "date": "2026-10-14 18:12",
+      "kind": "short",
+      "title": "Boss Watching vs Boss NOT Watching: Halloween Edition 🎃 (Costume & Burger)",
+      "privacy": "public",
+      "format": "boss",
+      "cast": "chonk",
+      "gags": [
+        "costume",
+        "burger",
+        "pumpkin"
+      ],
+      "room": "studio",
+      "seed": 943106
     }
   ]
 }
