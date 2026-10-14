@@ -687,6 +687,23 @@
           "luna"
         ]
       ]
+    },
+    {
+      "id": "KoSPB8FDHro",
+      "date": "2026-10-14 13:51",
+      "kind": "short",
+      "title": "Luna: What They See vs What I See 🤪 (Cookie & Selfie)",
+      "privacy": "public",
+      "format": "see",
+      "cast": "luna",
+      "gags": [
+        "cookie",
+        "selfie",
+        "balloon",
+        "sneeze"
+      ],
+      "room": "cafe",
+      "seed": 842235
     }
   ]
 }
