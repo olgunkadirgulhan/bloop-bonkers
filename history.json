@@ -627,6 +627,66 @@
       ],
       "room": "gym",
       "seed": 877949
+    },
+    {
+      "id": "3tAIjgZ61L8",
+      "date": "2026-10-14 01:12",
+      "kind": "episode",
+      "title": "Boris vs Luna: Who Is More Psycho? In Public vs At Home ⚔️ | Bloop Bonkers Ep 3",
+      "privacy": "public",
+      "format": "public",
+      "kurgu": "battle",
+      "theme": null,
+      "items": [
+        [
+          "cheese",
+          "boris"
+        ],
+        [
+          "taco",
+          "luna"
+        ],
+        [
+          "lemon",
+          "boris"
+        ],
+        [
+          "apple",
+          "luna"
+        ],
+        [
+          "carrot",
+          "boris"
+        ],
+        [
+          "orange",
+          "luna"
+        ],
+        [
+          "strawberry",
+          "boris"
+        ],
+        [
+          "soda",
+          "luna"
+        ],
+        [
+          "cupcake",
+          "boris"
+        ],
+        [
+          "burger",
+          "luna"
+        ],
+        [
+          "sushi",
+          "boris"
+        ],
+        [
+          "grapes",
+          "luna"
+        ]
+      ]
     }
   ]
 }
