@@ -961,6 +961,23 @@
           "chonk"
         ]
       ]
+    },
+    {
+      "id": "iafrhPeda4Q",
+      "date": "2026-10-15 20:51",
+      "kind": "short",
+      "title": "Boss Watching vs Boss NOT Watching: Halloween Edition 🎃 (Ketchup & Marshmallow)",
+      "privacy": "public",
+      "format": "boss",
+      "cast": "mimi",
+      "gags": [
+        "ketchup",
+        "marshmallow",
+        "pear",
+        "baguette"
+      ],
+      "room": "spooky",
+      "seed": 981855
     }
   ]
 }
