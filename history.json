@@ -897,6 +897,70 @@
       ],
       "room": "arcade",
       "seed": 218288
+    },
+    {
+      "id": "ErOmrGEBtDE",
+      "date": "2026-10-15 19:57",
+      "kind": "episode",
+      "title": "Normal vs Psychopath: Food Edition 🍕 (13 Situations) | Bloop Bonkers Ep 6",
+      "privacy": "public",
+      "format": "psycho",
+      "kurgu": "theme",
+      "theme": "food",
+      "items": [
+        [
+          "cookie",
+          "kiki"
+        ],
+        [
+          "sandwich",
+          "nova"
+        ],
+        [
+          "cake",
+          "rex"
+        ],
+        [
+          "spaghetti",
+          "pip"
+        ],
+        [
+          "donut",
+          "pepper"
+        ],
+        [
+          "icecream",
+          "grumbo"
+        ],
+        [
+          "pizza",
+          "bloop"
+        ],
+        [
+          "soda",
+          "luna"
+        ],
+        [
+          "ketchup",
+          "duke"
+        ],
+        [
+          "popcorn",
+          "zip"
+        ],
+        [
+          "lemon",
+          "boris"
+        ],
+        [
+          "hotsauce",
+          "mimi"
+        ],
+        [
+          "chips",
+          "chonk"
+        ]
+      ]
     }
   ]
 }
