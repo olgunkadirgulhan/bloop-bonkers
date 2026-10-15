@@ -880,6 +880,23 @@
       ],
       "room": "spooky",
       "seed": 706887
+    },
+    {
+      "id": "5t0_7F_2t3Y",
+      "date": "2026-10-15 18:51",
+      "kind": "short",
+      "title": "In Public vs At Home 😂 Coffee & Noodles",
+      "privacy": "public",
+      "format": "public",
+      "cast": "nova",
+      "gags": [
+        "coffee",
+        "noodles",
+        "croissant",
+        "tea"
+      ],
+      "room": "arcade",
+      "seed": 218288
     }
   ]
 }
