@@ -797,6 +797,74 @@
       ],
       "room": "bedroom",
       "seed": 56944
+    },
+    {
+      "id": "CpYBDGsl6Qg",
+      "date": "2026-10-15 00:39",
+      "kind": "episode",
+      "title": "Spaceship Chaos: Boss Watching vs Boss Not Watching (14 Situations) 🏠 | Bloop Bonkers Ep 5",
+      "privacy": "public",
+      "format": "boss",
+      "kurgu": "room",
+      "theme": "spaceship",
+      "items": [
+        [
+          "cherry",
+          "nova"
+        ],
+        [
+          "pear",
+          "ziggy"
+        ],
+        [
+          "corn",
+          "pip"
+        ],
+        [
+          "balloon",
+          "boris"
+        ],
+        [
+          "jelly",
+          "bloop"
+        ],
+        [
+          "cottoncandy",
+          "luna"
+        ],
+        [
+          "avocado",
+          "zip"
+        ],
+        [
+          "marshmallow",
+          "pepper"
+        ],
+        [
+          "noodles",
+          "chonk"
+        ],
+        [
+          "alarm",
+          "grumbo"
+        ],
+        [
+          "donut",
+          "jojo"
+        ],
+        [
+          "meatball",
+          "duke"
+        ],
+        [
+          "cakeslice",
+          "rex"
+        ],
+        [
+          "gift",
+          "kiki"
+        ]
+      ]
     }
   ]
 }
