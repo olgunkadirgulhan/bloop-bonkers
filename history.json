@@ -865,6 +865,21 @@
           "kiki"
         ]
       ]
+    },
+    {
+      "id": "aNwIwdud0nc",
+      "date": "2026-10-15 13:49",
+      "kind": "short",
+      "title": "Me At 8 AM vs Me At 3 AM: Halloween Edition 🎃 (Ketchup & Sushi)",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "pip",
+      "gags": [
+        "ketchup",
+        "sushi"
+      ],
+      "room": "spooky",
+      "seed": 706887
     }
   ]
 }
