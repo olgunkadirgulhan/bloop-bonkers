@@ -978,6 +978,74 @@
       ],
       "room": "spooky",
       "seed": 981855
+    },
+    {
+      "id": "JmB_U8i3gJA",
+      "date": "2026-10-16 00:21",
+      "kind": "episode",
+      "title": "Level 1 vs Level 100: 14 Situations 🤪 | Bloop Bonkers Ep 7",
+      "privacy": "public",
+      "format": "level",
+      "kurgu": "situations",
+      "theme": null,
+      "items": [
+        [
+          "peanutbutter",
+          "kiki"
+        ],
+        [
+          "plant",
+          "nova"
+        ],
+        [
+          "icecube",
+          "grumbo"
+        ],
+        [
+          "phone",
+          "bloop"
+        ],
+        [
+          "nachos",
+          "zip"
+        ],
+        [
+          "fries",
+          "luna"
+        ],
+        [
+          "pumpkin",
+          "duke"
+        ],
+        [
+          "energy",
+          "ziggy"
+        ],
+        [
+          "chili",
+          "chonk"
+        ],
+        [
+          "pie",
+          "rex"
+        ],
+        [
+          "lollipop",
+          "pepper"
+        ],
+        [
+          "sneeze",
+          "pip"
+        ],
+        [
+          "smoothie",
+          "boris"
+        ],
+        [
+          "coconut",
+          "mimi"
+        ]
+      ]
     }
   ]
 }
