@@ -1062,6 +1062,21 @@
       ],
       "room": "hotel",
       "seed": 159809
+    },
+    {
+      "id": "O7XCohENgOk",
+      "date": "2026-10-16 18:49",
+      "kind": "short",
+      "title": "Ziggy on Halloween 🎃 Me At 8 AM vs Me At 3 AM (Candy Bowl & Birthday Cake)",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "ziggy",
+      "gags": [
+        "candybowl",
+        "cake"
+      ],
+      "room": "spooky",
+      "seed": 87689
     }
   ]
 }
