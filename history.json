@@ -1046,6 +1046,22 @@
           "mimi"
         ]
       ]
+    },
+    {
+      "id": "ORDlNmTgmt0",
+      "date": "2026-10-16 13:48",
+      "kind": "short",
+      "title": "POV: You Are Luna for a Day 🤪 (Orange & Hot Sauce)",
+      "privacy": "public",
+      "format": "day",
+      "cast": "luna",
+      "gags": [
+        "orange",
+        "hotsauce",
+        "pumpkin"
+      ],
+      "room": "hotel",
+      "seed": 159809
     }
   ]
 }
