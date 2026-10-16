@@ -1077,6 +1077,66 @@
       ],
       "room": "spooky",
       "seed": 87689
+    },
+    {
+      "id": "H5uxGfmrUsY",
+      "date": "2026-10-16 19:28",
+      "kind": "episode",
+      "title": "A Day With Chonk: In Public vs At Home (12 Moments) ☀️ | Bloop Bonkers Ep 8",
+      "privacy": "public",
+      "format": "public",
+      "kurgu": "day",
+      "theme": null,
+      "items": [
+        [
+          "alarm",
+          "chonk"
+        ],
+        [
+          "coffee",
+          "chonk"
+        ],
+        [
+          "toothpaste",
+          "chonk"
+        ],
+        [
+          "phone",
+          "chonk"
+        ],
+        [
+          "pizza",
+          "chonk"
+        ],
+        [
+          "sandwich",
+          "chonk"
+        ],
+        [
+          "chips",
+          "chonk"
+        ],
+        [
+          "plant",
+          "chonk"
+        ],
+        [
+          "lemon",
+          "chonk"
+        ],
+        [
+          "spaghetti",
+          "chonk"
+        ],
+        [
+          "hotsauce",
+          "chonk"
+        ],
+        [
+          "popcorn",
+          "chonk"
+        ]
+      ]
     }
   ]
 }
