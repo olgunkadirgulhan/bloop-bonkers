@@ -1137,6 +1137,21 @@
           "chonk"
         ]
       ]
+    },
+    {
+      "id": "CO_ORI8nj10",
+      "date": "2026-10-16 20:48",
+      "kind": "short",
+      "title": "Chonk on Halloween 🎃 What They See vs What I See (Costume & Grapes)",
+      "privacy": "public",
+      "format": "see",
+      "cast": "chonk",
+      "gags": [
+        "costume",
+        "grapes"
+      ],
+      "room": "kitchen",
+      "seed": 542387
     }
   ]
 }
