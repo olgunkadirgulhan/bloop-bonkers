@@ -1212,6 +1212,23 @@
           "rex"
         ]
       ]
+    },
+    {
+      "id": "DkSE33pueHw",
+      "date": "2026-10-17 13:51",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Phone & Bowling Ball Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "ziggy",
+      "gags": [
+        "phone",
+        "bowling",
+        "energy",
+        "pumpkin"
+      ],
+      "room": "bedroom",
+      "seed": 17206
     }
   ]
 }
