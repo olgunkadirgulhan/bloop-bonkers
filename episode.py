@@ -117,7 +117,8 @@ def plan_episode(hist, rnd, kurgu='situations', theme=None):
     # bölüm özeli: bu bölüm yalnız en yakın 'debut' grubunu tanıtır, sonraki grup bir sonraki bölüme kalır
     shown = {g for v in hist['videos'] if v.get('kind') == 'episode' for g, *_ in v.get('items', [])}
     pending = sorted({bloop.GAGS[k]['debut'] for k in gags if bloop.GAGS[k].get('debut') and k not in shown})
-    gags = [k for k in gags if not bloop.GAGS[k].get('debut') or k in shown or bloop.GAGS[k]['debut'] == pending[0]]
+    all_gags = list(gags)
+    gags = [k for k in gags if not bloop.GAGS[k].get('debut') or k in shown or (pending and bloop.GAGS[k]['debut'] == pending[0])]
     # günde 2 bölüm: her bölüm EP_SIZE durum; yeni (debut) durumlar önce, sonra bölümlerde en uzun süredir
     # görünmeyenler → aynı durum ardışık bölümlerde tekrar etmez
     last_used = {}
@@ -127,6 +128,25 @@ def plan_episode(hist, rnd, kurgu='situations', theme=None):
         gags = [k for k in gags if k in DAY]
     elif kurgu == 'theme':
         gags = [k for k in gags if k in THEMES[theme][1]]
+    # 2026-10-17 (kullanıcı: günde 1 bölüm, eşsiz): son 10 bölümde geçen durum KESİN yasak; havuz küçükse (gün/tema) kademeli gevşer
+    n_eps = len([v for v in hist['videos'] if v.get('kind') == 'episode'])
+    need = {'day': 12, 'ranked': 12, 'battle': 12}.get(kurgu, EP_SIZE)
+    if kurgu in ('day', 'theme'):                      # küçük havuz: son 6 bölümle çakışmıyorsa yap, yoksa None (main başka kurgu seçer)
+        fresh = [k for k in gags if last_used.get(k, -99) < n_eps - 6]
+        if len(fresh) < min(need, 9): return None
+        gags = fresh
+    else:                                              # son 7 bölüm yasak; yetmezse sıradaki yeni durum grupları erkenden açılır
+        pool = list(gags)
+        for ng in range(1, len(pending) + 1):
+            fresh = [k for k in pool if last_used.get(k, -99) < n_eps - 7]
+            if len(fresh) >= need: gags = fresh; break
+            if ng < len(pending):
+                pool = [k for k in all_gags if (not bloop.GAGS[k].get('debut') or k in shown or bloop.GAGS[k]['debut'] in pending[:ng + 1])
+                        and (kurgu != 'day' or k in DAY)]
+        else:
+            for back in (5, 3, 1, 0):
+                fresh = [k for k in pool if last_used.get(k, -99) < n_eps - back]
+                if len(fresh) >= need: gags = fresh; break
     rnd.shuffle(gags)
     gags.sort(key=lambda k: (not (bloop.GAGS[k].get('debut') and k not in shown), last_used.get(k, -1)))
     gags = gags[:{'day': 12, 'ranked': 12, 'battle': 12}.get(kurgu, EP_SIZE)]
@@ -155,11 +175,11 @@ def main():
     rnd = random.Random()
     eps = [v for v in hist['videos'] if v.get('kind') == 'episode']
     n_ep = len(eps) + 1
-    if '--force' not in sys.argv and eps:          # günde en fazla 2 bölüm, aralarında en az 3 saat (yedek tetikler tekrar üretmez)
+    if '--force' not in sys.argv and eps:          # günde en fazla 1 bölüm, aralarında en az 12 saat (yedek tetikler tekrar üretmez)
         now_ = datetime.now(timezone.utc)
         last = datetime.strptime(eps[-1]['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)
         today_n = sum(1 for v in eps if v['date'].startswith(now_.strftime('%Y-%m-%d')))
-        if today_n >= 2 or (now_ - last).total_seconds() < 3 * 3600:
+        if today_n >= 1 or (now_ - last).total_seconds() < 12 * 3600:   # 2026-10-17: günde 1 bölüm (kullanıcı)
             print(f'bugün {today_n} bölüm, son {eps[-1]["date"]}: atlandı'); return
     fmt = EP_FORMATS[(n_ep - 1) % len(EP_FORMATS)]   # her bölüm farklı kıyas çerçevesi
     A, B, Q = bloop.FORMATS[fmt]
@@ -173,8 +193,16 @@ def main():
     theme = rnd.choice([t for t in THEMES if t != (eps[-1].get('theme') if eps else None)]) if kurgu == 'theme' else None
     one_room = rnd.choice(bloop.ROOMS) if kurgu == 'room' else None
     items = plan_episode(hist, rnd, kurgu, theme)
+    if items is None and kurgu == 'theme':             # tema taze değil → başka tema dene
+        for t in [t for t in THEMES if t != theme]:
+            items = plan_episode(hist, rnd, kurgu, t)
+            if items is not None: theme = t; break
+    if items is None:                                  # gün/tema havuzu son 6 bölümde tükendi → geniş kurgu (tekrar olmasın)
+        kurgu = next(k for k in ('situations', 'battle', 'ranked', 'room') if k != last_k); theme = None
+        one_room = rnd.choice(bloop.ROOMS) if kurgu == 'room' else None
+        items = plan_episode(hist, rnd, kurgu, theme)
     if kurgu == 'theme' and len(items) < 9:            # az durumlu tema → yemek teması (en geniş)
-        theme = 'food'; items = plan_episode(hist, rnd, kurgu, theme)
+        theme = 'food'; items = plan_episode(hist, rnd, kurgu, theme) or items
     if HALLOWEEN and kurgu == 'room':
         one_room = 'spooky'
     print(f'kurgu: {kurgu} {theme or one_room or ""} · çerçeve: {fmt}', flush=True)
