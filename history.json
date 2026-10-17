@@ -1152,6 +1152,66 @@
       ],
       "room": "kitchen",
       "seed": 542387
+    },
+    {
+      "id": "reV8pY4UCX4",
+      "date": "2026-10-17 00:29",
+      "kind": "episode",
+      "title": "Boris vs Rex: Who Is More Psycho? Me At 8 Am vs Me At 3 Am ⚔️ | Bloop Bonkers Ep 9",
+      "privacy": "public",
+      "format": "clock",
+      "kurgu": "battle",
+      "theme": null,
+      "items": [
+        [
+          "pizzabox",
+          "boris"
+        ],
+        [
+          "mint",
+          "rex"
+        ],
+        [
+          "candybowl",
+          "boris"
+        ],
+        [
+          "globe",
+          "rex"
+        ],
+        [
+          "costume",
+          "boris"
+        ],
+        [
+          "book",
+          "rex"
+        ],
+        [
+          "duck",
+          "boris"
+        ],
+        [
+          "basketball",
+          "rex"
+        ],
+        [
+          "bowling",
+          "boris"
+        ],
+        [
+          "soup",
+          "rex"
+        ],
+        [
+          "gummy",
+          "boris"
+        ],
+        [
+          "beachball",
+          "rex"
+        ]
+      ]
     }
   ]
 }
