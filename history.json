@@ -1289,6 +1289,23 @@
           "kiki"
         ]
       ]
+    },
+    {
+      "id": "wf8sJ3qCFTs",
+      "date": "2026-10-17 19:49",
+      "kind": "short",
+      "title": "POV: You Are Rex for a Day 🤪 (Selfie & Carrot)",
+      "privacy": "public",
+      "format": "day",
+      "cast": "rex",
+      "gags": [
+        "selfie",
+        "carrot",
+        "chili",
+        "gummy"
+      ],
+      "room": "garage",
+      "seed": 349041
     }
   ]
 }
