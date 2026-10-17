@@ -1306,6 +1306,21 @@
       ],
       "room": "garage",
       "seed": 349041
+    },
+    {
+      "id": "DO5zzDEf_zE",
+      "date": "2026-10-17 20:49",
+      "kind": "short",
+      "title": "Halloween: Level 1 vs Level 100 👻 Nachos & Mint",
+      "privacy": "public",
+      "format": "level",
+      "cast": "chonk",
+      "gags": [
+        "nachos",
+        "mint"
+      ],
+      "room": "spooky",
+      "seed": 962602
     }
   ]
 }
