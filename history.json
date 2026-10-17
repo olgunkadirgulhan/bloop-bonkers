@@ -1229,6 +1229,66 @@
       ],
       "room": "bedroom",
       "seed": 17206
+    },
+    {
+      "id": "pbKMCEO0_yQ",
+      "date": "2026-10-17 18:22",
+      "kind": "episode",
+      "title": "Top 12 Most Psycho Moves, Ranked 🏆 Boss Watching vs Boss Not Watching | Bloop Bonkers Ep 10",
+      "privacy": "public",
+      "format": "boss",
+      "kurgu": "ranked",
+      "theme": null,
+      "items": [
+        [
+          "flower",
+          "grumbo"
+        ],
+        [
+          "selfie",
+          "bloop"
+        ],
+        [
+          "lamp",
+          "mimi"
+        ],
+        [
+          "laptop",
+          "pip"
+        ],
+        [
+          "controller",
+          "rex"
+        ],
+        [
+          "burger",
+          "pepper"
+        ],
+        [
+          "pillow",
+          "luna"
+        ],
+        [
+          "teddy",
+          "jojo"
+        ],
+        [
+          "partyhat",
+          "ziggy"
+        ],
+        [
+          "remote",
+          "zip"
+        ],
+        [
+          "headset",
+          "boris"
+        ],
+        [
+          "shades",
+          "kiki"
+        ]
+      ]
     }
   ]
 }
