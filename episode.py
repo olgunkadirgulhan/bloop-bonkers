@@ -132,19 +132,19 @@ def plan_episode(hist, rnd, kurgu='situations', theme=None):
     n_eps = len([v for v in hist['videos'] if v.get('kind') == 'episode'])
     need = {'day': 12, 'ranked': 12, 'battle': 12}.get(kurgu, EP_SIZE)
     if kurgu in ('day', 'theme'):                      # küçük havuz: son 6 bölümle çakışmıyorsa yap, yoksa None (main başka kurgu seçer)
-        fresh = [k for k in gags if last_used.get(k, -99) < n_eps - 6]
+        fresh = [k for k in gags if last_used.get(k, -99) < n_eps - 10]
         if len(fresh) < min(need, 9): return None
         gags = fresh
-    else:                                              # son 7 bölüm yasak; yetmezse sıradaki yeni durum grupları erkenden açılır
+    else:                                              # son 12 bölüm (6 gün) yasak; yetmezse sıradaki yeni durum grupları erkenden açılır
         pool = list(gags)
         for ng in range(1, len(pending) + 1):
-            fresh = [k for k in pool if last_used.get(k, -99) < n_eps - 7]
+            fresh = [k for k in pool if last_used.get(k, -99) < n_eps - 12]
             if len(fresh) >= need: gags = fresh; break
             if ng < len(pending):
                 pool = [k for k in all_gags if (not bloop.GAGS[k].get('debut') or k in shown or bloop.GAGS[k]['debut'] in pending[:ng + 1])
                         and (kurgu != 'day' or k in DAY)]
         else:
-            for back in (5, 3, 1, 0):
+            for back in (9, 7, 5, 3, 1, 0):
                 fresh = [k for k in pool if last_used.get(k, -99) < n_eps - back]
                 if len(fresh) >= need: gags = fresh; break
     rnd.shuffle(gags)
@@ -175,11 +175,11 @@ def main():
     rnd = random.Random()
     eps = [v for v in hist['videos'] if v.get('kind') == 'episode']
     n_ep = len(eps) + 1
-    if '--force' not in sys.argv and eps:          # günde en fazla 1 bölüm, aralarında en az 12 saat (yedek tetikler tekrar üretmez)
+    if '--force' not in sys.argv and eps:          # günde en fazla 2 bölüm, aralarında en az 3 saat (yedek tetikler tekrar üretmez)
         now_ = datetime.now(timezone.utc)
         last = datetime.strptime(eps[-1]['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)
         today_n = sum(1 for v in eps if v['date'].startswith(now_.strftime('%Y-%m-%d')))
-        if today_n >= 1 or (now_ - last).total_seconds() < 12 * 3600:   # 2026-10-17: günde 1 bölüm (kullanıcı)
+        if today_n >= 2 or (now_ - last).total_seconds() < 3 * 3600:   # 2026-10-17: günde 2 bölüm (havuz 307 durum)
             print(f'bugün {today_n} bölüm, son {eps[-1]["date"]}: atlandı'); return
     fmt = EP_FORMATS[(n_ep - 1) % len(EP_FORMATS)]   # her bölüm farklı kıyas çerçevesi
     A, B, Q = bloop.FORMATS[fmt]

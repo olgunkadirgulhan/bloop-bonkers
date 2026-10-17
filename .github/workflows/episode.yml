@@ -2,7 +2,9 @@ name: episode
 # Uzun bölüm (yatay): her durum bölümde bir kez; günde 2 (16:00 + 22:00 UTC; kullanıcı kararı 2026-10-13). episode.py: günde en fazla 2, aralarında en az 3 saat
 on:
   schedule:
-    - cron: "0 16 * * *"    # günde 1 bölüm (TR 19:00 = ABD öğle) — 2026-10-17 kullanıcı: 2→1, eşsiz
+    - cron: "0 16 * * *"    # 1. bölüm (TR 19:00) — 2026-10-17: havuz 307 durum → günde 2, son 12 bölümde tekrar yok
+    - cron: "0 22 * * *"    # 2. bölüm (TR 01:00, ABD akşamı)
+    - cron: "30 23 * * *"
     - cron: "30 17 * * *"   # yedekler: GitHub zamanlayıcı bazen atlıyor; bölüm çıktıysa episode.py atlar
   workflow_dispatch:
     inputs:
