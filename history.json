@@ -1473,6 +1473,21 @@
           "bloop"
         ]
       ]
+    },
+    {
+      "id": "CekBtLk68H8",
+      "date": "2026-10-18 19:41",
+      "kind": "short",
+      "title": "Normal vs Psychopath: Halloween Edition 🎃 (Coffee & Beach Ball)",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "mimi",
+      "gags": [
+        "coffee",
+        "beachball"
+      ],
+      "room": "spooky",
+      "seed": 30824
     }
   ]
 }
