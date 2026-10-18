@@ -1321,6 +1321,74 @@
       ],
       "room": "spooky",
       "seed": 962602
+    },
+    {
+      "id": "ZISVi8n6-6w",
+      "date": "2026-10-18 01:37",
+      "kind": "episode",
+      "title": "Bedroom Chaos: Normal vs Psychopath (14 Situations) 🏠 | Bloop Bonkers Ep 11",
+      "privacy": "public",
+      "format": "psycho",
+      "kurgu": "room",
+      "theme": "bedroom",
+      "items": [
+        [
+          "cucumber",
+          "chonk"
+        ],
+        [
+          "tomato",
+          "jojo"
+        ],
+        [
+          "garlicbread",
+          "grumbo"
+        ],
+        [
+          "burrito",
+          "ziggy"
+        ],
+        [
+          "broccoli",
+          "pepper"
+        ],
+        [
+          "blueberry",
+          "mimi"
+        ],
+        [
+          "mango",
+          "luna"
+        ],
+        [
+          "peach",
+          "bloop"
+        ],
+        [
+          "radish",
+          "nova"
+        ],
+        [
+          "muffin",
+          "pip"
+        ],
+        [
+          "lime",
+          "kiki"
+        ],
+        [
+          "dumpling",
+          "boris"
+        ],
+        [
+          "ramen",
+          "rex"
+        ],
+        [
+          "pineapple",
+          "zip"
+        ]
+      ]
     }
   ]
 }
