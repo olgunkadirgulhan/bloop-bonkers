@@ -1405,6 +1405,74 @@
       ],
       "room": "kitchen",
       "seed": 115645
+    },
+    {
+      "id": "Nx-3XaiTbSQ",
+      "date": "2026-10-18 18:42",
+      "kind": "episode",
+      "title": "Level 1 vs Level 100: 14 Situations 🤪 | Bloop Bonkers Ep 12",
+      "privacy": "public",
+      "format": "level",
+      "kurgu": "situations",
+      "theme": null,
+      "items": [
+        [
+          "sausage",
+          "grumbo"
+        ],
+        [
+          "chocolate",
+          "rex"
+        ],
+        [
+          "springroll",
+          "kiki"
+        ],
+        [
+          "caramelapple",
+          "zip"
+        ],
+        [
+          "waffle",
+          "jojo"
+        ],
+        [
+          "jellybean",
+          "chonk"
+        ],
+        [
+          "milkshake",
+          "pepper"
+        ],
+        [
+          "icedtea",
+          "duke"
+        ],
+        [
+          "licorice",
+          "boris"
+        ],
+        [
+          "candycane",
+          "luna"
+        ],
+        [
+          "kiwi",
+          "nova"
+        ],
+        [
+          "omelet",
+          "ziggy"
+        ],
+        [
+          "kebab",
+          "mimi"
+        ],
+        [
+          "bacon",
+          "bloop"
+        ]
+      ]
     }
   ]
 }
