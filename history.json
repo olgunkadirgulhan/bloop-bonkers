@@ -1488,6 +1488,22 @@
       ],
       "room": "spooky",
       "seed": 30824
+    },
+    {
+      "id": "COWMtc8ovjU",
+      "date": "2026-10-18 20:48",
+      "kind": "short",
+      "title": "Rate Luna's Day 1-10 😂 Bubble Gum & Energy Drink",
+      "privacy": "public",
+      "format": "day",
+      "cast": "luna",
+      "gags": [
+        "gum",
+        "energy",
+        "lollipop"
+      ],
+      "room": "office",
+      "seed": 434984
     }
   ]
 }
