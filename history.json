@@ -1504,6 +1504,66 @@
       ],
       "room": "office",
       "seed": 434984
+    },
+    {
+      "id": "71mOrauRitY",
+      "date": "2026-10-19 00:19",
+      "kind": "episode",
+      "title": "Luna vs Boris: Who Is More Psycho? In Public vs At Home ⚔️ | Bloop Bonkers Ep 13",
+      "privacy": "public",
+      "format": "public",
+      "kurgu": "battle",
+      "theme": null,
+      "items": [
+        [
+          "macaron",
+          "luna"
+        ],
+        [
+          "cheesecake",
+          "boris"
+        ],
+        [
+          "yogurt",
+          "luna"
+        ],
+        [
+          "onion",
+          "boris"
+        ],
+        [
+          "crepe",
+          "luna"
+        ],
+        [
+          "curry",
+          "boris"
+        ],
+        [
+          "plum",
+          "luna"
+        ],
+        [
+          "lemonade",
+          "boris"
+        ],
+        [
+          "granola",
+          "luna"
+        ],
+        [
+          "pudding",
+          "boris"
+        ],
+        [
+          "brownie",
+          "luna"
+        ],
+        [
+          "potato",
+          "boris"
+        ]
+      ]
     }
   ]
 }
