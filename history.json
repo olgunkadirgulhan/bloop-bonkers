@@ -1564,6 +1564,22 @@
           "boris"
         ]
       ]
+    },
+    {
+      "id": "e3U2ZUoaTlM",
+      "date": "2026-10-19 13:50",
+      "kind": "short",
+      "title": "Halloween: What They See vs What I See 👻 Coconut & Toothpaste",
+      "privacy": "public",
+      "format": "see",
+      "cast": "duke",
+      "gags": [
+        "coconut",
+        "toothpaste",
+        "plum"
+      ],
+      "room": "spooky",
+      "seed": 664083
     }
   ]
 }
