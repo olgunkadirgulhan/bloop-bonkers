@@ -1596,6 +1596,21 @@
       ],
       "room": "bedroom",
       "seed": 386436
+    },
+    {
+      "id": "-pZowEBn1oI",
+      "date": "2026-10-19 20:50",
+      "kind": "short",
+      "title": "Duke on Halloween 🎃 Me At 8 AM vs Me At 3 AM (Headphones & Ice Cube)",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "duke",
+      "gags": [
+        "headset",
+        "icecube"
+      ],
+      "room": "spooky",
+      "seed": 176076
     }
   ]
 }
