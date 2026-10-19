@@ -1580,6 +1580,22 @@
       ],
       "room": "spooky",
       "seed": 664083
+    },
+    {
+      "id": "RE01MDWzTF0",
+      "date": "2026-10-19 18:50",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Cucumber & Milk",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "nova",
+      "gags": [
+        "cucumber",
+        "milk",
+        "pumpkin"
+      ],
+      "room": "bedroom",
+      "seed": 386436
     }
   ]
 }
