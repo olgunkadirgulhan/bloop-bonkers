@@ -179,7 +179,7 @@ def main():
         now_ = datetime.now(timezone.utc)
         last = datetime.strptime(eps[-1]['date'], '%Y-%m-%d %H:%M').replace(tzinfo=timezone.utc)
         today_n = sum(1 for v in eps if v['date'].startswith(now_.strftime('%Y-%m-%d')))
-        if today_n >= 2 or (now_ - last).total_seconds() < 3 * 3600:   # 2026-10-17: günde 2 bölüm (havuz 307 durum)
+        if today_n >= 1 or (now_ - last).total_seconds() < 36 * 3600:  # 2026-10-20: haftada 3 bölüm (kullanıcı onayı)
             print(f'bugün {today_n} bölüm, son {eps[-1]["date"]}: atlandı'); return
     fmt = EP_FORMATS[(n_ep - 1) % len(EP_FORMATS)]   # her bölüm farklı kıyas çerçevesi
     A, B, Q = bloop.FORMATS[fmt]

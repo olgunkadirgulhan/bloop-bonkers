@@ -109,10 +109,13 @@ def pick_plan(hist, rnd, perf=({}, {})):
     fperf, gperf = perf
     past = [v for v in hist['videos'] if v.get('kind', 'short') == 'short' and v.get('format')][-12:]  # derlemeler hariç
     last2 = [v['format'] for v in past[-2:]]
-    fmts = [f for f in bloop.FORMATS if f not in RETIRED and not (len(last2) == 2 and last2[0] == last2[1] == f)]   # 3. kez üst üste yok
-    fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
-    if past and all(v['format'] != 'day' for v in past[-3:]):   # çeşitlilik: tek ekran formatı düzenli araya girer
-        fmt = 'day'
+    # 2026-10-20: 7 büyük hitin 7'si 'Normal vs Psycho' (60K-213K), diğer formatlar 2-25K → düzen P P X: psycho 2/3,
+    # üçüncü video çeşitlilik için diğer formatlardan (izlenmeye göre ağırlıklı); psycho asla 3 kez üst üste değil.
+    if not (len(last2) == 2 and last2[0] == last2[1] == 'psycho'):
+        fmt = 'psycho'
+    else:
+        fmts = [f for f in bloop.FORMATS if f not in RETIRED and f != 'psycho']
+        fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
     last_cast = past[-1]['cast'] if past else None
     casts = [c for c in bloop.CAST if c != last_cast]
     cast = rnd.choices(casts, weights=[3 if c == 'bloop' else 2 for c in casts])[0]
@@ -155,6 +158,11 @@ def pick_plan(hist, rnd, perf=({}, {})):
     now = datetime.now(timezone.utc)
     if now.month == 10 and now.day >= 15 and last_room != 'spooky' and rnd.random() < 0.6:   # Cadılar Bayramı dönemi
         room = 'spooky'
+    # 2026-10-20: başlık ilk iki durumdan yazılır; hitler tanıdık eşyalarla açıldı (telefon, kurabiye, kahve…) → fabrika durumu öndeyse
+    # klasik (el yapımı) bir durumu başa al
+    if bloop.GAGS[gags[0]].get('factory'):
+        classic = [g for g in gags if not bloop.GAGS[g].get('factory')]
+        if classic: gags.remove(classic[0]); gags.insert(0, classic[0])
     return dict(format=fmt, cast=cast, gags=gags, room=room, seed=rnd.randrange(10 ** 6))
 
 
