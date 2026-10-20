@@ -1,0 +1,29 @@
+name: retitle
+on:
+  workflow_dispatch:
+    inputs:
+      video: {description: video id, required: true}
+      old: {description: başlıktaki eski parça, required: true}
+      new: {description: yeni parça, required: true}
+permissions:
+  contents: write
+concurrency:
+  group: repo-writes
+  cancel-in-progress: false
+jobs:
+  r:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q google-api-python-client google-auth
+      - env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: python tools/retitle.py "${{ inputs.video }}" "${{ inputs.old }}" "${{ inputs.new }}"
+      - run: |
+          git config user.name "bloop-bot"; git config user.email "bot@users.noreply.github.com"
+          python3 tools/push_state.py "retitle ${{ inputs.video }}" history.json
