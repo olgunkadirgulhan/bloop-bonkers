@@ -1839,6 +1839,23 @@
       ],
       "room": "spooky",
       "seed": 624229
+    },
+    {
+      "id": "xMcdWj3b2js",
+      "date": "2026-10-20 20:49",
+      "kind": "short",
+      "title": "Me at 8 AM vs Me at 3 AM 😂 Noodles & Omelet",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "kiki",
+      "gags": [
+        "noodles",
+        "omelet",
+        "flower",
+        "goggles"
+      ],
+      "room": "cafe",
+      "seed": 917647
     }
   ]
 }
