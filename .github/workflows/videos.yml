@@ -80,11 +80,7 @@ jobs:
         run: |
           git config user.name "bloop-bot"
           git config user.email "bot@users.noreply.github.com"
-          [ -e history.json ] && git add history.json || true
-          git diff --cached --quiet && exit 0
-          git commit -m "video: $(date -u +%F-%H%M)"
-          git pull --rebase
-          git push
+          python3 tools/push_state.py "video: $(date -u +%F-%H%M)" history.json
       - name: İlk yorum (hemen)
         if: always()
         env:

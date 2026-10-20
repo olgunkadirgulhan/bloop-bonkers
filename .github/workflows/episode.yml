@@ -55,8 +55,4 @@ jobs:
         run: |
           git config user.name "bloop-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add history.json playlists.json
-          git diff --cached --quiet && exit 0
-          git commit -m "episode: $(date -u +%F)"
-          git pull --rebase
-          git push
+          python3 tools/push_state.py "episode: $(date -u +%F)" history.json playlists.json
