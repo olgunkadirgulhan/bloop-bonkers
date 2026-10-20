@@ -1824,6 +1824,21 @@
       ],
       "room": "hotel",
       "seed": 70535
+    },
+    {
+      "id": "3CsCyxZ2c8o",
+      "date": "2026-10-20 18:08",
+      "kind": "short",
+      "title": "Halloween: Normal vs Psychopath 👻 Popsicle & Yogurt",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "nova",
+      "gags": [
+        "popsicle",
+        "yogurt"
+      ],
+      "room": "spooky",
+      "seed": 624229
     }
   ]
 }
