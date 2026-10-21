@@ -1954,6 +1954,23 @@
           "boris"
         ]
       ]
+    },
+    {
+      "id": "kqUpZPB9Q3c",
+      "date": "2026-10-21 21:51",
+      "kind": "short",
+      "title": "Boss Watching vs Boss NOT Watching: Halloween Edition 🎃 (Toothpaste & Radish)",
+      "privacy": "public",
+      "format": "boss",
+      "cast": "kiki",
+      "gags": [
+        "toothpaste",
+        "radish",
+        "sweatband",
+        "beachball"
+      ],
+      "room": "spooky",
+      "seed": 313088
     }
   ]
 }
