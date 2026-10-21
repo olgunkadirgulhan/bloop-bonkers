@@ -1856,6 +1856,21 @@
       ],
       "room": "cafe",
       "seed": 917647
+    },
+    {
+      "id": "hx_tw-h-e_8",
+      "date": "2026-10-21 13:49",
+      "kind": "short",
+      "title": "Normal vs Psychopath: Halloween Edition 🎃 (Caramel Apple & Pie)",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "boris",
+      "gags": [
+        "caramelapple",
+        "pie"
+      ],
+      "room": "spooky",
+      "seed": 761838
     }
   ]
 }
