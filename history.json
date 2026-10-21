@@ -1871,6 +1871,21 @@
       ],
       "room": "spooky",
       "seed": 761838
+    },
+    {
+      "id": "78gybeET0dU",
+      "date": "2026-10-21 18:17",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Soda & Metronome",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "bloop",
+      "gags": [
+        "soda",
+        "metronome"
+      ],
+      "room": "garage",
+      "seed": 633197
     }
   ]
 }
