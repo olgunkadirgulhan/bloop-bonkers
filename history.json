@@ -2003,6 +2003,23 @@
       ],
       "room": "spooky",
       "seed": 96956
+    },
+    {
+      "id": "UG9jXkYu5kA",
+      "date": "2026-10-22 20:51",
+      "kind": "short",
+      "title": "What Others See vs What I See (Ice Cream & Avocado) 💀",
+      "privacy": "public",
+      "format": "see",
+      "cast": "ziggy",
+      "gags": [
+        "icecream",
+        "avocado",
+        "basketball",
+        "milkshake"
+      ],
+      "room": "spaceship",
+      "seed": 512010
     }
   ]
 }
