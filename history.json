@@ -1986,6 +1986,23 @@
       ],
       "room": "cafe",
       "seed": 518283
+    },
+    {
+      "id": "BimuZoeEOLw",
+      "date": "2026-10-22 18:13",
+      "kind": "short",
+      "title": "Normal vs Psychopath: Halloween Edition 🎃 (Pumpkin & Cheesecake)",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pepper",
+      "gags": [
+        "pumpkin",
+        "cheesecake",
+        "licorice",
+        "cowboyhat"
+      ],
+      "room": "spooky",
+      "seed": 96956
     }
   ]
 }
