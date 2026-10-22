@@ -1971,6 +1971,21 @@
       ],
       "room": "spooky",
       "seed": 313088
+    },
+    {
+      "id": "w_mznB8pgnc",
+      "date": "2026-10-22 13:50",
+      "kind": "short",
+      "title": "Bloop: Normal vs Psycho (Prism & Bubbles) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "bloop",
+      "gags": [
+        "prism",
+        "bubblewand"
+      ],
+      "room": "cafe",
+      "seed": 518283
     }
   ]
 }
