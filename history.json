@@ -2020,6 +2020,21 @@
       ],
       "room": "spaceship",
       "seed": 512010
+    },
+    {
+      "id": "5Lk28nIPRHA",
+      "date": "2026-10-23 13:49",
+      "kind": "short",
+      "title": "Chonk on Halloween 🎃 Normal vs Psychopath (Pumpkin & Calculator)",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "chonk",
+      "gags": [
+        "pumpkin",
+        "calculator"
+      ],
+      "room": "spooky",
+      "seed": 832678
     }
   ]
 }
