@@ -2035,6 +2035,23 @@
       ],
       "room": "spooky",
       "seed": 832678
+    },
+    {
+      "id": "i7ablduJbVE",
+      "date": "2026-10-23 18:51",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Remote & Typewriter Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pepper",
+      "gags": [
+        "remote",
+        "typewriter",
+        "lime",
+        "paintroller"
+      ],
+      "room": "diner",
+      "seed": 637189
     }
   ]
 }
