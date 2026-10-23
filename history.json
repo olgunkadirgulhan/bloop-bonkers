@@ -2052,6 +2052,74 @@
       ],
       "room": "diner",
       "seed": 637189
+    },
+    {
+      "id": "d5OEH-NKqeU",
+      "date": "2026-10-23 20:22",
+      "kind": "episode",
+      "title": "In Public vs At Home: 14 Situations 🤪 | Bloop Bonkers Ep 18",
+      "privacy": "public",
+      "format": "public",
+      "kurgu": "situations",
+      "theme": null,
+      "items": [
+        [
+          "sponge",
+          "duke"
+        ],
+        [
+          "crayon",
+          "bloop"
+        ],
+        [
+          "prism",
+          "pepper"
+        ],
+        [
+          "bubblewand",
+          "jojo"
+        ],
+        [
+          "clickpen",
+          "rex"
+        ],
+        [
+          "fishbowl",
+          "kiki"
+        ],
+        [
+          "lavalamp",
+          "zip"
+        ],
+        [
+          "bubblewrap",
+          "mimi"
+        ],
+        [
+          "typewriter",
+          "boris"
+        ],
+        [
+          "calculator",
+          "nova"
+        ],
+        [
+          "spintop",
+          "luna"
+        ],
+        [
+          "glowstick",
+          "chonk"
+        ],
+        [
+          "drum",
+          "ziggy"
+        ],
+        [
+          "soap",
+          "pip"
+        ]
+      ]
     }
   ]
 }
