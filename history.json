@@ -2136,6 +2136,22 @@
       ],
       "room": "spooky",
       "seed": 959840
+    },
+    {
+      "id": "HRKGgYvXHPw",
+      "date": "2026-10-24 13:50",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Caramel Apple & Fish Bowl",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "kiki",
+      "gags": [
+        "caramelapple",
+        "fishbowl",
+        "corn"
+      ],
+      "room": "garage",
+      "seed": 951141
     }
   ]
 }
