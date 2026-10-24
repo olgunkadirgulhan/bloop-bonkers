@@ -2152,6 +2152,22 @@
       ],
       "room": "garage",
       "seed": 951141
+    },
+    {
+      "id": "Gx-X_9lCA6U",
+      "date": "2026-10-24 18:51",
+      "kind": "short",
+      "title": "Ziggy: Normal vs Psycho (Pumpkin & Kebab) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "ziggy",
+      "gags": [
+        "pumpkin",
+        "kebab",
+        "kite"
+      ],
+      "room": "living",
+      "seed": 534890
     }
   ]
 }
