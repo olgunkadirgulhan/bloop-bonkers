@@ -2168,6 +2168,21 @@
       ],
       "room": "living",
       "seed": 534890
+    },
+    {
+      "id": "FhraZLB3qPU",
+      "date": "2026-10-24 20:49",
+      "kind": "short",
+      "title": "Pip on Halloween 🎃 Level 1 vs Level 100 (Cucumber & Broom)",
+      "privacy": "public",
+      "format": "level",
+      "cast": "pip",
+      "gags": [
+        "cucumber",
+        "broom"
+      ],
+      "room": "spooky",
+      "seed": 782451
     }
   ]
 }
