@@ -2215,6 +2215,22 @@
       ],
       "room": "kitchen",
       "seed": 699125
+    },
+    {
+      "id": "tHdF888OtPw",
+      "date": "2026-10-25 20:50",
+      "kind": "short",
+      "title": "What They See vs What I See: Halloween Edition 🎃 (Pumpkin & Cinnamon Roll)",
+      "privacy": "public",
+      "format": "see",
+      "cast": "bloop",
+      "gags": [
+        "pumpkin",
+        "cinnamonroll",
+        "soccer"
+      ],
+      "room": "spooky",
+      "seed": 888744
     }
   ]
 }
