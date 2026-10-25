@@ -2198,6 +2198,23 @@
       ],
       "room": "spaceship",
       "seed": 851406
+    },
+    {
+      "id": "ZwuahA62WE4",
+      "date": "2026-10-25 18:51",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Boomerang & Parachute",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "mimi",
+      "gags": [
+        "boomerang",
+        "parachute",
+        "beachball",
+        "springtoy"
+      ],
+      "room": "kitchen",
+      "seed": 699125
     }
   ]
 }
