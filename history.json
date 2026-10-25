@@ -2183,6 +2183,21 @@
       ],
       "room": "spooky",
       "seed": 782451
+    },
+    {
+      "id": "OMrUlm6cPqo",
+      "date": "2026-10-25 13:49",
+      "kind": "short",
+      "title": "Kiki: Normal vs Psycho (Sneeze & Popcorn) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "kiki",
+      "gags": [
+        "sneeze",
+        "popcorn"
+      ],
+      "room": "spaceship",
+      "seed": 851406
     }
   ]
 }
