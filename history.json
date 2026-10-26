@@ -2277,6 +2277,66 @@
       ],
       "room": "hotel",
       "seed": 649655
+    },
+    {
+      "id": "rnexC2nLhsY",
+      "date": "2026-10-26 21:34",
+      "kind": "episode",
+      "title": "A Day With Boris: Me At 8 Am vs Me At 3 Am (12 Moments) ☀️ | Halloween Special",
+      "privacy": "public",
+      "format": "clock",
+      "kurgu": "day",
+      "theme": null,
+      "items": [
+        [
+          "alarm",
+          "boris"
+        ],
+        [
+          "coffee",
+          "boris"
+        ],
+        [
+          "toothpaste",
+          "boris"
+        ],
+        [
+          "phone",
+          "boris"
+        ],
+        [
+          "pizza",
+          "boris"
+        ],
+        [
+          "sandwich",
+          "boris"
+        ],
+        [
+          "chips",
+          "boris"
+        ],
+        [
+          "plant",
+          "boris"
+        ],
+        [
+          "lemon",
+          "boris"
+        ],
+        [
+          "spaghetti",
+          "boris"
+        ],
+        [
+          "hotsauce",
+          "boris"
+        ],
+        [
+          "popcorn",
+          "boris"
+        ]
+      ]
     }
   ]
 }
