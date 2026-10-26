@@ -2246,6 +2246,21 @@
       ],
       "room": "bathroom",
       "seed": 14265
+    },
+    {
+      "id": "NfoITBqbc2k",
+      "date": "2026-10-26 18:50",
+      "kind": "short",
+      "title": "Normal vs Psychopath: Halloween Edition 🎃 (Pumpkin & Crates)",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "chonk",
+      "gags": [
+        "pumpkin",
+        "crates"
+      ],
+      "room": "spooky",
+      "seed": 586793
     }
   ]
 }
