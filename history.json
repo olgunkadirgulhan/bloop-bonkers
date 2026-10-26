@@ -2261,6 +2261,22 @@
       ],
       "room": "spooky",
       "seed": 586793
+    },
+    {
+      "id": "ItDZXe4OnIQ",
+      "date": "2026-10-26 20:49",
+      "kind": "short",
+      "title": "Ziggy: What They See vs What I See 🤪 (Yogurt & Mushroom)",
+      "privacy": "public",
+      "format": "see",
+      "cast": "ziggy",
+      "gags": [
+        "yogurt",
+        "mushroom",
+        "remote"
+      ],
+      "room": "hotel",
+      "seed": 649655
     }
   ]
 }
