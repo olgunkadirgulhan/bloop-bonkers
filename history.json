@@ -2231,6 +2231,21 @@
       ],
       "room": "spooky",
       "seed": 888744
+    },
+    {
+      "id": "LtjYD5KUEtE",
+      "date": "2026-10-26 13:48",
+      "kind": "short",
+      "title": "Kiki: Normal vs Psycho (Juggling Balls & Frisbee) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "kiki",
+      "gags": [
+        "juggleballs",
+        "frisbee"
+      ],
+      "room": "bathroom",
+      "seed": 14265
     }
   ]
 }
