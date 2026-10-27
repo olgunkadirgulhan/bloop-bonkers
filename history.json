@@ -2369,6 +2369,22 @@
       ],
       "room": "garage",
       "seed": 894347
+    },
+    {
+      "id": "OivBuwroVN8",
+      "date": "2026-10-27 20:50",
+      "kind": "short",
+      "title": "What Others See vs What I See (Cheese & Hat Boxes) 💀",
+      "privacy": "public",
+      "format": "see",
+      "cast": "luna",
+      "gags": [
+        "cheese",
+        "hatboxes",
+        "bacon"
+      ],
+      "room": "office",
+      "seed": 6673
     }
   ]
 }
