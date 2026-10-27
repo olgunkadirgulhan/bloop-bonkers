@@ -2337,6 +2337,23 @@
           "boris"
         ]
       ]
+    },
+    {
+      "id": "jqI9uLQ6cwg",
+      "date": "2026-10-27 13:51",
+      "kind": "short",
+      "title": "Halloween: Normal vs Psychopath 👻 Hockey Puck & Cupcake",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "jojo",
+      "gags": [
+        "puck",
+        "cupcake",
+        "spintop",
+        "cucumber"
+      ],
+      "room": "spooky",
+      "seed": 571496
     }
   ]
 }
