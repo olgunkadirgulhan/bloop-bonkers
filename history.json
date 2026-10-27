@@ -2354,6 +2354,21 @@
       ],
       "room": "spooky",
       "seed": 571496
+    },
+    {
+      "id": "Vd1PuR3c5C8",
+      "date": "2026-10-27 18:48",
+      "kind": "short",
+      "title": "Kiki: Normal vs Psycho (Soap & Snowball) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "kiki",
+      "gags": [
+        "soap",
+        "snowball"
+      ],
+      "room": "garage",
+      "seed": 894347
     }
   ]
 }
