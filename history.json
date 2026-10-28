@@ -2415,6 +2415,23 @@
       ],
       "room": "diner",
       "seed": 438414
+    },
+    {
+      "id": "yV-950Z5bis",
+      "date": "2026-10-28 20:52",
+      "kind": "short",
+      "title": "Pepper on Halloween 🎃 Boss Watching vs Boss NOT Watching (Pumpkin & Tambourine)",
+      "privacy": "public",
+      "format": "boss",
+      "cast": "pepper",
+      "gags": [
+        "pumpkin",
+        "tambourine",
+        "telescope",
+        "plantmister"
+      ],
+      "room": "spooky",
+      "seed": 551290
     }
   ]
 }
