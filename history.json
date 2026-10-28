@@ -2385,6 +2385,21 @@
       ],
       "room": "office",
       "seed": 6673
+    },
+    {
+      "id": "BF2fmD-tifg",
+      "date": "2026-10-28 13:50",
+      "kind": "short",
+      "title": "Duke on Halloween 🎃 Normal vs Psychopath (Bean Bag & Cowboy Hat)",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "duke",
+      "gags": [
+        "beanbag",
+        "cowboyhat"
+      ],
+      "room": "spooky",
+      "seed": 613729
     }
   ]
 }
