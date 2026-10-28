@@ -2400,6 +2400,21 @@
       ],
       "room": "spooky",
       "seed": 613729
+    },
+    {
+      "id": "SA68NdiwhHs",
+      "date": "2026-10-28 18:49",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Party Popper & Drum) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "kiki",
+      "gags": [
+        "popper",
+        "drum"
+      ],
+      "room": "diner",
+      "seed": 438414
     }
   ]
 }
