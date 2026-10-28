@@ -2432,6 +2432,66 @@
       ],
       "room": "spooky",
       "seed": 551290
+    },
+    {
+      "id": "Rn2bGI7VfPM",
+      "date": "2026-10-28 21:43",
+      "kind": "episode",
+      "title": "Kiki vs Nova: Who Is More Psycho? Boss Watching vs Boss Not Watching ⚔️ | Halloween Special",
+      "privacy": "public",
+      "format": "boss",
+      "kurgu": "battle",
+      "theme": null,
+      "items": [
+        [
+          "juicebox",
+          "kiki"
+        ],
+        [
+          "stopwatch",
+          "nova"
+        ],
+        [
+          "baguette",
+          "kiki"
+        ],
+        [
+          "pinata",
+          "nova"
+        ],
+        [
+          "sparkler",
+          "kiki"
+        ],
+        [
+          "popsicle",
+          "nova"
+        ],
+        [
+          "whistle",
+          "kiki"
+        ],
+        [
+          "milk",
+          "nova"
+        ],
+        [
+          "tea",
+          "kiki"
+        ],
+        [
+          "paint",
+          "nova"
+        ],
+        [
+          "bagel",
+          "kiki"
+        ],
+        [
+          "pretzel",
+          "nova"
+        ]
+      ]
     }
   ]
 }
