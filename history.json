@@ -2492,6 +2492,21 @@
           "nova"
         ]
       ]
+    },
+    {
+      "id": "d8nxqrz4yUo",
+      "date": "2026-10-29 13:49",
+      "kind": "short",
+      "title": "Mimi: Normal vs Psycho (Soda & Ping Pong) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "mimi",
+      "gags": [
+        "soda",
+        "pingpong"
+      ],
+      "room": "studio",
+      "seed": 557586
     }
   ]
 }
