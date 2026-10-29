@@ -2524,6 +2524,22 @@
       ],
       "room": "kitchen",
       "seed": 728999
+    },
+    {
+      "id": "P5LOFdK_X6E",
+      "date": "2026-10-29 20:49",
+      "kind": "short",
+      "title": "Rex on Halloween 🎃 What They See vs What I See (Magnifying Glass & Boomerang)",
+      "privacy": "public",
+      "format": "see",
+      "cast": "rex",
+      "gags": [
+        "magnifier",
+        "boomerang",
+        "burger"
+      ],
+      "room": "spooky",
+      "seed": 690210
     }
   ]
 }
