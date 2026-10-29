@@ -2507,6 +2507,23 @@
       ],
       "room": "studio",
       "seed": 557586
+    },
+    {
+      "id": "jD8gX0oWGQw",
+      "date": "2026-10-29 18:49",
+      "kind": "short",
+      "title": "Pip: Normal vs Psycho (Pumpkin & Onion) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pip",
+      "gags": [
+        "pumpkin",
+        "onion",
+        "hairdryer",
+        "potato"
+      ],
+      "room": "kitchen",
+      "seed": 728999
     }
   ]
 }
