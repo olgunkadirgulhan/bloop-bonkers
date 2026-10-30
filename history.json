@@ -2587,6 +2587,66 @@
       ],
       "room": "spooky",
       "seed": 21202
+    },
+    {
+      "id": "XGa2zChqOYE",
+      "date": "2026-10-30 21:25",
+      "kind": "episode",
+      "title": "Top 12 Most Psycho Moves, Ranked 🏆 Normal vs Psychopath | Halloween Special",
+      "privacy": "public",
+      "format": "psycho",
+      "kurgu": "ranked",
+      "theme": null,
+      "items": [
+        [
+          "crates",
+          "jojo"
+        ],
+        [
+          "feather",
+          "zip"
+        ],
+        [
+          "coins",
+          "boris"
+        ],
+        [
+          "hulahoop",
+          "grumbo"
+        ],
+        [
+          "dominoes",
+          "pepper"
+        ],
+        [
+          "hairdryer",
+          "luna"
+        ],
+        [
+          "shampoo",
+          "mimi"
+        ],
+        [
+          "trafficcone",
+          "ziggy"
+        ],
+        [
+          "hackysack",
+          "pip"
+        ],
+        [
+          "parachute",
+          "bloop"
+        ],
+        [
+          "birdie",
+          "rex"
+        ],
+        [
+          "papercups",
+          "kiki"
+        ]
+      ]
     }
   ]
 }
