@@ -2540,6 +2540,21 @@
       ],
       "room": "spooky",
       "seed": 690210
+    },
+    {
+      "id": "H_Fr3rLgKXw",
+      "date": "2026-10-30 13:50",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Pumpkin & Milkshake",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "duke",
+      "gags": [
+        "pumpkin",
+        "milkshake"
+      ],
+      "room": "arcade",
+      "seed": 667651
     }
   ]
 }
