@@ -2555,6 +2555,23 @@
       ],
       "room": "arcade",
       "seed": 667651
+    },
+    {
+      "id": "EP62-IsGAyI",
+      "date": "2026-10-30 18:49",
+      "kind": "short",
+      "title": "Grumbo: Normal vs Psycho (Snowball & Milk) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "grumbo",
+      "gags": [
+        "snowball",
+        "milk",
+        "beanie",
+        "mirror"
+      ],
+      "room": "bedroom",
+      "seed": 707346
     }
   ]
 }
