@@ -2572,6 +2572,21 @@
       ],
       "room": "bedroom",
       "seed": 707346
+    },
+    {
+      "id": "Ygel13g2-yo",
+      "date": "2026-10-30 20:49",
+      "kind": "short",
+      "title": "Boris on Halloween 🎃 What They See vs What I See (Pumpkin & Glue Stick)",
+      "privacy": "public",
+      "format": "see",
+      "cast": "boris",
+      "gags": [
+        "pumpkin",
+        "gluestick"
+      ],
+      "room": "spooky",
+      "seed": 21202
     }
   ]
 }
