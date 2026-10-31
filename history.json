@@ -2677,6 +2677,21 @@
       ],
       "room": "garage",
       "seed": 522589
+    },
+    {
+      "id": "45YbyiOiqFQ",
+      "date": "2026-10-31 20:49",
+      "kind": "short",
+      "title": "Boss Watching vs Boss NOT Watching: Halloween Edition 🎃 (Towel & Earmuffs)",
+      "privacy": "public",
+      "format": "boss",
+      "cast": "boris",
+      "gags": [
+        "towel",
+        "earmuffs"
+      ],
+      "room": "spooky",
+      "seed": 514367
     }
   ]
 }
