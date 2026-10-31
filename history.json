@@ -2662,6 +2662,21 @@
       ],
       "room": "studio",
       "seed": 621828
+    },
+    {
+      "id": "a2MJgT2p_Wk",
+      "date": "2026-10-31 18:50",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Pumpkin & Chocolate) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "luna",
+      "gags": [
+        "pumpkin",
+        "chocolate"
+      ],
+      "room": "garage",
+      "seed": 522589
     }
   ]
 }
