@@ -2647,6 +2647,21 @@
           "kiki"
         ]
       ]
+    },
+    {
+      "id": "qGeYqA98bC4",
+      "date": "2026-10-31 13:49",
+      "kind": "short",
+      "title": "Nova: Normal vs Psycho (Bubble Gum & Ketchup) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "nova",
+      "gags": [
+        "gum",
+        "ketchup"
+      ],
+      "room": "studio",
+      "seed": 621828
     }
   ]
 }
