@@ -2723,6 +2723,23 @@
       ],
       "room": "diner",
       "seed": 865258
+    },
+    {
+      "id": "ey4weV0Ukqg",
+      "date": "2026-11-01 20:51",
+      "kind": "short",
+      "title": "Boss Watching vs Boss NOT Watching 😂 Football & Hacky Sack",
+      "privacy": "public",
+      "format": "boss",
+      "cast": "grumbo",
+      "gags": [
+        "football",
+        "hackysack",
+        "tent",
+        "plantmister"
+      ],
+      "room": "garage",
+      "seed": 101814
     }
   ]
 }
