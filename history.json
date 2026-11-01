@@ -2708,6 +2708,21 @@
       ],
       "room": "greenhouse",
       "seed": 79310
+    },
+    {
+      "id": "qkju53WSIaU",
+      "date": "2026-11-01 18:34",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Smoothie & Dice Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pip",
+      "gags": [
+        "smoothie",
+        "dice"
+      ],
+      "room": "diner",
+      "seed": 865258
     }
   ]
 }
