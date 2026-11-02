@@ -2771,6 +2771,21 @@
       ],
       "room": "library",
       "seed": 643909
+    },
+    {
+      "id": "4IpnDwD-AJw",
+      "date": "2026-11-02 20:49",
+      "kind": "short",
+      "title": "Pepper: Normal vs Psycho (Soda & Cherries) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pepper",
+      "gags": [
+        "soda",
+        "cherry"
+      ],
+      "room": "studio",
+      "seed": 222377
     }
   ]
 }
