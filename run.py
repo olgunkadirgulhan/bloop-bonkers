@@ -102,16 +102,18 @@ def trend_gags(pool):
     return hits
 
 
-RETIRED = {'expect'}   # 2026-10-14: 'Expectation vs Reality' Dex'in formatı (kanallar birbirine benzemesin)
+RETIRED = {'expect', 'see', 'boss'}   # 2026-10-14: 'Expectation vs Reality' Dex'in formatı (kanallar birbirine benzemesin)
+# 2026-11-02: 'see' (medyan 1.7K, n7) ve 'boss' (1.1K, n4) psycho'nun (14.7K, n29) çok altında → emekli
 
 
 def pick_plan(hist, rnd, perf=({}, {})):
     fperf, gperf = perf
     past = [v for v in hist['videos'] if v.get('kind', 'short') == 'short' and v.get('format')][-12:]  # derlemeler hariç
-    last2 = [v['format'] for v in past[-2:]]
+    last4 = [v['format'] for v in past[-4:]]
     # 2026-10-20: 7 büyük hitin 7'si 'Normal vs Psycho' (60K-213K), diğer formatlar 2-25K → düzen P P X: psycho 2/3,
     # üçüncü video çeşitlilik için diğer formatlardan (izlenmeye göre ağırlıklı); psycho asla 3 kez üst üste değil.
-    if not (len(last2) == 2 and last2[0] == last2[1] == 'psycho'):
+    # 2026-11-02: P P X'teki X her gün 1-2K aldı (psycho 6-37K) → düzen P P P P X (psycho 4/5)
+    if not (len(last4) == 4 and all(f == 'psycho' for f in last4)):
         fmt = 'psycho'
     else:
         fmts = [f for f in bloop.FORMATS if f not in RETIRED and f != 'psycho']
