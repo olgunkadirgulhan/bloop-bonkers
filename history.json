@@ -2756,6 +2756,21 @@
       ],
       "room": "spaceship",
       "seed": 522761
+    },
+    {
+      "id": "DRnm_O4-Rf8",
+      "date": "2026-11-02 18:50",
+      "kind": "short",
+      "title": "Rex: Normal vs Psycho (Tiara & Taco) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "rex",
+      "gags": [
+        "tiara",
+        "taco"
+      ],
+      "room": "library",
+      "seed": 643909
     }
   ]
 }
