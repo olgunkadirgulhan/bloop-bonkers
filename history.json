@@ -2884,6 +2884,22 @@
       ],
       "room": "diner",
       "seed": 65261
+    },
+    {
+      "id": "FcZxI2t9fxQ",
+      "date": "2026-11-03 20:51",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Sponge & Wooden Blocks",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "nova",
+      "gags": [
+        "sponge",
+        "woodblocks",
+        "headset"
+      ],
+      "room": "garage",
+      "seed": 267376
     }
   ]
 }
