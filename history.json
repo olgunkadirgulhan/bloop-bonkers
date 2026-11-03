@@ -2869,6 +2869,21 @@
       ],
       "room": "living",
       "seed": 729732
+    },
+    {
+      "id": "QB1TcC2e1zk",
+      "date": "2026-11-03 18:49",
+      "kind": "short",
+      "title": "Level 1 vs Level 100: Toy Spring & Pinwheel 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "kiki",
+      "gags": [
+        "springtoy",
+        "pinwheel"
+      ],
+      "room": "diner",
+      "seed": 65261
     }
   ]
 }
