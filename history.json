@@ -2786,6 +2786,74 @@
       ],
       "room": "studio",
       "seed": 222377
+    },
+    {
+      "id": "O9_WzeHmwno",
+      "date": "2026-11-03 00:05",
+      "kind": "episode",
+      "title": "Garage Chaos: Level 1 vs Level 100 (14 Situations) 🏠 | Bloop Bonkers Ep 22",
+      "privacy": "public",
+      "format": "level",
+      "kurgu": "room",
+      "theme": "garage",
+      "items": [
+        [
+          "piggybank",
+          "bloop"
+        ],
+        [
+          "springtoy",
+          "boris"
+        ],
+        [
+          "envelope",
+          "jojo"
+        ],
+        [
+          "bowlingpins",
+          "chonk"
+        ],
+        [
+          "calendar",
+          "kiki"
+        ],
+        [
+          "boomerang",
+          "pepper"
+        ],
+        [
+          "hatboxes",
+          "mimi"
+        ],
+        [
+          "mirror",
+          "grumbo"
+        ],
+        [
+          "waterballoon",
+          "duke"
+        ],
+        [
+          "dandelion",
+          "zip"
+        ],
+        [
+          "pinwheel",
+          "pip"
+        ],
+        [
+          "puzzlecube",
+          "rex"
+        ],
+        [
+          "perfume",
+          "luna"
+        ],
+        [
+          "juggleballs",
+          "ziggy"
+        ]
+      ]
     }
   ]
 }
