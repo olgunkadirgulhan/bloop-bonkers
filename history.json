@@ -2931,6 +2931,22 @@
       ],
       "room": "studio",
       "seed": 295585
+    },
+    {
+      "id": "fAZ1UkqeIt4",
+      "date": "2026-11-04 20:35",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Puzzle Cube & Juggling Balls",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "bloop",
+      "gags": [
+        "puzzlecube",
+        "juggleballs",
+        "pillow"
+      ],
+      "room": "cafe",
+      "seed": 578036
     }
   ]
 }
