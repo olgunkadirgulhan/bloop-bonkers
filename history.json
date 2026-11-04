@@ -2900,6 +2900,21 @@
       ],
       "room": "garage",
       "seed": 267376
+    },
+    {
+      "id": "mmNT2DR2VjY",
+      "date": "2026-11-04 13:49",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Sausage & Shampoo Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pepper",
+      "gags": [
+        "sausage",
+        "shampoo"
+      ],
+      "room": "cafe",
+      "seed": 35361
     }
   ]
 }
