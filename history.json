@@ -2915,6 +2915,22 @@
       ],
       "room": "cafe",
       "seed": 35361
+    },
+    {
+      "id": "s0sBx2dGWlI",
+      "date": "2026-11-04 18:50",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Maracas & Bow Tie",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pip",
+      "gags": [
+        "maracas",
+        "bowtie",
+        "rainboots"
+      ],
+      "room": "studio",
+      "seed": 295585
     }
   ]
 }
