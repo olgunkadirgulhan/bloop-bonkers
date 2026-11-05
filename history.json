@@ -3030,6 +3030,21 @@
       ],
       "room": "diner",
       "seed": 141641
+    },
+    {
+      "id": "FjbV-b7Osz4",
+      "date": "2026-11-05 18:49",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Golf Ball & Burger",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "grumbo",
+      "gags": [
+        "golf",
+        "burger"
+      ],
+      "room": "hotel",
+      "seed": 560024
     }
   ]
 }
