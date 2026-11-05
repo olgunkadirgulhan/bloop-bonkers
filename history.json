@@ -3045,6 +3045,23 @@
       ],
       "room": "hotel",
       "seed": 560024
+    },
+    {
+      "id": "KkMfep7IuLI",
+      "date": "2026-11-05 20:50",
+      "kind": "short",
+      "title": "Ziggy: Normal vs Psycho (Party Popper & Remote) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "ziggy",
+      "gags": [
+        "popper",
+        "remote",
+        "popsicle",
+        "spintop"
+      ],
+      "room": "library",
+      "seed": 541426
     }
   ]
 }
