@@ -3093,6 +3093,22 @@
       ],
       "room": "library",
       "seed": 606125
+    },
+    {
+      "id": "sTQC-wM7QqA",
+      "date": "2026-11-06 20:50",
+      "kind": "short",
+      "title": "Level 1 vs Level 100: Garlic Bread & Jelly 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "rex",
+      "gags": [
+        "garlicbread",
+        "jelly",
+        "watergun"
+      ],
+      "room": "gym",
+      "seed": 311685
     }
   ]
 }
