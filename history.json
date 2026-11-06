@@ -3062,6 +3062,21 @@
       ],
       "room": "library",
       "seed": 541426
+    },
+    {
+      "id": "S0pJySM-5aU",
+      "date": "2026-11-06 13:49",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Bubble Wrap & Spring Roll Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "bloop",
+      "gags": [
+        "bubblewrap",
+        "springroll"
+      ],
+      "room": "cafe",
+      "seed": 245193
     }
   ]
 }
