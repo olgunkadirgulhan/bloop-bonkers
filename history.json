@@ -3109,6 +3109,66 @@
       ],
       "room": "gym",
       "seed": 311685
+    },
+    {
+      "id": "Th1o36ufnnQ",
+      "date": "2026-11-06 22:08",
+      "kind": "episode",
+      "title": "Ziggy vs Mimi: Who Is More Psycho? Me At 8 Am vs Me At 3 Am ⚔️ | Bloop Bonkers Ep 24",
+      "privacy": "public",
+      "format": "clock",
+      "kurgu": "battle",
+      "theme": null,
+      "items": [
+        [
+          "notebook",
+          "ziggy"
+        ],
+        [
+          "frisbee",
+          "mimi"
+        ],
+        [
+          "lampshade",
+          "ziggy"
+        ],
+        [
+          "mushroom",
+          "mimi"
+        ],
+        [
+          "spoon",
+          "ziggy"
+        ],
+        [
+          "ruler",
+          "mimi"
+        ],
+        [
+          "cardboardbox",
+          "ziggy"
+        ],
+        [
+          "cloud",
+          "mimi"
+        ],
+        [
+          "beanbag",
+          "ziggy"
+        ],
+        [
+          "football",
+          "mimi"
+        ],
+        [
+          "paperbag",
+          "ziggy"
+        ],
+        [
+          "telescope",
+          "mimi"
+        ]
+      ]
     }
   ]
 }
