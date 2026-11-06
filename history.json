@@ -3077,6 +3077,22 @@
       ],
       "room": "cafe",
       "seed": 245193
+    },
+    {
+      "id": "zSg9BMq4uD0",
+      "date": "2026-11-06 18:50",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Bubble Gum & Gummy Bears",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "nova",
+      "gags": [
+        "gum",
+        "gummy",
+        "bikehorn"
+      ],
+      "room": "library",
+      "seed": 606125
     }
   ]
 }
