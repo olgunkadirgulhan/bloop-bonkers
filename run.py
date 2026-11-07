@@ -198,6 +198,7 @@ def metadata(plan, hist, rnd):
     desc = (intro
             + (f'🎬 Full episode ({ep["title"].split("|")[0].strip()}): https://youtu.be/{ep["id"]}\n\n' if ep else '') +
             f'New Bloop Bonkers Shorts every day. Subscribe for more chaos! 🟣\n\n'
+            f'Make your own animated video from one idea, 3 free videos: https://fennecvideo.com (our tool)\n\n'
             f'#shorts #animation #funny #cartoon #{TAGS[plan["format"]]} #bloopbonkers')
     tags = ['bloop bonkers', f'{A.lower()} vs {B.lower()}' if A else 'day in the life', 'funny animation', '3d animation', 'cartoon',
             'funny shorts', 'relatable', c.lower()] + [n.lower() for n in names]
