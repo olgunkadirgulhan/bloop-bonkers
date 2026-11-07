@@ -3169,6 +3169,22 @@
           "mimi"
         ]
       ]
+    },
+    {
+      "id": "jHzg5ht8xZk",
+      "date": "2026-11-07 13:50",
+      "kind": "short",
+      "title": "Me at 8 AM vs Me at 3 AM 😂 Kettlebell & Hacky Sack",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "zip",
+      "gags": [
+        "kettlebell",
+        "hackysack",
+        "paintroller"
+      ],
+      "room": "office",
+      "seed": 981439
     }
   ]
 }
