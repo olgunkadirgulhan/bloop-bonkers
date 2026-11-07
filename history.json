@@ -3200,6 +3200,21 @@
       ],
       "room": "garage",
       "seed": 708903
+    },
+    {
+      "id": "TMxMrpc3IGU",
+      "date": "2026-11-07 20:49",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Dice & Hat Boxes Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "jojo",
+      "gags": [
+        "dice",
+        "hatboxes"
+      ],
+      "room": "bathroom",
+      "seed": 172776
     }
   ]
 }
