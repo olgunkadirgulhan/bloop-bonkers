@@ -22,7 +22,8 @@ TITLES = {
     # 2026-10-12 YouTube arama önerileri: "normal vs psychopath food / eating" (yemek durumlarında kullanılır)
     'psycho_food': ['Normal vs Psychopath: Food Edition 🍕 {g}', 'Normal vs Psychopath Eating {g} 😂',
                     'How Psychopaths Eat {g} 💀 Normal vs Psychopath'],
-    'level': ['Level 1 vs Level 100: {g} 🔥', '{g}: Level 1 vs Level 100 😂', 'Level 1 vs Level 100 ({g}) 💀'],
+    'level': ['Level 1 vs Level 100: {g} 🔥', '{g}: Level 1 vs Level 100 😂', 'Level 1 vs Level 100 ({g}) 💀',
+              '{c}: Level 1 vs Level 100 ({g}) 🔥', 'LEVEL 1 vs LEVEL 100: {g} Edition 💀'],
     'expect': ['Expectation vs Reality: {g} 😭', '{g}: Expectation vs Reality 💀', 'Expectation vs Reality ({g}) 😂'],
     'boss': ['Boss Watching vs Boss NOT Watching 😂 {g}', 'When the Boss Isn\'t Watching... ({g}) 💀', 'Boss Watching vs Not Watching: {g} 👀'],
     'public': ['In Public vs At Home 😂 {g}', 'Me in Public vs Me at Home ({g}) 🤪', 'In Public vs At Home: {g} 💀'],
@@ -109,15 +110,19 @@ RETIRED = {'expect', 'see', 'boss'}   # 2026-10-14: 'Expectation vs Reality' Dex
 def pick_plan(hist, rnd, perf=({}, {})):
     fperf, gperf = perf
     past = [v for v in hist['videos'] if v.get('kind', 'short') == 'short' and v.get('format')][-12:]  # derlemeler hariç
-    last4 = [v['format'] for v in past[-4:]]
-    # 2026-10-20: 7 büyük hitin 7'si 'Normal vs Psycho' (60K-213K), diğer formatlar 2-25K → düzen P P X: psycho 2/3,
-    # üçüncü video çeşitlilik için diğer formatlardan (izlenmeye göre ağırlıklı); psycho asla 3 kez üst üste değil.
-    # 2026-11-02: P P X'teki X her gün 1-2K aldı (psycho 6-37K) → düzen P P P P X (psycho 4/5)
-    if not (len(last4) == 4 and all(f == 'psycho' for f in last4)):
+    last = [v['format'] for v in past[-5:]]
+    # 2026-11-07: 'normal vs psycho' YouTube genelinde soğudu (arama medyanı 15K; kanalda video başı 7K → 3K),
+    # 'level 1 vs level 100' 543K (33 kanal) ve şakalara birebir uyar (üst sakin, alt aşırı) → iki ana format sırayla:
+    # psycho ve level, aynısı 2 kez üst üste olmaz; her 5 videoda bir diğer formatlardan biri (çeşitlilik).
+    if len(last) == 5 and all(f in ('psycho', 'level') for f in last):
+        fmts = [f for f in bloop.FORMATS if f not in RETIRED and f not in ('psycho', 'level')]
+        fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
+    elif last and last[-1] == 'psycho':
+        fmt = 'level'
+    elif last and last[-1] == 'level':
         fmt = 'psycho'
     else:
-        fmts = [f for f in bloop.FORMATS if f not in RETIRED and f != 'psycho']
-        fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
+        fmt = rnd.choice(['psycho', 'level'])
     last_cast = past[-1]['cast'] if past else None
     casts = [c for c in bloop.CAST if c != last_cast]
     cast = rnd.choices(casts, weights=[3 if c == 'bloop' else 2 for c in casts])[0]
