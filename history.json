@@ -3185,6 +3185,21 @@
       ],
       "room": "office",
       "seed": 981439
+    },
+    {
+      "id": "mlsQAkV9P0U",
+      "date": "2026-11-07 18:19",
+      "kind": "short",
+      "title": "Level 1 vs Level 100 (Chips & Mittens) 💀",
+      "privacy": "public",
+      "format": "level",
+      "cast": "bloop",
+      "gags": [
+        "chips",
+        "mitten"
+      ],
+      "room": "garage",
+      "seed": 708903
     }
   ]
 }
