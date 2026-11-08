@@ -3246,6 +3246,22 @@
       ],
       "room": "arcade",
       "seed": 447936
+    },
+    {
+      "id": "tOBemhM6iBo",
+      "date": "2026-11-08 20:50",
+      "kind": "short",
+      "title": "Level 1 vs Level 100 (Popcorn & Cotton Candy) 💀",
+      "privacy": "public",
+      "format": "level",
+      "cast": "grumbo",
+      "gags": [
+        "popcorn",
+        "cottoncandy",
+        "icedtea"
+      ],
+      "room": "bedroom",
+      "seed": 717994
     }
   ]
 }
