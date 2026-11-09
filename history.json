@@ -3277,6 +3277,21 @@
       ],
       "room": "kitchen",
       "seed": 580453
+    },
+    {
+      "id": "7gY9Zo3Rnzg",
+      "date": "2026-11-09 18:50",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Glitter & Puzzle Cube) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pepper",
+      "gags": [
+        "glitter",
+        "cube"
+      ],
+      "room": "diner",
+      "seed": 31162
     }
   ]
 }
