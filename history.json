@@ -3262,6 +3262,21 @@
       ],
       "room": "bedroom",
       "seed": 717994
+    },
+    {
+      "id": "LffHBf2zrrA",
+      "date": "2026-11-09 13:48",
+      "kind": "short",
+      "title": "In Public vs At Home 😂 Macaron & Lava Lamp",
+      "privacy": "public",
+      "format": "public",
+      "cast": "ziggy",
+      "gags": [
+        "macaron",
+        "lavalamp"
+      ],
+      "room": "kitchen",
+      "seed": 580453
     }
   ]
 }
