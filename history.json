@@ -3391,6 +3391,23 @@
       ],
       "room": "living",
       "seed": 344413
+    },
+    {
+      "id": "8Y35QJBtvq0",
+      "date": "2026-11-10 18:51",
+      "kind": "short",
+      "title": "LEVEL 1 vs LEVEL 100: Coffee & Hat Boxes Edition 💀",
+      "privacy": "public",
+      "format": "level",
+      "cast": "boris",
+      "gags": [
+        "coffee",
+        "hatboxes",
+        "beanie",
+        "candycane"
+      ],
+      "room": "cafe",
+      "seed": 956920
     }
   ]
 }
