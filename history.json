@@ -3408,6 +3408,22 @@
       ],
       "room": "cafe",
       "seed": 956920
+    },
+    {
+      "id": "P_a0sDsAIss",
+      "date": "2026-11-10 20:38",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Notebook & Book",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "bloop",
+      "gags": [
+        "notebook",
+        "book",
+        "smoothie"
+      ],
+      "room": "kitchen",
+      "seed": 797724
     }
   ]
 }
