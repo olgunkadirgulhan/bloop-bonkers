@@ -3307,6 +3307,74 @@
       ],
       "room": "library",
       "seed": 81020
+    },
+    {
+      "id": "rkpo80XwEQE",
+      "date": "2026-11-10 00:46",
+      "kind": "episode",
+      "title": "Boss Watching vs Boss Not Watching: 14 Situations 🤪 | Bloop Bonkers Ep 25",
+      "privacy": "public",
+      "format": "boss",
+      "kurgu": "situations",
+      "theme": null,
+      "items": [
+        [
+          "soccer",
+          "mimi"
+        ],
+        [
+          "wand",
+          "chonk"
+        ],
+        [
+          "eraser",
+          "pip"
+        ],
+        [
+          "dice",
+          "zip"
+        ],
+        [
+          "sleepmask",
+          "jojo"
+        ],
+        [
+          "flashlight",
+          "grumbo"
+        ],
+        [
+          "leaf",
+          "bloop"
+        ],
+        [
+          "newspaper",
+          "boris"
+        ],
+        [
+          "cube",
+          "rex"
+        ],
+        [
+          "hotairballoon",
+          "nova"
+        ],
+        [
+          "sleepingbag",
+          "duke"
+        ],
+        [
+          "rocket",
+          "luna"
+        ],
+        [
+          "gluestick",
+          "ziggy"
+        ],
+        [
+          "backpack",
+          "pepper"
+        ]
+      ]
     }
   ]
 }
