@@ -3375,6 +3375,22 @@
           "pepper"
         ]
       ]
+    },
+    {
+      "id": "XJpiU_VBI4k",
+      "date": "2026-11-10 13:50",
+      "kind": "short",
+      "title": "Jojo: Normal vs Psycho (Typewriter & Milkshake) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "jojo",
+      "gags": [
+        "typewriter",
+        "milkshake",
+        "juicebox"
+      ],
+      "room": "living",
+      "seed": 344413
     }
   ]
 }
