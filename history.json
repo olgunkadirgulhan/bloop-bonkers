@@ -3439,6 +3439,22 @@
       ],
       "room": "studio",
       "seed": 568271
+    },
+    {
+      "id": "0sMpkJ0WGIc",
+      "date": "2026-11-11 18:50",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Desk Bell & Water Gun Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "bloop",
+      "gags": [
+        "bell",
+        "watergun",
+        "keyboard"
+      ],
+      "room": "bedroom",
+      "seed": 704475
     }
   ]
 }
