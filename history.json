@@ -3455,6 +3455,21 @@
       ],
       "room": "bedroom",
       "seed": 704475
+    },
+    {
+      "id": "WJ5dCWp8xXQ",
+      "date": "2026-11-11 21:49",
+      "kind": "short",
+      "title": "LEVEL 1 vs LEVEL 100: Garlic Bread & Pickle Edition 💀",
+      "privacy": "public",
+      "format": "level",
+      "cast": "pip",
+      "gags": [
+        "garlicbread",
+        "pickle"
+      ],
+      "room": "office",
+      "seed": 329456
     }
   ]
 }
