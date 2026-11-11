@@ -3424,6 +3424,21 @@
       ],
       "room": "kitchen",
       "seed": 797724
+    },
+    {
+      "id": "P2IGhVJKT5Y",
+      "date": "2026-11-11 13:50",
+      "kind": "short",
+      "title": "In Public vs At Home: Coins & Chocolate 💀",
+      "privacy": "public",
+      "format": "public",
+      "cast": "zip",
+      "gags": [
+        "coins",
+        "chocolate"
+      ],
+      "room": "studio",
+      "seed": 568271
     }
   ]
 }
