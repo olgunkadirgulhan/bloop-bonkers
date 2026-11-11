@@ -3470,6 +3470,66 @@
       ],
       "room": "office",
       "seed": 329456
+    },
+    {
+      "id": "_n3-U23oQjU",
+      "date": "2026-11-11 23:29",
+      "kind": "episode",
+      "title": "Chonk vs Nova: Who Is More Psycho? Normal vs Psychopath ⚔️ | Bloop Bonkers Ep 26",
+      "privacy": "public",
+      "format": "psycho",
+      "kurgu": "battle",
+      "theme": null,
+      "items": [
+        [
+          "cookie",
+          "chonk"
+        ],
+        [
+          "icecream",
+          "nova"
+        ],
+        [
+          "plushwhale",
+          "chonk"
+        ],
+        [
+          "cottoncandy",
+          "nova"
+        ],
+        [
+          "meatball",
+          "chonk"
+        ],
+        [
+          "donut",
+          "nova"
+        ],
+        [
+          "ketchup",
+          "chonk"
+        ],
+        [
+          "magnifier",
+          "nova"
+        ],
+        [
+          "sandcastle",
+          "chonk"
+        ],
+        [
+          "cake",
+          "nova"
+        ],
+        [
+          "soda",
+          "chonk"
+        ],
+        [
+          "sunflower",
+          "nova"
+        ]
+      ]
     }
   ]
 }
