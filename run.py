@@ -103,7 +103,7 @@ def trend_gags(pool):
     return hits
 
 
-RETIRED = {'expect', 'see', 'boss'}   # 2026-10-14: 'Expectation vs Reality' Dex'in formatı (kanallar birbirine benzemesin)
+RETIRED = {'expect', 'see', 'boss', 'public'}   # 2026-11-12: 'In Public vs At Home' 175 izlenme (Level 4K, Psycho 2.7K) → 2026-10-14: 'Expectation vs Reality' Dex'in formatı (kanallar birbirine benzemesin)
 # 2026-11-02: 'see' (medyan 1.7K, n7) ve 'boss' (1.1K, n4) psycho'nun (14.7K, n29) çok altında → emekli
 
 
