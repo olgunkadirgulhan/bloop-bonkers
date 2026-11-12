@@ -3561,6 +3561,22 @@
       ],
       "room": "diner",
       "seed": 728864
+    },
+    {
+      "id": "J9cyKxzPDPg",
+      "date": "2026-11-12 20:50",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Iced Tea & Sushi) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "chonk",
+      "gags": [
+        "icedtea",
+        "sushi",
+        "chocolate"
+      ],
+      "room": "library",
+      "seed": 579026
     }
   ]
 }
