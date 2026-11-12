@@ -3545,6 +3545,22 @@
       ],
       "room": "living",
       "seed": 80008
+    },
+    {
+      "id": "Mrj54lLZPOY",
+      "date": "2026-11-12 18:50",
+      "kind": "short",
+      "title": "Level 1 vs Level 100: Fig & Lava Lamp 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "jojo",
+      "gags": [
+        "fig",
+        "lavalamp",
+        "pie"
+      ],
+      "room": "diner",
+      "seed": 728864
     }
   ]
 }
