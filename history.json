@@ -3577,6 +3577,22 @@
       ],
       "room": "library",
       "seed": 579026
+    },
+    {
+      "id": "gPr8OjTiZX4",
+      "date": "2026-11-13 13:50",
+      "kind": "short",
+      "title": "8 AM Me vs 3 AM Me (Plant & Sparkler) 💀",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "duke",
+      "gags": [
+        "plant",
+        "sparkler",
+        "fidget"
+      ],
+      "room": "kitchen",
+      "seed": 625921
     }
   ]
 }
