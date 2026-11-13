@@ -3626,6 +3626,66 @@
       ],
       "room": "diner",
       "seed": 880903
+    },
+    {
+      "id": "yMGwX4p-aN8",
+      "date": "2026-11-13 22:26",
+      "kind": "episode",
+      "title": "Top 12 Most Psycho Moves, Ranked 🏆 Level 1 vs Level 100 | Bloop Bonkers Ep 27",
+      "privacy": "public",
+      "format": "level",
+      "kurgu": "ranked",
+      "theme": null,
+      "items": [
+        [
+          "watergun",
+          "grumbo"
+        ],
+        [
+          "puck",
+          "mimi"
+        ],
+        [
+          "golf",
+          "pepper"
+        ],
+        [
+          "tablet",
+          "luna"
+        ],
+        [
+          "radio",
+          "pip"
+        ],
+        [
+          "trumpet",
+          "rex"
+        ],
+        [
+          "towel",
+          "kiki"
+        ],
+        [
+          "peanutbutter",
+          "jojo"
+        ],
+        [
+          "pingpong",
+          "bloop"
+        ],
+        [
+          "kettlebell",
+          "duke"
+        ],
+        [
+          "lightbulb",
+          "boris"
+        ],
+        [
+          "fries",
+          "chonk"
+        ]
+      ]
     }
   ]
 }
