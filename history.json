@@ -3609,6 +3609,23 @@
       ],
       "room": "office",
       "seed": 318324
+    },
+    {
+      "id": "ifpg3cujLbo",
+      "date": "2026-11-13 20:42",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Light Switch & Tortilla Chips",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pip",
+      "gags": [
+        "lightswitch",
+        "tortilla",
+        "prism",
+        "maracas"
+      ],
+      "room": "diner",
+      "seed": 880903
     }
   ]
 }
