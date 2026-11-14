@@ -45,7 +45,7 @@ def load():
 
 
 # Kanal verisi yokken başlangıç ağırlıkları: 'psycho' ilk gün viral oldu (31 bin izlenme)
-PRIOR = {'psycho': 9.0, 'see': 4.0}   # 2026-10-10: psycho 18K-100K, diğer formatlar 1.7-5K izlenme
+PRIOR = {'psycho': 9.0, 'see': 4.0, 'clock': 4.0}   # 2026-11-14: clock (8 AM vs 3 AM) 3.1K → çeşitlilik slotunda öne   # 2026-10-10: psycho 18K-100K, diğer formatlar 1.7-5K izlenme
 
 
 def performance(hist):
@@ -117,12 +117,14 @@ def pick_plan(hist, rnd, perf=({}, {})):
     if len(last) == 5 and all(f in ('psycho', 'level') for f in last):
         fmts = [f for f in bloop.FORMATS if f not in RETIRED and f not in ('psycho', 'level')]
         fmt = rnd.choices(fmts, weights=weights(fmts, fperf, PRIOR))[0]
-    elif last and last[-1] == 'psycho':
+    # 2026-11-14 ölçüm (11-09..13): psycho son videolar ~3.7K, level ~450 (5'in 2'si tuttu) → psycho 2/3, level 1/3;
+    # psycho 3. kez üst üste gelmez, level 2 kez üst üste gelmez.
+    elif len(last) >= 2 and last[-1] == last[-2] == 'psycho':
         fmt = 'level'
     elif last and last[-1] == 'level':
         fmt = 'psycho'
     else:
-        fmt = rnd.choice(['psycho', 'level'])
+        fmt = rnd.choices(['psycho', 'level'], weights=[2, 1])[0]
     last_cast = past[-1]['cast'] if past else None
     casts = [c for c in bloop.CAST if c != last_cast]
     cast = rnd.choices(casts, weights=[3 if c == 'bloop' else 2 for c in casts])[0]
