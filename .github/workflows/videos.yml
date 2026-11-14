@@ -34,7 +34,7 @@ jobs:
       - id: g
         env:
           LOG_FILE: history.json
-          SLOTS: "12:00,18:00,20:30"   # 2026-10-13: günde 3 Short (+2 uzun bölüm, kullanıcı kararı); 2026-10-14 TEST (10-21 ölç): ilk slot GD Asya akşamı (izleyicinin %53ü ID/PH/VN/TH/MY)
+          SLOTS: "12:00,17:00,18:00"   # 2026-11-14: 2-14 günlük veri 18 UTC 8.5K, 13 UTC 4.7K, 20:30 slotu 2.8K → 20:30 → 17:00 (Paw da 17-20 UTC en iyi); 12:00 GD Asya kalsın
         run: python3 .github/slot_guard.py
 
   make:
