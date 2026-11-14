@@ -3701,6 +3701,21 @@
       ],
       "room": "arcade",
       "seed": 914127
+    },
+    {
+      "id": "AlBevUHfe4c",
+      "date": "2026-11-14 17:49",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Cupcake & Sleeping Bag Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "zip",
+      "gags": [
+        "cupcake",
+        "sleepingbag"
+      ],
+      "room": "gym",
+      "seed": 848830
     }
   ]
 }
