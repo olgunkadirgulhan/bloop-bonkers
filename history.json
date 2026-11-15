@@ -3764,6 +3764,21 @@
       ],
       "room": "bedroom",
       "seed": 366245
+    },
+    {
+      "id": "HOBn2zvJvkc",
+      "date": "2026-11-15 18:49",
+      "kind": "short",
+      "title": "LEVEL 1 vs LEVEL 100: Chips & Plush Whale Edition 💀",
+      "privacy": "public",
+      "format": "level",
+      "cast": "zip",
+      "gags": [
+        "chips",
+        "plushwhale"
+      ],
+      "room": "office",
+      "seed": 500021
     }
   ]
 }
