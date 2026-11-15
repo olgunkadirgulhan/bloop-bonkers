@@ -3748,6 +3748,22 @@
       ],
       "room": "bathroom",
       "seed": 281175
+    },
+    {
+      "id": "d4fW8dtO7SE",
+      "date": "2026-11-15 17:50",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Fan & Apple Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "boris",
+      "gags": [
+        "fan",
+        "apple",
+        "leaf"
+      ],
+      "room": "bedroom",
+      "seed": 366245
     }
   ]
 }
