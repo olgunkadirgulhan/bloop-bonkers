@@ -3812,6 +3812,21 @@
       ],
       "room": "office",
       "seed": 350327
+    },
+    {
+      "id": "4Le3sm0YIw0",
+      "date": "2026-11-16 18:49",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Papaya & Apricot",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "rex",
+      "gags": [
+        "papaya",
+        "apricot"
+      ],
+      "room": "arcade",
+      "seed": 173127
     }
   ]
 }
