@@ -3796,6 +3796,22 @@
       ],
       "room": "library",
       "seed": 364486
+    },
+    {
+      "id": "gSySzNiCWkw",
+      "date": "2026-11-16 17:49",
+      "kind": "short",
+      "title": "Fidget Spinner & Fig: Level 1 vs Level 100 😂",
+      "privacy": "public",
+      "format": "level",
+      "cast": "duke",
+      "gags": [
+        "fidget",
+        "fig",
+        "waffle"
+      ],
+      "room": "office",
+      "seed": 350327
     }
   ]
 }
