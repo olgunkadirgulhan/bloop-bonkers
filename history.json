@@ -3779,6 +3779,23 @@
       ],
       "room": "office",
       "seed": 500021
+    },
+    {
+      "id": "Z-tswkiyHWY",
+      "date": "2026-11-16 13:50",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Spring Roll & Burger Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "jojo",
+      "gags": [
+        "springroll",
+        "burger",
+        "typewriter",
+        "partyhat"
+      ],
+      "room": "library",
+      "seed": 364486
     }
   ]
 }
