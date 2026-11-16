@@ -167,6 +167,8 @@ def pick_plan(hist, rnd, perf=({}, {})):
     now = datetime.now(timezone.utc)
     if now.month == 10 and now.day >= 15 and last_room != 'spooky' and rnd.random() < 0.6:   # Cadılar Bayramı dönemi
         room = 'spooky'
+    if now.month == 12 and now.day <= 26 and last_room != 'xmas' and rnd.random() < 0.5:   # Noel dönemi (2026-11-16)
+        room = 'xmas'
     # 2026-10-20: başlık ilk iki durumdan yazılır; hitler tanıdık eşyalarla açıldı (telefon, kurabiye, kahve…) → fabrika durumu öndeyse
     # klasik (el yapımı) bir durumu başa al
     if bloop.GAGS[gags[0]].get('factory'):
@@ -187,6 +189,10 @@ def metadata(plan, hist, rnd):
         A_, B_ = (' '.join(w if w in ('AM', 'PM', 'NOT') else w.capitalize() for w in x.split()) for x in bloop.FORMATS[plan['format']][:2])
         opts = [f'{A_} vs {B_}: Halloween Edition 🎃 ({g})', f'Halloween: {A_} vs {B_} 👻 {g}',
                 f'{c} on Halloween 🎃 {A_} vs {B_} ({g})']
+    if plan['format'] != 'day' and plan.get('room') == 'xmas':
+        A_, B_ = (' '.join(w if w in ('AM', 'PM', 'NOT') else w.capitalize() for w in x.split()) for x in bloop.FORMATS[plan['format']][:2])
+        opts = [f'{A_} vs {B_}: Christmas Edition 🎄 ({g})', f'Christmas: {A_} vs {B_} 🎅 {g}',
+                f'{c} at Christmas 🎄 {A_} vs {B_} ({g})']
     rnd.shuffle(opts)
     title = next((t for t in opts if t not in used), opts[0] + f' #{len(hist["videos"]) + 1}')
     A, B, _ = bloop.FORMATS.get(plan['format'], ('', '', ''))

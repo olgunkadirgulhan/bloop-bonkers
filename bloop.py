@@ -204,7 +204,8 @@ FLOORS = {'living': (196, 138, 88), 'kitchen': (214, 204, 186), 'bedroom': (176,
           'bathroom': (225, 228, 238), 'garage': (128, 128, 134), 'cafe': (150, 100, 70),
           'library': (120, 80, 55), 'gym': (70, 72, 80), 'diner': (235, 235, 235),
           'arcade': (60, 42, 80), 'studio': (105, 90, 82), 'greenhouse': (150, 132, 100), 'spaceship': (140, 145, 158), 'hotel': (150, 40, 52),
-          'spooky': (70, 52, 62)}   # spooky: yalnız Cadılar Bayramı döneminde (ROOMS dışında)
+          'spooky': (70, 52, 62),    # spooky: yalnız Cadılar Bayramı döneminde (ROOMS dışında)
+          'xmas': (150, 95, 60)}     # xmas: yalnız Aralık'ta (ROOMS dışında; 2026-11-16)
 
 
 @lru_cache(None)
@@ -222,6 +223,8 @@ def background(wall, room='living'):
         stripe = ((xx // 160) % 2) * -0.03 + (((xx % 160) < 3) * -0.08) + 0.0 * yy
     elif room == 'spooky':     # karanlık, eski duvar kâğıdı
         stripe = -0.42 + ((xx // 70) % 2 == 0) * 0.05 + 0.0 * yy
+    elif room == 'xmas':       # sıcak, küçük baklava desenli duvar kâğıdı
+        stripe = (((xx + yy) % 80 < 3) | ((xx - yy) % 80 < 3)) * 0.07 + 0.02 + 0.0 * yy
     elif room == 'arcade':     # karanlık + neon şeritler
         stripe = -0.5 + (((yy % 120) < 6) * 0.9) + 0.0 * xx
     elif room == 'studio':     # akustik sünger
@@ -298,6 +301,27 @@ def background(wall, room='living'):
         d = ImageDraw.Draw(img)
         for dx in (-30, 30): d.polygon([(L(180 + dx - 16), L(240)), (L(180 + dx), L(222)), (L(180 + dx + 16), L(240))], fill=(255, 230, 90))
         d.chord(box(140, 250, 220, 290), 0, 180, fill=(255, 230, 90))
+    elif room == 'xmas':       # karlı gece penceresi + ışık zinciri + süslü çam + hediyeler
+        d.rectangle(box(676, 76, 944, 326), fill=(28, 34, 80))
+        for k in range(26):
+            r_ = random.Random(100 + k); sx_, sy_ = r_.uniform(684, 936), r_.uniform(84, 300); rr = r_.uniform(3, 7)
+            d.ellipse(box(sx_ - rr, sy_ - rr, sx_ + rr, sy_ + rr), fill=(250, 250, 255))
+        d.rectangle(box(676, 300, 944, 326), fill=(245, 248, 255))
+        d.rectangle(box(806, 76, 814, 314), fill=(250, 250, 248)); d.rectangle(box(676, 195, 944, 203), fill=(250, 250, 248))
+        for k in range(17):   # ışık zinciri
+            x_ = 20 + k * 60; y_ = 34 + 16 * math.sin(k * 0.9)
+            if k: d.line(box(x_ - 60, 34 + 16 * math.sin((k - 1) * 0.9), x_, y_), fill=(40, 90, 50), width=L(4))
+            d.ellipse(box(x_ - 10, y_ + 2, x_ + 10, y_ + 26), fill=[(255, 70, 70), (255, 215, 60), (80, 200, 255), (120, 230, 120)][k % 4])
+        wx, wy = 470, 215   # kapı çelengi: dikey kadrajda etiket ve karakter başının arasında görünen boş duvar
+        for k in range(28):
+            a_ = k * 2 * math.pi / 28; px, py = wx + 82 * math.cos(a_), wy + 82 * math.sin(a_)
+            d.ellipse(box(px - 26, py - 26, px + 26, py + 26), fill=[(40, 120, 60), (55, 145, 75), (30, 100, 50)][k % 3])
+        for k in range(10):
+            a_ = k * 2 * math.pi / 10 + 0.3; px, py = wx + 82 * math.cos(a_), wy + 82 * math.sin(a_)
+            d.ellipse(box(px - 9, py - 9, px + 9, py + 9), fill=(220, 40, 50))
+        d.polygon([(L(wx), L(wy + 70)), (L(wx - 44), L(wy + 44)), (L(wx - 44), L(wy + 96))], fill=(210, 30, 45))
+        d.polygon([(L(wx), L(wy + 70)), (L(wx + 44), L(wy + 44)), (L(wx + 44), L(wy + 96))], fill=(210, 30, 45))
+        d.ellipse(box(wx - 14, wy + 56, wx + 14, wy + 84), fill=(240, 60, 70))
     elif room == 'arcade':     # oyun makinesi
         d.rounded_rectangle(box(60, 60, 280, 360), radius=L(16), fill=(30, 20, 60), outline=(80, 220, 255), width=L(6))
         d.rectangle(box(90, 100, 250, 220), fill=(20, 200, 140)); d.rectangle(box(110, 130, 140, 150), fill=(255, 230, 60))
