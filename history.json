@@ -3827,6 +3827,74 @@
       ],
       "room": "arcade",
       "seed": 173127
+    },
+    {
+      "id": "KGrPQQlLUH4",
+      "date": "2026-11-17 00:47",
+      "kind": "episode",
+      "title": "Diner Chaos: In Public vs At Home (14 Situations) 🏠 | Bloop Bonkers Ep 28",
+      "privacy": "public",
+      "format": "public",
+      "kurgu": "room",
+      "theme": "diner",
+      "items": [
+        [
+          "energy",
+          "ziggy"
+        ],
+        [
+          "xylophone",
+          "nova"
+        ],
+        [
+          "maracas",
+          "kiki"
+        ],
+        [
+          "snowball",
+          "chonk"
+        ],
+        [
+          "glitter",
+          "pepper"
+        ],
+        [
+          "wizardhat",
+          "grumbo"
+        ],
+        [
+          "tambourine",
+          "pip"
+        ],
+        [
+          "lollipop",
+          "bloop"
+        ],
+        [
+          "slime",
+          "rex"
+        ],
+        [
+          "icecube",
+          "luna"
+        ],
+        [
+          "crown",
+          "duke"
+        ],
+        [
+          "coconut",
+          "zip"
+        ],
+        [
+          "popper",
+          "boris"
+        ],
+        [
+          "cowbell",
+          "mimi"
+        ]
+      ]
     }
   ]
 }
