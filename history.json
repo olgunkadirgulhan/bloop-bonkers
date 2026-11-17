@@ -3911,6 +3911,22 @@
       ],
       "room": "diner",
       "seed": 325717
+    },
+    {
+      "id": "QDRLVNvms9o",
+      "date": "2026-11-17 17:49",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Remote & Croissant) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "ziggy",
+      "gags": [
+        "remote",
+        "croissant",
+        "typewriter"
+      ],
+      "room": "studio",
+      "seed": 903242
     }
   ]
 }
