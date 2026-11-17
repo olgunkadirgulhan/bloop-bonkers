@@ -3927,6 +3927,21 @@
       ],
       "room": "studio",
       "seed": 903242
+    },
+    {
+      "id": "iWvJyUi4goc",
+      "date": "2026-11-17 18:49",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Ice Cream & Birthday Cake",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "grumbo",
+      "gags": [
+        "icecream",
+        "cake"
+      ],
+      "room": "garage",
+      "seed": 805490
     }
   ]
 }
