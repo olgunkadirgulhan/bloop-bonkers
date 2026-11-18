@@ -3975,6 +3975,23 @@
       ],
       "room": "office",
       "seed": 858126
+    },
+    {
+      "id": "cyvjHZpmXkc",
+      "date": "2026-11-18 18:50",
+      "kind": "short",
+      "title": "Normal People vs Psychopaths (Gift & Notebook) 💀",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "nova",
+      "gags": [
+        "gift",
+        "notebook",
+        "lemon",
+        "sparkler"
+      ],
+      "room": "kitchen",
+      "seed": 231611
     }
   ]
 }
