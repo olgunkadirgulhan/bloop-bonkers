@@ -3942,6 +3942,23 @@
       ],
       "room": "garage",
       "seed": 805490
+    },
+    {
+      "id": "dFdMeVYG0hA",
+      "date": "2026-11-18 13:50",
+      "kind": "short",
+      "title": "Ziggy: Level 1 vs Level 100 (Nap & Strawberry) 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "ziggy",
+      "gags": [
+        "nap",
+        "strawberry",
+        "cucumber",
+        "sponge"
+      ],
+      "room": "living",
+      "seed": 161216
     }
   ]
 }
