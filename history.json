@@ -4077,6 +4077,22 @@
       ],
       "room": "bathroom",
       "seed": 419096
+    },
+    {
+      "id": "9PP-mfzMT-g",
+      "date": "2026-11-19 17:49",
+      "kind": "short",
+      "title": "Chonk: Normal vs Psycho (Yogurt & Pinata) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "chonk",
+      "gags": [
+        "yogurt",
+        "pinata",
+        "caramelapple"
+      ],
+      "room": "hotel",
+      "seed": 626499
     }
   ]
 }
