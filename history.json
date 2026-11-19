@@ -4093,6 +4093,23 @@
       ],
       "room": "hotel",
       "seed": 626499
+    },
+    {
+      "id": "KQcEa6Joplw",
+      "date": "2026-11-19 18:50",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Soap & Cheese",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "pepper",
+      "gags": [
+        "soap",
+        "cheese",
+        "burger",
+        "magnet"
+      ],
+      "room": "garage",
+      "seed": 34119
     }
   ]
 }
