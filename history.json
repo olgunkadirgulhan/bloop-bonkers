@@ -4126,6 +4126,21 @@
       ],
       "room": "greenhouse",
       "seed": 838615
+    },
+    {
+      "id": "bg02mup-V2o",
+      "date": "2026-11-20 17:49",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Ice Cream & Desk Bell Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "zip",
+      "gags": [
+        "icecream",
+        "bell"
+      ],
+      "room": "kitchen",
+      "seed": 688138
     }
   ]
 }
