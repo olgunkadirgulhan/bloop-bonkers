@@ -4156,6 +4156,66 @@
       ],
       "room": "spaceship",
       "seed": 431101
+    },
+    {
+      "id": "8jqtrtredRg",
+      "date": "2026-11-20 23:04",
+      "kind": "episode",
+      "title": "Boris vs Bloop: Who Is More Psycho? Boss Watching vs Boss Not Watching ⚔️ | Bloop Bonkers Ep 30",
+      "privacy": "public",
+      "format": "boss",
+      "kurgu": "battle",
+      "theme": null,
+      "items": [
+        [
+          "bowling",
+          "boris"
+        ],
+        [
+          "mug",
+          "bloop"
+        ],
+        [
+          "plantmister",
+          "boris"
+        ],
+        [
+          "basketball",
+          "bloop"
+        ],
+        [
+          "globe",
+          "boris"
+        ],
+        [
+          "mint",
+          "bloop"
+        ],
+        [
+          "bell",
+          "boris"
+        ],
+        [
+          "book",
+          "bloop"
+        ],
+        [
+          "nachos",
+          "boris"
+        ],
+        [
+          "stapler",
+          "bloop"
+        ],
+        [
+          "present",
+          "boris"
+        ],
+        [
+          "soup",
+          "bloop"
+        ]
+      ]
     }
   ]
 }
