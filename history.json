@@ -4141,6 +4141,21 @@
       ],
       "room": "kitchen",
       "seed": 688138
+    },
+    {
+      "id": "4WLVBiD8h9I",
+      "date": "2026-11-20 18:49",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Dandelion & Soap Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "nova",
+      "gags": [
+        "dandelion",
+        "soap"
+      ],
+      "room": "spaceship",
+      "seed": 431101
     }
   ]
 }
