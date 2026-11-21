@@ -4216,6 +4216,21 @@
           "bloop"
         ]
       ]
+    },
+    {
+      "id": "6bIVEHsIhik",
+      "date": "2026-11-21 13:49",
+      "kind": "short",
+      "title": "Me at 8 AM vs 3 AM: Ice Cream & Newspaper 🌙",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "pip",
+      "gags": [
+        "icecream",
+        "newspaper"
+      ],
+      "room": "cafe",
+      "seed": 227345
     }
   ]
 }
