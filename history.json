@@ -4246,6 +4246,23 @@
       ],
       "room": "studio",
       "seed": 843330
+    },
+    {
+      "id": "QCQMEmnmhcA",
+      "date": "2026-11-21 18:50",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Pen & Pie Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "mimi",
+      "gags": [
+        "pen",
+        "pie",
+        "kite",
+        "kaleidoscope"
+      ],
+      "room": "cafe",
+      "seed": 2701
     }
   ]
 }
