@@ -4231,6 +4231,21 @@
       ],
       "room": "cafe",
       "seed": 227345
+    },
+    {
+      "id": "iCbIvIoIJpw",
+      "date": "2026-11-21 17:49",
+      "kind": "short",
+      "title": "Level 1 vs Level 100: Football & Frisbee 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "zip",
+      "gags": [
+        "football",
+        "frisbee"
+      ],
+      "room": "studio",
+      "seed": 843330
     }
   ]
 }
