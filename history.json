@@ -4278,6 +4278,21 @@
       ],
       "room": "office",
       "seed": 679703
+    },
+    {
+      "id": "ESNvQTzw4k0",
+      "date": "2026-11-22 17:49",
+      "kind": "short",
+      "title": "Bloop: Normal vs Psycho (Sunglasses & Laptop) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "bloop",
+      "gags": [
+        "shades",
+        "laptop"
+      ],
+      "room": "spaceship",
+      "seed": 759145
     }
   ]
 }
