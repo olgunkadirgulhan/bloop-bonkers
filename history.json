@@ -4293,6 +4293,21 @@
       ],
       "room": "spaceship",
       "seed": 759145
+    },
+    {
+      "id": "NVANZOCDOYE",
+      "date": "2026-11-22 18:49",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Hot Dog & Pudding Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "luna",
+      "gags": [
+        "hotdog",
+        "pudding"
+      ],
+      "room": "office",
+      "seed": 946615
     }
   ]
 }
