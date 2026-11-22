@@ -4263,6 +4263,21 @@
       ],
       "room": "cafe",
       "seed": 2701
+    },
+    {
+      "id": "zpsR4TnSv-I",
+      "date": "2026-11-22 13:49",
+      "kind": "short",
+      "title": "Level 1 vs Level 100: Yo-Yo & Maracas 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "pip",
+      "gags": [
+        "yoyo",
+        "maracas"
+      ],
+      "room": "office",
+      "seed": 679703
     }
   ]
 }
