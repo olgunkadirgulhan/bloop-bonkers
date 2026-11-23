@@ -4340,6 +4340,23 @@
       ],
       "room": "spaceship",
       "seed": 647620
+    },
+    {
+      "id": "5cvhPo_pO5M",
+      "date": "2026-11-23 18:49",
+      "kind": "short",
+      "title": "LEVEL 1 vs LEVEL 100: Trash Shot & Lollipop Edition 💀",
+      "privacy": "public",
+      "format": "level",
+      "cast": "ziggy",
+      "gags": [
+        "basket",
+        "lollipop",
+        "tambourine",
+        "plantmister"
+      ],
+      "room": "bedroom",
+      "seed": 99622
     }
   ]
 }
