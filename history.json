@@ -4323,6 +4323,23 @@
       ],
       "room": "diner",
       "seed": 691539
+    },
+    {
+      "id": "pR5LSgXJdX4",
+      "date": "2026-11-23 17:51",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Coffee & Balloon Dog",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "chonk",
+      "gags": [
+        "coffee",
+        "balloonanimal",
+        "drum",
+        "perfume"
+      ],
+      "room": "spaceship",
+      "seed": 647620
     }
   ]
 }
