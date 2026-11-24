@@ -4357,6 +4357,74 @@
       ],
       "room": "bedroom",
       "seed": 99622
+    },
+    {
+      "id": "50SC8Ftp9mI",
+      "date": "2026-11-24 03:27",
+      "kind": "episode",
+      "title": "Normal vs Psychopath: 14 Situations 🤪 | Bloop Bonkers Ep 31",
+      "privacy": "public",
+      "format": "psycho",
+      "kurgu": "situations",
+      "theme": null,
+      "items": [
+        [
+          "cereal",
+          "nova"
+        ],
+        [
+          "umbrella",
+          "ziggy"
+        ],
+        [
+          "flower",
+          "mimi"
+        ],
+        [
+          "remote",
+          "rex"
+        ],
+        [
+          "pizzabox",
+          "luna"
+        ],
+        [
+          "duck",
+          "zip"
+        ],
+        [
+          "egg",
+          "duke"
+        ],
+        [
+          "controller",
+          "chonk"
+        ],
+        [
+          "pillow",
+          "pepper"
+        ],
+        [
+          "beachball",
+          "boris"
+        ],
+        [
+          "gummy",
+          "jojo"
+        ],
+        [
+          "selfie",
+          "pip"
+        ],
+        [
+          "watermelon",
+          "bloop"
+        ],
+        [
+          "pancake",
+          "grumbo"
+        ]
+      ]
     }
   ]
 }
