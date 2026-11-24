@@ -4456,6 +4456,23 @@
       ],
       "room": "living",
       "seed": 270423
+    },
+    {
+      "id": "2FsDPykQe_Q",
+      "date": "2026-11-24 18:50",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Apricot & Garlic Bread Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "nova",
+      "gags": [
+        "apricot",
+        "garlicbread",
+        "waterballoon",
+        "lightbulb"
+      ],
+      "room": "greenhouse",
+      "seed": 474855
     }
   ]
 }
