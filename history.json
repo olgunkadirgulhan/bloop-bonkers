@@ -4504,6 +4504,21 @@
       ],
       "room": "bedroom",
       "seed": 996254
+    },
+    {
+      "id": "zW9D2QJVYYM",
+      "date": "2026-11-25 18:49",
+      "kind": "short",
+      "title": "Nova: Level 1 vs Level 100 (Tissue & Rocket) 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "nova",
+      "gags": [
+        "tissue",
+        "rocket"
+      ],
+      "room": "gym",
+      "seed": 496417
     }
   ]
 }
