@@ -4489,6 +4489,21 @@
       ],
       "room": "gym",
       "seed": 543818
+    },
+    {
+      "id": "osKmFq860-I",
+      "date": "2026-11-25 17:49",
+      "kind": "short",
+      "title": "Normal vs Psychopath 😂 Paper Plane & Drum",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "chonk",
+      "gags": [
+        "paperplane",
+        "drum"
+      ],
+      "room": "bedroom",
+      "seed": 996254
     }
   ]
 }
