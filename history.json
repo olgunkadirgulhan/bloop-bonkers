@@ -4473,6 +4473,22 @@
       ],
       "room": "greenhouse",
       "seed": 474855
+    },
+    {
+      "id": "NzD3QLTNfk8",
+      "date": "2026-11-25 13:49",
+      "kind": "short",
+      "title": "8 AM Me vs 3 AM Me (Lemon & Beanie) 💀",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "pepper",
+      "gags": [
+        "lemon",
+        "beanie",
+        "ketchup"
+      ],
+      "room": "gym",
+      "seed": 543818
     }
   ]
 }
