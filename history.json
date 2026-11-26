@@ -4519,6 +4519,66 @@
       ],
       "room": "gym",
       "seed": 496417
+    },
+    {
+      "id": "HZTwZkiqmT0",
+      "date": "2026-11-26 01:05",
+      "kind": "episode",
+      "title": "A Day With Nova: Level 1 vs Level 100 (12 Moments) ☀️ | Bloop Bonkers Ep 32",
+      "privacy": "public",
+      "format": "level",
+      "kurgu": "day",
+      "theme": null,
+      "items": [
+        [
+          "alarm",
+          "nova"
+        ],
+        [
+          "toothpaste",
+          "nova"
+        ],
+        [
+          "pizza",
+          "nova"
+        ],
+        [
+          "sandwich",
+          "nova"
+        ],
+        [
+          "chips",
+          "nova"
+        ],
+        [
+          "pen",
+          "nova"
+        ],
+        [
+          "fan",
+          "nova"
+        ],
+        [
+          "plant",
+          "nova"
+        ],
+        [
+          "dumbbell",
+          "nova"
+        ],
+        [
+          "spaghetti",
+          "nova"
+        ],
+        [
+          "hotsauce",
+          "nova"
+        ],
+        [
+          "popcorn",
+          "nova"
+        ]
+      ]
     }
   ]
 }
