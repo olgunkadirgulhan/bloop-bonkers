@@ -4610,6 +4610,23 @@
       ],
       "room": "spaceship",
       "seed": 389340
+    },
+    {
+      "id": "YQjo1ewIddc",
+      "date": "2026-11-26 18:50",
+      "kind": "short",
+      "title": "Level 1 vs Level 100: Crown & Goggles 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "zip",
+      "gags": [
+        "crown",
+        "goggles",
+        "cloud",
+        "lightbulb"
+      ],
+      "room": "gym",
+      "seed": 331661
     }
   ]
 }
