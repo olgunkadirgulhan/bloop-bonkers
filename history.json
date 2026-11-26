@@ -4595,6 +4595,21 @@
       ],
       "room": "office",
       "seed": 137636
+    },
+    {
+      "id": "gUGudXekDCk",
+      "date": "2026-11-26 17:49",
+      "kind": "short",
+      "title": "Rex: Normal vs Psycho (Lamp & Pretzel) 😂",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "rex",
+      "gags": [
+        "lamp",
+        "pretzel"
+      ],
+      "room": "spaceship",
+      "seed": 389340
     }
   ]
 }
