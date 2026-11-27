@@ -4661,6 +4661,22 @@
       ],
       "room": "garage",
       "seed": 786434
+    },
+    {
+      "id": "18IeF6OSRM4",
+      "date": "2026-11-27 18:49",
+      "kind": "short",
+      "title": "NORMAL vs PSYCHO: Tablet & Papaya Edition 🤪",
+      "privacy": "public",
+      "format": "psycho",
+      "cast": "jojo",
+      "gags": [
+        "tablet",
+        "papaya",
+        "tiara"
+      ],
+      "room": "diner",
+      "seed": 978913
     }
   ]
 }
