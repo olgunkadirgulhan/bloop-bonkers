@@ -4627,6 +4627,23 @@
       ],
       "room": "gym",
       "seed": 331661
+    },
+    {
+      "id": "Lwhx9f2n5i4",
+      "date": "2026-11-27 13:49",
+      "kind": "short",
+      "title": "Me at 8 AM vs Me at 3 AM 😂 Papaya & Hacky Sack",
+      "privacy": "public",
+      "format": "clock",
+      "cast": "chonk",
+      "gags": [
+        "papaya",
+        "hackysack",
+        "hairdryer",
+        "bowtie"
+      ],
+      "room": "kitchen",
+      "seed": 887664
     }
   ]
 }
