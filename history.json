@@ -4644,6 +4644,23 @@
       ],
       "room": "kitchen",
       "seed": 887664
+    },
+    {
+      "id": "7xH5hwhOBSY",
+      "date": "2026-11-27 17:51",
+      "kind": "short",
+      "title": "Level 1 vs Level 100: Alarm Clock & Phone 🔥",
+      "privacy": "public",
+      "format": "level",
+      "cast": "bloop",
+      "gags": [
+        "alarm",
+        "phone",
+        "lantern",
+        "basketball"
+      ],
+      "room": "garage",
+      "seed": 786434
     }
   ]
 }
