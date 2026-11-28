@@ -4677,6 +4677,66 @@
       ],
       "room": "diner",
       "seed": 978913
+    },
+    {
+      "id": "kj0q-JutK7A",
+      "date": "2026-11-28 00:29",
+      "kind": "episode",
+      "title": "Bloop vs Mimi: Who Is More Psycho? In Public vs At Home ⚔️ | Bloop Bonkers Ep 33",
+      "privacy": "public",
+      "format": "public",
+      "kurgu": "battle",
+      "theme": null,
+      "items": [
+        [
+          "paperplane",
+          "bloop"
+        ],
+        [
+          "laptop",
+          "mimi"
+        ],
+        [
+          "burger",
+          "bloop"
+        ],
+        [
+          "headset",
+          "mimi"
+        ],
+        [
+          "dumpling",
+          "bloop"
+        ],
+        [
+          "banana",
+          "mimi"
+        ],
+        [
+          "partyhat",
+          "bloop"
+        ],
+        [
+          "tomato",
+          "mimi"
+        ],
+        [
+          "lamp",
+          "bloop"
+        ],
+        [
+          "muffin",
+          "mimi"
+        ],
+        [
+          "shades",
+          "bloop"
+        ],
+        [
+          "teddy",
+          "mimi"
+        ]
+      ]
     }
   ]
 }
