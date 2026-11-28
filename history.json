@@ -4737,6 +4737,21 @@
           "mimi"
         ]
       ]
+    },
+    {
+      "id": "En5T8hgZ-k4",
+      "date": "2026-11-28 13:49",
+      "kind": "short",
+      "title": "LEVEL 1 vs LEVEL 100: Selfie & Yoga Ball Edition 💀",
+      "privacy": "public",
+      "format": "level",
+      "cast": "zip",
+      "gags": [
+        "selfie",
+        "yogaball"
+      ],
+      "room": "spaceship",
+      "seed": 567729
     }
   ]
 }
